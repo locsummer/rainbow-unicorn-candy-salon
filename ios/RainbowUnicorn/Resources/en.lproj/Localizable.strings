@@ -1,0 +1,58 @@
+"app_name" = "Rainbow Unicorn Candy Salon";
+"btn_play" = "Story Mode";
+"btn_party" = "Party Mode";
+"btn_gallery" = "Gallery";
+"btn_settings" = "Settings";
+"btn_shop" = "Candy Shop";
+"btn_exit" = "Exit";
+"btn_back" = "Back";
+"btn_next" = "Next";
+"btn_done" = "Complete";
+"btn_reset" = "Reset";
+"btn_undo" = "Undo";
+"btn_redo" = "Redo";
+"btn_confirm" = "Confirm";
+"btn_cancel" = "Cancel";
+"btn_take_photo" = "Snap Photo";
+"btn_save_photo" = "Save to Photos";
+
+"station_spa" = "Cleaning Spa";
+"station_hair" = "Hair Salon";
+"station_makeup" = "Sweet Makeup";
+"station_dressup" = "Dress Up";
+"station_cake" = "Candy Cake";
+"station_pet" = "Pet Care";
+"station_photo" = "Party Photo";
+
+"level_victory" = "Sweet Victory!";
+"level_try_again" = "Not Quite Sweet Enough!";
+"level_premium_locked" = "Unlock Levels 11–20 with Premium!";
+
+"score_total" = "Total Score: %d / 100";
+"candy_earned" = "+%d Candies";
+"candy_balance" = "%d Candies";
+
+"parental_gate_title" = "Parental Gate";
+"parental_gate_instruction" = "Hold button for 3 seconds, then solve math to continue:";
+"parental_gate_hold" = "Hold 3 Seconds";
+
+"dialog_exit_title" = "Leave Level?";
+"dialog_exit_message" = "Are you sure you want to pause and return to the map? Progress is saved.";
+
+"dialog_reset_title" = "Reset Station?";
+"dialog_reset_message" = "Are you sure you want to restart this station? Your candy and stars are safe!";
+
+"gallery_title" = "Sweet Memory Gallery";
+"gallery_full_warning" = "Gallery is full (50/50)! Please delete older photos to snap more.";
+"gallery_empty" = "No photos yet! Head to Party Mode to snap sweet pictures!";
+
+"settings_title" = "Game Settings";
+"settings_bgm" = "Background Music";
+"settings_sfx" = "Sound Effects";
+"settings_restore" = "Restore Purchases";
+"settings_privacy" = "Child Privacy (100% Offline & Safe)";
+
+"shop_title" = "Candy Sweet Shop";
+"shop_premium_levels" = "Unlock Levels 11–20 & Remove Ads";
+"shop_remove_ads" = "Remove All Ads";
+"shop_purchased" = "Purchased";

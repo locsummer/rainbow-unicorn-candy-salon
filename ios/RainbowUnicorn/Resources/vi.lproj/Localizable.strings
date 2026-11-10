@@ -1,0 +1,58 @@
+"app_name" = "Rainbow Unicorn Candy Salon";
+"btn_play" = "Chế độ cốt truyện";
+"btn_party" = "Chế độ tiệc tùng";
+"btn_gallery" = "Thư viện ảnh";
+"btn_settings" = "Cài đặt";
+"btn_shop" = "Cửa hàng kẹo";
+"btn_exit" = "Thoát";
+"btn_back" = "Quay lại";
+"btn_next" = "Tiếp tục";
+"btn_done" = "Hoàn thành";
+"btn_reset" = "Làm lại";
+"btn_undo" = "Hoàn tác";
+"btn_redo" = "Làm lại thao tác";
+"btn_confirm" = "Xác nhận";
+"btn_cancel" = "Huỷ bỏ";
+"btn_take_photo" = "Chụp ảnh";
+"btn_save_photo" = "Lưu vào thư viện";
+
+"station_spa" = "Spa làm sạch";
+"station_hair" = "Làm tóc";
+"station_makeup" = "Trang điểm";
+"station_dressup" = "Thay đồ";
+"station_cake" = "Bánh kẹo";
+"station_pet" = "Thú cưng";
+"station_photo" = "Chụp ảnh tiệc";
+
+"level_victory" = "Chiến thắng ngọt ngào!";
+"level_try_again" = "Chưa đạt! Thử lại nhé!";
+"level_premium_locked" = "Mở khoá Level 11–20 với gói VIP!";
+
+"score_total" = "Tổng điểm: %d / 100";
+"candy_earned" = "+%d Kẹo";
+"candy_balance" = "%d Kẹo";
+
+"parental_gate_title" = "Cổng phụ huynh";
+"parental_gate_instruction" = "Giữ nút trong 3 giây và giải toán để tiếp tục:";
+"parental_gate_hold" = "Giữ nút 3 giây";
+
+"dialog_exit_title" = "Thoát màn chơi?";
+"dialog_exit_message" = "Bạn có muốn tạm dừng và quay về menu không? Tiến độ trạm được tự động lưu.";
+
+"dialog_reset_title" = "Làm lại trạm này?";
+"dialog_reset_message" = "Bạn có chắc chắn muốn làm lại trạm này? Kẹo và sao của bạn không bị mất!";
+
+"gallery_title" = "Bộ sưu tập ảnh kẹo ngọt";
+"gallery_full_warning" = "Thư viện đã đầy (50/50)! Hãy xoá bớt ảnh cũ để chụp thêm nhé.";
+"gallery_empty" = "Chưa có ảnh nào! Hãy vào Chế độ Tiệc Tùng để chụp hình!";
+
+"settings_title" = "Cài đặt trò chơi";
+"settings_bgm" = "Nhạc nền (BGM)";
+"settings_sfx" = "Âm thanh hiệu ứng (SFX)";
+"settings_restore" = "Khôi phục mua hàng";
+"settings_privacy" = "An toàn trẻ em (100% Ngoại tuyến)";
+
+"shop_title" = "Cửa hàng kẹo ngọt";
+"shop_premium_levels" = "Mở Level 11–20 & Tắt quảng cáo";
+"shop_remove_ads" = "Tắt toàn bộ quảng cáo";
+"shop_purchased" = "Đã sở hữu";
