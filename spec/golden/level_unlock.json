@@ -1,0 +1,84 @@
+{
+  "testSuite": "Level Unlocking and Premium Progression",
+  "ruleReferences": ["RULE-011", "RULE-012", "RULE-035"],
+  "testCases": [
+    {
+      "caseId": "UNL-001",
+      "description": "Initial game state has only Level 1 unlocked",
+      "completedLevels": [],
+      "hasPremium": false,
+      "queryLevelId": 1,
+      "expectedIsUnlocked": true,
+      "expectedRequiresIAP": false
+    },
+    {
+      "caseId": "UNL-002",
+      "description": "Winning Level 1 unlocks Level 2",
+      "completedLevels": [{ "levelId": 1, "stars": 2 }],
+      "hasPremium": false,
+      "queryLevelId": 2,
+      "expectedIsUnlocked": true,
+      "expectedRequiresIAP": false
+    },
+    {
+      "caseId": "UNL-003",
+      "description": "Winning Level 1 does not unlock Level 3 prematurely",
+      "completedLevels": [{ "levelId": 1, "stars": 3 }],
+      "hasPremium": false,
+      "queryLevelId": 3,
+      "expectedIsUnlocked": false,
+      "expectedRequiresIAP": false
+    },
+    {
+      "caseId": "UNL-004",
+      "description": "Level 10 completed without premium blocks Level 11 and prompts IAP",
+      "completedLevels": [
+        { "levelId": 1, "stars": 3 },
+        { "levelId": 2, "stars": 3 },
+        { "levelId": 3, "stars": 3 },
+        { "levelId": 4, "stars": 3 },
+        { "levelId": 5, "stars": 3 },
+        { "levelId": 6, "stars": 3 },
+        { "levelId": 7, "stars": 3 },
+        { "levelId": 8, "stars": 3 },
+        { "levelId": 9, "stars": 3 },
+        { "levelId": 10, "stars": 3 }
+      ],
+      "hasPremium": false,
+      "queryLevelId": 11,
+      "expectedIsUnlocked": false,
+      "expectedRequiresIAP": true
+    },
+    {
+      "caseId": "UNL-005",
+      "description": "Level 10 completed with premium unlocked successfully opens Level 11",
+      "completedLevels": [
+        { "levelId": 1, "stars": 3 },
+        { "levelId": 2, "stars": 3 },
+        { "levelId": 3, "stars": 3 },
+        { "levelId": 4, "stars": 3 },
+        { "levelId": 5, "stars": 3 },
+        { "levelId": 6, "stars": 3 },
+        { "levelId": 7, "stars": 3 },
+        { "levelId": 8, "stars": 3 },
+        { "levelId": 9, "stars": 3 },
+        { "levelId": 10, "stars": 3 }
+      ],
+      "hasPremium": true,
+      "queryLevelId": 11,
+      "expectedIsUnlocked": true,
+      "expectedRequiresIAP": false
+    },
+    {
+      "caseId": "UNL-006",
+      "description": "Failing a level (0 stars) does not unlock next level",
+      "completedLevels": [{ "levelId": 1, "stars": 1 }],
+      "currentLevelPlayed": 2,
+      "currentLevelStars": 0,
+      "hasPremium": false,
+      "queryLevelId": 3,
+      "expectedIsUnlocked": false,
+      "expectedRequiresIAP": false
+    }
+  ]
+}

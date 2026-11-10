@@ -1,0 +1,82 @@
+{
+  "testSuite": "Economy, Rewards and Purchases",
+  "ruleReferences": ["RULE-036", "RULE-037", "RULE-040", "RULE-041", "RULE-043"],
+  "testCases": [
+    {
+      "caseId": "ECO-001",
+      "description": "First time win with 1 star awards 10 candies",
+      "initialBestStars": 0,
+      "levelEarnedStars": 1,
+      "expectedNewBestStars": 1,
+      "expectedCandyAward": 10
+    },
+    {
+      "caseId": "ECO-002",
+      "description": "First time win with 3 stars awards 30 candies",
+      "initialBestStars": 0,
+      "levelEarnedStars": 3,
+      "expectedNewBestStars": 3,
+      "expectedCandyAward": 30
+    },
+    {
+      "caseId": "ECO-003",
+      "description": "Improving from 1 star to 3 stars awards 20 candies",
+      "initialBestStars": 1,
+      "levelEarnedStars": 3,
+      "expectedNewBestStars": 3,
+      "expectedCandyAward": 20
+    },
+    {
+      "caseId": "ECO-004",
+      "description": "Replaying level and getting same 3 stars awards 0 candy (no farming)",
+      "initialBestStars": 3,
+      "levelEarnedStars": 3,
+      "expectedNewBestStars": 3,
+      "expectedCandyAward": 0
+    },
+    {
+      "caseId": "ECO-005",
+      "description": "Replaying level with lower score preserves 3 stars and awards 0 candy",
+      "initialBestStars": 3,
+      "levelEarnedStars": 1,
+      "expectedNewBestStars": 3,
+      "expectedCandyAward": 0
+    },
+    {
+      "caseId": "ECO-006",
+      "description": "Successful purchase deducts exact candy balance",
+      "initialCandy": 50,
+      "itemPrice": 30,
+      "isAlreadyOwned": false,
+      "expectedSuccess": true,
+      "expectedRemainingCandy": 20
+    },
+    {
+      "caseId": "ECO-007",
+      "description": "Exact balance purchase reduces candy to exactly 0 without error",
+      "initialCandy": 20,
+      "itemPrice": 20,
+      "isAlreadyOwned": false,
+      "expectedSuccess": true,
+      "expectedRemainingCandy": 0
+    },
+    {
+      "caseId": "ECO-008",
+      "description": "Insufficient candy rejects purchase and preserves balance",
+      "initialCandy": 10,
+      "itemPrice": 25,
+      "isAlreadyOwned": false,
+      "expectedSuccess": false,
+      "expectedRemainingCandy": 10
+    },
+    {
+      "caseId": "ECO-009",
+      "description": "Purchasing already unlocked item is rejected and does not deduct candy",
+      "initialCandy": 100,
+      "itemPrice": 30,
+      "isAlreadyOwned": true,
+      "expectedSuccess": false,
+      "expectedRemainingCandy": 100
+    }
+  ]
+}

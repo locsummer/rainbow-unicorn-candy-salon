@@ -1,0 +1,10 @@
+{
+  "game-spec.md": "f96ebdf76b7bb2b2b8c9a0245ea4024e2a1a78e9d16a91c62c18ebd2cc9beaa0",
+  "levels.json": "b9be6819367be1c5cd4654fbd9ee62448d20ff6f43eecb6965498602d63c4e37",
+  "items.json": "c3db861bda380eea77ec45a346ffbcb63c964375f7ebe6f928faa68cfcbca718",
+  "golden/ad_policy.json": "cda5e01dde2eefc5397a0790d7c3b6dcba920d267e56e7515d0f254aa51e0b71",
+  "golden/character_layers_slots.json": "d36a871ee111dd80bef958e12223c4ff960d03fe1712b0440f909db81746635d",
+  "golden/economy_rewards.json": "e187e29b3a2bf1a77d85d72462da31ff93799f626416ade467047c5a94083341",
+  "golden/level_unlock.json": "3b3dc65a3d647d790cc0b887fcc31f75637113fff10a52ba8fe98b47f89acfe0",
+  "golden/scoring_stars.json": "47cf4a367a65659c4a350a5bd26486b017db28892bee47bbc46900ebde883988"
+}

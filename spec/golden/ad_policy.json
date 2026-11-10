@@ -1,0 +1,77 @@
+{
+  "testSuite": "Advertising Policy and Timing Gates",
+  "ruleReferences": ["RULE-060", "RULE-061"],
+  "testCases": [
+    {
+      "caseId": "AD-001",
+      "description": "Ads disabled when remove_ads is purchased",
+      "hasRemoveAds": true,
+      "hasPremiumLevels": false,
+      "expectedAdsEnabled": false
+    },
+    {
+      "caseId": "AD-002",
+      "description": "Ads disabled when premium_levels is purchased",
+      "hasRemoveAds": false,
+      "hasPremiumLevels": true,
+      "expectedAdsEnabled": false
+    },
+    {
+      "caseId": "AD-003",
+      "description": "Ads enabled for free user without purchases",
+      "hasRemoveAds": false,
+      "hasPremiumLevels": false,
+      "expectedAdsEnabled": true
+    },
+    {
+      "caseId": "AD-004",
+      "description": "Never show ad after Level 1 even if cooldown elapsed",
+      "completedLevel": 1,
+      "secondsSinceLastAd": 300,
+      "currentScreen": "level_select",
+      "expectedShouldShowAd": false
+    },
+    {
+      "caseId": "AD-005",
+      "description": "Never show ad after Level 2",
+      "completedLevel": 2,
+      "secondsSinceLastAd": 300,
+      "currentScreen": "level_select",
+      "expectedShouldShowAd": false
+    },
+    {
+      "caseId": "AD-006",
+      "description": "Never show ad inside a station",
+      "completedLevel": 4,
+      "secondsSinceLastAd": 300,
+      "currentScreen": "inside_station_makeup",
+      "expectedShouldShowAd": false
+    },
+    {
+      "caseId": "AD-007",
+      "description": "Never show ad during photo/party mode",
+      "completedLevel": 4,
+      "secondsSinceLastAd": 300,
+      "currentScreen": "photo_party",
+      "expectedShouldShowAd": false
+    },
+    {
+      "caseId": "AD-008",
+      "description": "Cooldown not elapsed (120s < 180s) blocks ad",
+      "completedLevel": 4,
+      "secondsSinceLastAd": 120,
+      "currentScreen": "level_select",
+      "levelsSinceLastAd": 2,
+      "expectedShouldShowAd": false
+    },
+    {
+      "caseId": "AD-009",
+      "description": "Eligible ad when cooldown >= 180s, level > 2, every 2 levels, on level_select",
+      "completedLevel": 4,
+      "secondsSinceLastAd": 180,
+      "currentScreen": "level_select",
+      "levelsSinceLastAd": 2,
+      "expectedShouldShowAd": true
+    }
+  ]
+}

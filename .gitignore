@@ -1,0 +1,30 @@
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+
+# Android & Gradle
+.gradle/
+build/
+app/build/
+core/build/
+*.apk
+*.aab
+local.properties
+.idea/
+*.iml
+
+# iOS & Xcode
+.build/
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+*.xcworkspace/*
+!*.xcworkspace/contents.xcworkspacedata
+DerivedData/
+
+# Node
+node_modules/
+npm-debug.log

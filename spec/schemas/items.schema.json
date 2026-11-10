@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ItemsCatalog",
+  "type": "object",
+  "required": ["version", "categories", "items"],
+  "properties": {
+    "version": { "type": "integer", "minimum": 1 },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "slotType", "maxSelected"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "slotType": { "type": "string", "enum": ["exclusive", "multi"] },
+          "maxSelected": { "type": "integer", "minimum": 1 }
+        }
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "category",
+          "unlockedByDefault",
+          "candyPrice",
+          "assetId"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "category": { "type": "string" },
+          "unlockedByDefault": { "type": "boolean" },
+          "candyPrice": { "type": "integer", "minimum": 0 },
+          "assetId": { "type": "string" },
+          "color": { "type": "string" },
+          "layer": { "type": "integer", "minimum": 1, "maximum": 11 }
+        }
+      }
+    }
+  }
+}

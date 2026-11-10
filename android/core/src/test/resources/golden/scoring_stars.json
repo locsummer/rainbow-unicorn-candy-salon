@@ -1,0 +1,96 @@
+{
+  "testSuite": "Scoring and Star Thresholds",
+  "ruleReferences": ["RULE-031", "RULE-032", "RULE-033", "RULE-034", "RULE-035", "RULE-036"],
+  "testCases": [
+    {
+      "caseId": "SCORE-001",
+      "description": "Zero score - no criteria met, zero quality",
+      "matchScore": 0.0,
+      "qualityScore": 0.0,
+      "allStationsCompleted": true,
+      "expectedTotal": 0,
+      "expectedStars": 0,
+      "expectedWin": false
+    },
+    {
+      "caseId": "SCORE-002",
+      "description": "Boundary just below 1-star (49 points)",
+      "matchScore": 0.45,
+      "qualityScore": 0.55,
+      "allStationsCompleted": true,
+      "expectedTotal": 49,
+      "expectedStars": 0,
+      "expectedWin": false
+    },
+    {
+      "caseId": "SCORE-003",
+      "description": "Exact boundary for 1-star (50 points)",
+      "matchScore": 0.50,
+      "qualityScore": 0.50,
+      "allStationsCompleted": true,
+      "expectedTotal": 50,
+      "expectedStars": 1,
+      "expectedWin": true
+    },
+    {
+      "caseId": "SCORE-004",
+      "description": "Boundary just below 2-stars (74 points)",
+      "matchScore": 0.70,
+      "qualityScore": 0.80,
+      "allStationsCompleted": true,
+      "expectedTotal": 74,
+      "expectedStars": 1,
+      "expectedWin": true
+    },
+    {
+      "caseId": "SCORE-005",
+      "description": "Exact boundary for 2-stars (75 points)",
+      "matchScore": 0.75,
+      "qualityScore": 0.75,
+      "allStationsCompleted": true,
+      "expectedTotal": 75,
+      "expectedStars": 2,
+      "expectedWin": true
+    },
+    {
+      "caseId": "SCORE-006",
+      "description": "Boundary just below 3-stars (89 points)",
+      "matchScore": 0.85,
+      "qualityScore": 0.95,
+      "allStationsCompleted": true,
+      "expectedTotal": 89,
+      "expectedStars": 2,
+      "expectedWin": true
+    },
+    {
+      "caseId": "SCORE-007",
+      "description": "Exact boundary for 3-stars (90 points)",
+      "matchScore": 0.90,
+      "qualityScore": 0.90,
+      "allStationsCompleted": true,
+      "expectedTotal": 90,
+      "expectedStars": 3,
+      "expectedWin": true
+    },
+    {
+      "caseId": "SCORE-008",
+      "description": "Perfect 100 points score",
+      "matchScore": 1.0,
+      "qualityScore": 1.0,
+      "allStationsCompleted": true,
+      "expectedTotal": 100,
+      "expectedStars": 3,
+      "expectedWin": true
+    },
+    {
+      "caseId": "SCORE-009",
+      "description": "High score but station not completed fails win",
+      "matchScore": 1.0,
+      "qualityScore": 1.0,
+      "allStationsCompleted": false,
+      "expectedTotal": 100,
+      "expectedStars": 0,
+      "expectedWin": false
+    }
+  ]
+}
