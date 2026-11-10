@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Rainbow Unicorn Candy Salon</string>
+    <string name="btn_play">Chế độ cốt truyện</string>
+    <string name="btn_party">Chế độ tiệc tùng</string>
+    <string name="btn_gallery">Thư viện ảnh</string>
+    <string name="btn_settings">Cài đặt</string>
+    <string name="btn_shop">Cửa hàng kẹo</string>
+    <string name="btn_exit">Thoát</string>
+    <string name="btn_back">Quay lại</string>
+    <string name="btn_next">Tiếp tục</string>
+    <string name="btn_done">Hoàn thành</string>
+    <string name="btn_reset">Làm lại</string>
+    <string name="btn_undo">Hoàn tác</string>
+    <string name="btn_redo">Làm lại thao tác</string>
+    <string name="btn_buy">Mở khoá</string>
+    <string name="btn_watch_ad">Xem quảng cáo</string>
+    <string name="btn_cancel">Huỷ bỏ</string>
+    <string name="btn_confirm">Xác nhận</string>
+    <string name="btn_edit_look">Chỉnh sửa tiếp</string>
+    <string name="btn_replay">Chơi lại</string>
+    <string name="btn_take_photo">Chụp ảnh</string>
+    <string name="btn_save_photo">Lưu vào thư viện</string>
+
+    <string name="station_spa">Spa làm sạch</string>
+    <string name="station_hair">Làm tóc</string>
+    <string name="station_makeup">Trang điểm</string>
+    <string name="station_dressup">Thay đồ</string>
+    <string name="station_cake">Bánh kẹo</string>
+    <string name="station_pet">Thú cưng</string>
+    <string name="station_photo">Chụp ảnh tiệc</string>
+
+    <string name="level_title_format">Màn %1$d: %2$s</string>
+    <string name="level_request_card">Thẻ yêu cầu của khách</string>
+    <string name="level_victory">Tuyệt vời! Chiến thắng ngọt ngào!</string>
+    <string name="level_try_again">Chưa đạt! Hãy thử làm đẹp thêm nhé!</string>
+    <string name="level_premium_locked">Mở khoá Level 11–20 với gói Premium!</string>
+
+    <string name="score_match">Độ khớp yêu cầu: %1$d%%</string>
+    <string name="score_quality">Độ hoàn thiện trạm: %1$d%%</string>
+    <string name="score_total">Tổng điểm: %1$d / 100</string>
+    <string name="candy_earned">+%1$d Kẹo</string>
+    <string name="candy_balance">%1$d Kẹo</string>
+
+    <string name="parental_gate_title">Cổng phụ huynh</string>
+    <string name="parental_gate_instruction">Giữ nút trong 3 giây và giải toán để tiếp tục:</string>
+    <string name="parental_gate_hold">Giữ nút 3 giây</string>
+    <string name="parental_gate_correct">Chính xác! Đã mở quyền.</string>
+    <string name="parental_gate_wrong">Chưa đúng. Vui lòng thử lại!</string>
+
+    <string name="dialog_exit_title">Thoát màn chơi?</string>
+    <string name="dialog_exit_message">Bạn có muốn tạm dừng và quay về menu không? Tiến độ các trạm đã xong sẽ được lưu lại.</string>
+
+    <string name="dialog_reset_title">Làm lại trạm này?</string>
+    <string name="dialog_reset_message">Bạn có chắc chắn muốn làm lại trạm này không? Số kẹo và sao của bạn được giữ nguyên!</string>
+
+    <string name="gallery_title">Bộ sưu tập ảnh kẹo ngọt</string>
+    <string name="gallery_count">%1$d / 50 Ảnh</string>
+    <string name="gallery_full_warning">Thư viện đã đầy (50/50)! Hãy xoá bớt ảnh cũ để chụp thêm những bức hình mới nhé.</string>
+    <string name="gallery_empty">Chưa có ảnh nào! Hãy vào Chế độ Tiệc Tùng để chụp những bức hình lung linh!</string>
+
+    <string name="settings_title">Cài đặt trò chơi</string>
+    <string name="settings_bgm">Nhạc nền (BGM)</string>
+    <string name="settings_sfx">Âm thanh hiệu ứng (SFX)</string>
+    <string name="settings_language">Ngôn ngữ</string>
+    <string name="settings_restore">Khôi phục mua hàng</string>
+    <string name="settings_privacy">Chính sách an toàn trẻ em (100% Offline)</string>
+
+    <string name="shop_title">Cửa hàng kẹo ngọt</string>
+    <string name="shop_premium_levels">Mở Level 11–20 &amp; Tắt quảng cáo</string>
+    <string name="shop_remove_ads">Tắt toàn bộ quảng cáo</string>
+    <string name="shop_purchased">Đã sở hữu</string>
+</resources>
