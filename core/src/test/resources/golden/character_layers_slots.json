@@ -1,0 +1,68 @@
+{
+  "testSuite": "Character Layers, Exclusive Slots, Multi-item Caps and Undo",
+  "ruleReferences": ["RULE-050", "RULE-051", "RULE-052", "RULE-053", "RULE-054", "RULE-055"],
+  "testCases": [
+    {
+      "caseId": "CHR-001",
+      "description": "Strict 11 layer ordering verification",
+      "expectedLayers": [
+        { "order": 1, "name": "background" },
+        { "order": 2, "name": "back_wings" },
+        { "order": 3, "name": "back_hair" },
+        { "order": 4, "name": "body_skin" },
+        { "order": 5, "name": "makeup_masked" },
+        { "order": 6, "name": "eyes_lashes" },
+        { "order": 7, "name": "outfit" },
+        { "order": 8, "name": "front_hair" },
+        { "order": 9, "name": "accessories_jewelry_horn" },
+        { "order": 10, "name": "tiara_crown" },
+        { "order": 11, "name": "stickers_sparkles" }
+      ]
+    },
+    {
+      "caseId": "CHR-002",
+      "description": "Exclusive slot: Selecting new outfit replaces existing outfit",
+      "initialOutfit": "outfit_cotton_candy_dress",
+      "action": "equip",
+      "newItem": "outfit_pastry_chef",
+      "slotType": "exclusive",
+      "expectedOutfits": ["outfit_pastry_chef"]
+    },
+    {
+      "caseId": "CHR-003",
+      "description": "Multi-item slot: Face paint capped at exactly 3 items",
+      "initialFacePaints": ["face_paint_glitter_stars", "face_paint_carnival_mask"],
+      "action": "add",
+      "itemToAdd": "face_paint_neon_glow",
+      "expectedCount": 3,
+      "subsequentAction": "add_fourth_item",
+      "itemToAddFourth": "face_paint_dragon_sparkle",
+      "expectedResultCount": 3,
+      "expectedPaints": ["face_paint_carnival_mask", "face_paint_neon_glow", "face_paint_dragon_sparkle"]
+    },
+    {
+      "caseId": "CHR-004",
+      "description": "Multi-item slot: Stickers capped at exactly 10 items",
+      "initialStickerCount": 10,
+      "action": "add",
+      "itemToAdd": "sticker_magic_wand",
+      "expectedCount": 10,
+      "expectedRejected": true
+    },
+    {
+      "caseId": "CHR-005",
+      "description": "Undo stack records exactly 20 steps and drops oldest on step 21",
+      "actionSequenceLength": 21,
+      "expectedUndoStackSize": 20
+    },
+    {
+      "caseId": "CHR-006",
+      "description": "Reset station wipes current station customizations without touching stars, candy or IAP",
+      "station": "makeup",
+      "initialMakeup": { "eyeshadow": "eyeshadow_berry_pink", "lipstick": "lipstick_cherry_red" },
+      "action": "reset_station",
+      "expectedMakeup": {},
+      "preservedProperties": ["candyBalance", "unlockedLevels", "unlockedItems", "purchasedEntitlements"]
+    }
+  ]
+}
