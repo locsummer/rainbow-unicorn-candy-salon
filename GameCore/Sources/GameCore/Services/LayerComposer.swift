@@ -44,6 +44,15 @@ public enum LayerComposer {
         return copy
     }
 
+    public static func toggleFacePaint(character: CharacterState, paintId: String) -> CharacterState {
+        var copy = character
+        if copy.facePaints.contains(paintId) {
+            copy.facePaints.removeAll { $0 == paintId }
+            return copy
+        }
+        return addFacePaint(character: character, paintId: paintId)
+    }
+
     public static func addSticker(character: CharacterState, stickerId: String) -> (CharacterState, Bool) {
         if character.stickers.count >= maxStickers {
             return (character, false)
@@ -53,9 +62,24 @@ public enum LayerComposer {
         return (copy, true)
     }
 
+    public static func removeLastSticker(character: CharacterState) -> CharacterState {
+        var copy = character
+        if !copy.stickers.isEmpty {
+            copy.stickers.removeLast()
+        }
+        return copy
+    }
+
     public static func applyEyeshadow(character: CharacterState, eyeshadowId: String) -> CharacterState {
         var copy = character
         copy.makeup.eyeshadow = eyeshadowId
+        return copy
+    }
+
+    public static func clearMakeup(character: CharacterState) -> CharacterState {
+        var copy = character
+        copy.makeup = MakeupState()
+        copy.facePaints = []
         return copy
     }
 }

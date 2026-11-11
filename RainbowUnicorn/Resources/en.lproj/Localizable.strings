@@ -7,52 +7,121 @@
 "btn_exit" = "Exit";
 "btn_back" = "Back";
 "btn_next" = "Next";
+"btn_start" = "Start";
 "btn_done" = "Complete";
 "btn_reset" = "Reset";
 "btn_undo" = "Undo";
 "btn_redo" = "Redo";
-"btn_confirm" = "Confirm";
+"btn_buy" = "Unlock";
+"btn_watch_ad" = "Watch Ad (Free)";
 "btn_cancel" = "Cancel";
+"btn_confirm" = "Confirm";
+"btn_close" = "Close";
+"btn_delete" = "Delete";
+"btn_clear" = "Clear";
+"btn_edit_look" = "Edit Look";
+"btn_replay" = "Replay";
 "btn_take_photo" = "Snap Photo";
 "btn_save_photo" = "Save to Photos";
+"btn_backdrop" = "Backdrop";
+"btn_resume" = "Continue";
+"btn_start_fresh" = "Start Fresh";
 
-"station_spa" = "Cleaning Spa";
+"station_spa" = "Spa Bath";
 "station_hair" = "Hair Salon";
-"station_makeup" = "Sweet Makeup";
+"station_makeup" = "Makeup";
 "station_dressup" = "Dress Up";
 "station_cake" = "Candy Cake";
 "station_pet" = "Pet Care";
 "station_photo" = "Party Photo";
 
+"level_select_title" = "Story Map (20 Levels)";
+"level_short_format" = "Level %d";
+"level_request_card" = "Customer Request";
+"level_stations_label" = "Stations in this level";
 "level_victory" = "Sweet Victory!";
-"level_try_again" = "Not Quite Sweet Enough!";
-"level_premium_locked" = "Unlock Levels 11–20 with Premium!";
+"level_try_again" = "Keep Trying!";
+"level_try_again_hint" = "You need a score of at least 50 and all stations complete. Edit your look anytime!";
+"level_locked_hint" = "Win the previous level first!";
+"criteria_progress_format" = "Goals %d/%d";
 
+"score_match" = "Request Match: %d%%";
+"score_quality" = "Station Quality: %d%%";
 "score_total" = "Total Score: %d / 100";
 "candy_earned" = "+%d Candies";
 "candy_balance" = "%d Candies";
 
 "parental_gate_title" = "Parental Gate";
-"parental_gate_instruction" = "Hold button for 3 seconds, then solve math to continue:";
-"parental_gate_hold" = "Hold 3 Seconds";
+"parental_gate_instruction" = "Press and hold the circle for 3 seconds, then solve the math problem:";
+"parental_gate_hold" = "Hold 3s";
+"parental_gate_wrong" = "Incorrect answer. Try another!";
 
 "dialog_exit_title" = "Leave Level?";
-"dialog_exit_message" = "Are you sure you want to pause and return to the map? Progress is saved.";
-
+"dialog_exit_message" = "Pause and return to the level map? Your completed stations and makeover will be saved automatically.";
 "dialog_reset_title" = "Reset Station?";
-"dialog_reset_message" = "Are you sure you want to restart this station? Your candy and stars are safe!";
+"dialog_reset_message" = "Reset changes made in this station? Your candies, stars, and other stations stay safe!";
+"dialog_delete_photo_title" = "Delete Photo?";
+"dialog_delete_photo_message" = "Are you sure you want to delete this photo from the gallery?";
+"dialog_resume_title" = "Continue Level %d?";
+"dialog_resume_message" = "You have saved station progress in this level. Continue where you left off or start fresh?";
 
-"gallery_title" = "Sweet Memory Gallery";
-"gallery_full_warning" = "Gallery is full (50/50)! Please delete older photos to snap more.";
-"gallery_empty" = "No photos yet! Head to Party Mode to snap sweet pictures!";
+"gallery_title" = "Memory Gallery";
+"gallery_count" = "%d / 50";
+"gallery_full_title" = "Gallery Full (50/50)";
+"gallery_full_warning" = "Gallery is full (50/50). Delete older photos to take more!";
+"gallery_empty" = "No photos yet! Visit Party Mode to snap cute looks!";
+"gallery_saved_banner" = "Saved to Gallery (%d/50)!";
+"export_success" = "Saved to Photos app!";
+"export_failed" = "Could not save photo.";
 
 "settings_title" = "Game Settings";
 "settings_bgm" = "Background Music";
 "settings_sfx" = "Sound Effects";
+"settings_language" = "Language";
+"lang_english" = "English";
+"lang_vietnamese" = "Tiếng Việt";
 "settings_restore" = "Restore Purchases";
-"settings_privacy" = "Child Privacy (100% Offline & Safe)";
+"restore_success" = "Purchases synced & restored!";
+"settings_privacy" = "Kid-Safe Offline App: Zero tracking, zero IDFA, zero chat.";
 
 "shop_title" = "Candy Sweet Shop";
-"shop_premium_levels" = "Unlock Levels 11–20 & Remove Ads";
+"shop_premium_levels" = "Premium VIP Pack (Levels 11–20 + No Ads)";
+"shop_premium_desc" = "Unlock Levels 11–20 and remove all interstitial ads forever.";
 "shop_remove_ads" = "Remove All Ads";
+"shop_remove_ads_desc" = "Remove interstitial ads between levels while playing free stages.";
 "shop_purchased" = "Purchased";
+"purchase_success" = "Thank you! Unlock completed.";
+"purchase_failed" = "Purchase cancelled or failed. Progress unchanged.";
+
+"switch_to_princess" = "To Princess";
+"switch_to_unicorn" = "To Unicorn";
+
+"spa_instruction" = "Scrub all dirt spots with your sponge until clean (>= 80%)!";
+"spa_clean_percent" = "Cleanliness: %d%%";
+"spa_need_more" = "Scrub until at least 80% clean to finish Spa!";
+"hair_instruction" = "Choose a hairstyle and rainbow or pastel dye below";
+"makeup_instruction" = "Pick eyeshadow, lipstick, blush & face paint — stays neat inside lash mask!";
+"makeup_remover" = "Remove Makeup";
+"dressup_instruction" = "Mix outfits, wings, horns, tiaras, jewelry & up to 10 stickers!";
+"cake_instruction" = "Pick 1–4 tiers, frost with cream & sprinkle sweet toppings!";
+"cake_layers_label" = "Cake Tiers";
+"cake_clear_toppings" = "Clear Toppings";
+"pet_instruction" = "Care for your candy pet: Feed candy, give a bubble bath & brush fur!";
+"pet_feed" = "Feed Treat";
+"pet_bath" = "Wash Pet";
+"pet_groom" = "Brush Fur";
+"pet_clean_format" = "Wash: %d%%";
+"photo_instruction" = "Pick a fun pose and backdrop, then tap Snap Photo!";
+"photo_pose_happy" = "Dance";
+"photo_pose_star" = "Star Pose";
+"photo_pose_wave" = "Wave";
+"photo_saved_banner" = "Photo Snapped!";
+"backdrop_pastel" = "Candy Sky";
+"backdrop_disco" = "Disco";
+"backdrop_forest" = "Rainbow Glade";
+
+"unlock_item_title" = "Unlock Item";
+"unlock_with_candies" = "Unlock (%d Candies)";
+"unlock_not_enough_candy" = "Need %d candies (you have %d). Win levels or watch an ad!";
+"sticker_limit_banner" = "Max 10 stickers reached! Tap Clear to remove.";
+"multi_count_format" = "Equipped: %d/%d";

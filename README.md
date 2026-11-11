@@ -1,7 +1,7 @@
 # Rainbow Unicorn Candy Salon - iOS (Swift / SwiftUI / SpriteKit)
 
 ## 1. Giới thiệu
-Phiên bản native cho hệ điều hành iOS (iPhone & iPad) được xây dựng 100% bằng Swift 5.9+ và SwiftUI kết hợp SpriteKit, tối ưu cho màn hình ngang (Landscape), tuyệt đối không force unwrap (`!`), tuân thủ tiêu chuẩn an toàn cho trẻ em (COPPA) và hoạt động ngoại tuyến.
+Phiên bản native cho hệ điều hành iOS (iPhone & iPad) được xây dựng 100% bằng Swift 5.9+ và SwiftUI kết hợp SpriteKit, tối ưu cho màn hình dọc (Portrait), tuyệt đối không force unwrap (`!`), tuân thủ tiêu chuẩn an toàn cho trẻ em (COPPA) và hoạt động ngoại tuyến.
 
 - **iOS Target:** iOS 15.6+
 - **Kiến trúc:** MVVM, async/await, `@MainActor` cho UI
@@ -19,7 +19,7 @@ ios/
 │   ├── Sources/GameCore/
 │   │   ├── Models/                    # GameModels, CharacterState, RenderLayer
 │   │   └── Services/                  # LevelEngine, ScoringEngine, EconomyService, AdPolicy, ...
-│   └── Tests/GameCoreTests/           # GoldenVectorTests
+│   └── Tests/GameCoreTests/           # GoldenVectorTests, SaveAndEngineTests
 ├── RainbowUnicorn/                    # Ứng dụng SwiftUI
 │   ├── App/                           # RainbowUnicornApp.swift
 │   ├── Views/                         # Screens, Components, Stations
