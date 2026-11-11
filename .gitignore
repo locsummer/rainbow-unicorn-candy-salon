@@ -8,6 +8,7 @@ ehthumbs.db
 
 # Android & Gradle
 .gradle/
+.kotlin/
 build/
 app/build/
 core/build/
