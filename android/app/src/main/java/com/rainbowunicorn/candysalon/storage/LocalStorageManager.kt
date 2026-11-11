@@ -26,23 +26,35 @@ class LocalStorageManager(private val context: Context) {
 
     fun loadSaveData(): SaveData {
         if (!saveFile.exists()) {
-            return SaveData()
+            return if (backupFile.exists() && backupFile.length() > 0) {
+                try {
+                    val backupContent = backupFile.readText(Charsets.UTF_8)
+                    val recovered = SaveSerializer.fromJsonStrict(backupContent)
+                    saveFile.writeText(SaveSerializer.toJson(recovered), Charsets.UTF_8)
+                    recovered
+                } catch (_: Exception) {
+                    SaveData()
+                }
+            } else {
+                SaveData()
+            }
         }
 
         return try {
             val content = saveFile.readText(Charsets.UTF_8)
-            val parsed = SaveSerializer.fromJson(content)
-            // If parsed correctly, update backup
-            if (content.isNotBlank() && backupFile.exists() && backupFile.length() == 0L) {
+            val parsed = SaveSerializer.fromJsonStrict(content)
+            if (content.isNotBlank() && (!backupFile.exists() || backupFile.length() == 0L)) {
                 backupFile.writeText(content, Charsets.UTF_8)
             }
             parsed
         } catch (_: Exception) {
-            // Corrupt primary file: fallback to backup file if available
+            // Corrupt primary file: fallback to backup file if available (RULE-091)
             try {
                 if (backupFile.exists() && backupFile.length() > 0) {
                     val backupContent = backupFile.readText(Charsets.UTF_8)
-                    SaveSerializer.fromJson(backupContent)
+                    val recovered = SaveSerializer.fromJsonStrict(backupContent)
+                    saveFile.writeText(SaveSerializer.toJson(recovered), Charsets.UTF_8)
+                    recovered
                 } else {
                     SaveData()
                 }
@@ -55,9 +67,17 @@ class LocalStorageManager(private val context: Context) {
     fun saveSaveData(data: SaveData) {
         try {
             val json = SaveSerializer.toJson(data)
-            // Write to backup first if existing file is valid
             if (saveFile.exists() && saveFile.length() > 0) {
-                saveFile.copyTo(backupFile, overwrite = true)
+                try {
+                    val existing = saveFile.readText(Charsets.UTF_8)
+                    SaveSerializer.fromJsonStrict(existing)
+                    backupFile.writeText(existing, Charsets.UTF_8)
+                } catch (_: Exception) {
+                    // Existing primary file was corrupt, overwrite backup with new valid state instead
+                    backupFile.writeText(json, Charsets.UTF_8)
+                }
+            } else {
+                backupFile.writeText(json, Charsets.UTF_8)
             }
             saveFile.writeText(json, Charsets.UTF_8)
         } catch (_: Exception) {}

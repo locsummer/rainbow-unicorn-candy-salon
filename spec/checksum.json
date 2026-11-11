@@ -1,7 +1,7 @@
 {
-  "game-spec.md": "f96ebdf76b7bb2b2b8c9a0245ea4024e2a1a78e9d16a91c62c18ebd2cc9beaa0",
-  "levels.json": "b9be6819367be1c5cd4654fbd9ee62448d20ff6f43eecb6965498602d63c4e37",
-  "items.json": "c3db861bda380eea77ec45a346ffbcb63c964375f7ebe6f928faa68cfcbca718",
+  "game-spec.md": "e65484a8849ae5d6ffa7bb71081083f2bb20c3624c631d92ea00ab6ba07a9291",
+  "levels.json": "94e251309171302b0d8456b1b4a64388bdf1d42df30f078c543ed74f2f21dfbb",
+  "items.json": "a422a078820d94d28cda69e4729e652cf422760a9740e0e7209d50f33ca3eda3",
   "golden/ad_policy.json": "cda5e01dde2eefc5397a0790d7c3b6dcba920d267e56e7515d0f254aa51e0b71",
   "golden/character_layers_slots.json": "d36a871ee111dd80bef958e12223c4ff960d03fe1712b0440f909db81746635d",
   "golden/economy_rewards.json": "e187e29b3a2bf1a77d85d72462da31ff93799f626416ade467047c5a94083341",

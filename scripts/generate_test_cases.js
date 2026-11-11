@@ -422,12 +422,19 @@ for (let i = 1; i <= 14; i++) {
     cond = 'SaveData version cũ';
     steps = 'Nạp dữ liệu';
     exp = 'Nâng cấp lên version hiện tại không mất dữ liệu';
+  } else if (i === 4) {
+    title = 'Giữ toàn bộ tiến độ khi chọn Edit Look sau khi thua [RULE-035, RULE-071]';
+    cond = 'Level kết thúc với < 50 điểm';
+    steps = 'Bấm Chỉnh sửa tiếp (Edit Look) và chỉnh lại đồ';
+    exp = 'Giữ nguyên trạng thái trạm/nhân vật, sửa đạt >= 50 điểm thì thắng';
+    evid = 'ExtendedCoreAndSaveTests.testLevelEngineCheckpointResumeAndEditLookPreservation';
   } else {
-    title = `Kiểm tra lưu trữ bền vững case ${i} [RULE-090..RULE-092]`;
-    cond = 'SaveData chuẩn';
-    steps = 'Tuần tự hoá và giải tuần tự';
-    exp = 'Dữ liệu khớp 100%';
+    title = `Kiểm tra lưu trữ, checkpoint & migration case ${i} [RULE-090..RULE-092]`;
+    cond = 'SaveData schema v1/v2 & activeCheckpoint';
+    steps = 'Tuần tự hoá nghiêm ngặt và phục hồi .bak khi lỗi';
+    exp = 'Dữ liệu khớp 100%, không crash khi file chính hỏng';
     prio = 'P1';
+    evid = 'ExtendedCoreAndSaveTests / SaveSerializerTest';
   }
   addTest(`SAV-${pad}`, 'SAV', 'Cả hai', title, cond, steps, exp, prio, 'Unit', auto, status, '', evid);
 }
@@ -557,10 +564,11 @@ for (let i = 1; i <= 18; i++) {
     steps = 'Chuyển sang Tóc rồi quay lại Váy';
     exp = 'Vị trí cuộn của Váy được giữ nguyên';
   } else {
-    title = `Kiểm tra hiển thị giao diện trên thiết bị case ${i} [RULE-070..RULE-074]`;
-    cond = 'Landscape mode';
-    steps = 'Xoay máy và co giãn màn hình';
-    exp = 'Giao diện co giãn tự nhiên không tràn viền';
+    title = `Kiểm tra hiển thị giao diện màn hình dọc (Portrait) trên thiết bị case ${i} [RULE-070..RULE-074]`;
+    cond = 'Portrait mode (9:16 mobile & 3:4 tablet, Edge-to-Edge Safe Area)';
+    steps = 'Kiểm tra trên màn hình dọc và co giãn độ phân giải khác nhau';
+    exp = 'Giao diện dọc 3 cột/HUD cân đối, không cắt chữ, không che lấp nhân vật';
+    evid = 'MainActivity.kt / AndroidManifest.xml (sensorPortrait) / Info.plist (Portrait)';
   }
   addTest(`UIX-${pad}`, 'UIX', 'Cả hai', title, cond, steps, exp, prio, 'UI', auto, status, '', evid);
 }
@@ -602,10 +610,16 @@ for (let i = 1; i <= 10; i++) {
     cond = 'Máy đặt tiếng Việt';
     steps = 'Mở app';
     exp = 'Toàn bộ chuỗi hiển thị tiếng Việt tự nhiên';
+  } else if (i === 3) {
+    title = 'Chuyển đổi trực tiếp Anh <-> Việt trong Cài đặt [RULE-005, A11]';
+    cond = 'Màn hình Settings';
+    steps = 'Bấm nút Tiếng Việt rồi quay về Home và đổi lại English';
+    exp = 'Toàn bộ UI, thẻ tiêu chí & tên món đồ cập nhật tức thì mà không cần khởi động lại app';
+    evid = 'SettingsScreen.kt / MainActivity.kt (LocalizedContent) / ExtendedCoreAndSaveTests';
   } else {
     title = `Kiểm tra nội địa hoá chuỗi UI case ${i}`;
-    cond = 'Resource bundle';
-    steps = 'Đọc chuỗi';
+    cond = 'Resource bundle (values & values-vi / en.lproj & vi.lproj)';
+    steps = 'Đọc chuỗi EN & VI trên cả UI và JSON';
     exp = 'Không có chuỗi rỗng hay mã hoá sai';
   }
   addTest(`A11-${pad}`, 'A11', 'Cả hai', title, cond, steps, exp, prio, 'Manual', auto, status, '', evid);

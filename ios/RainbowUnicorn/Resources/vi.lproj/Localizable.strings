@@ -1,20 +1,31 @@
 "app_name" = "Rainbow Unicorn Candy Salon";
-"btn_play" = "Chế độ cốt truyện";
-"btn_party" = "Chế độ tiệc tùng";
+"btn_play" = "Chế độ Cốt truyện";
+"btn_party" = "Chế độ Tiệc tùng";
 "btn_gallery" = "Thư viện ảnh";
 "btn_settings" = "Cài đặt";
 "btn_shop" = "Cửa hàng kẹo";
 "btn_exit" = "Thoát";
 "btn_back" = "Quay lại";
 "btn_next" = "Tiếp tục";
+"btn_start" = "Bắt đầu";
 "btn_done" = "Hoàn thành";
 "btn_reset" = "Làm lại";
 "btn_undo" = "Hoàn tác";
-"btn_redo" = "Làm lại thao tác";
-"btn_confirm" = "Xác nhận";
+"btn_redo" = "Làm lại bước";
+"btn_buy" = "Mở khoá";
+"btn_watch_ad" = "Xem QC (Miễn phí)";
 "btn_cancel" = "Huỷ bỏ";
+"btn_confirm" = "Xác nhận";
+"btn_close" = "Đóng";
+"btn_delete" = "Xoá";
+"btn_clear" = "Xoá sạch";
+"btn_edit_look" = "Chỉnh sửa tiếp";
+"btn_replay" = "Chơi lại";
 "btn_take_photo" = "Chụp ảnh";
 "btn_save_photo" = "Lưu vào thư viện";
+"btn_backdrop" = "Phông nền";
+"btn_resume" = "Chơi tiếp";
+"btn_start_fresh" = "Chơi từ đầu";
 
 "station_spa" = "Spa làm sạch";
 "station_hair" = "Làm tóc";
@@ -24,35 +35,93 @@
 "station_pet" = "Thú cưng";
 "station_photo" = "Chụp ảnh tiệc";
 
+"level_select_title" = "Bản đồ 20 Màn chơi";
+"level_short_format" = "Màn %d";
+"level_request_card" = "Thẻ yêu cầu khách hàng";
+"level_stations_label" = "Các trạm trong màn chơi";
 "level_victory" = "Chiến thắng ngọt ngào!";
-"level_try_again" = "Chưa đạt! Thử lại nhé!";
-"level_premium_locked" = "Mở khoá Level 11–20 với gói VIP!";
+"level_try_again" = "Chưa đạt! Thử làm đẹp thêm nhé!";
+"level_try_again_hint" = "Cần đạt ít nhất 50 điểm và hoàn thành đủ các trạm. Bấm Chỉnh sửa tiếp bất kỳ lúc nào!";
+"level_locked_hint" = "Hãy vượt qua màn trước đó để mở khoá!";
+"criteria_progress_format" = "Yêu cầu %d/%d";
 
+"score_match" = "Độ khớp yêu cầu: %d%%";
+"score_quality" = "Hoàn thiện trạm: %d%%";
 "score_total" = "Tổng điểm: %d / 100";
 "candy_earned" = "+%d Kẹo";
 "candy_balance" = "%d Kẹo";
 
 "parental_gate_title" = "Cổng phụ huynh";
-"parental_gate_instruction" = "Giữ nút trong 3 giây và giải toán để tiếp tục:";
-"parental_gate_hold" = "Giữ nút 3 giây";
+"parental_gate_instruction" = "Nhấn giữ nút tròn đủ 3 giây, sau đó giải phép cộng để tiếp tục:";
+"parental_gate_hold" = "Giữ 3 giây";
+"parental_gate_wrong" = "Chưa đúng. Hãy thử câu khác nhé!";
 
 "dialog_exit_title" = "Thoát màn chơi?";
-"dialog_exit_message" = "Bạn có muốn tạm dừng và quay về menu không? Tiến độ trạm được tự động lưu.";
-
+"dialog_exit_message" = "Tạm dừng và quay về bản đồ màn chơi? Tiến độ các trạm đã xong được tự động lưu.";
 "dialog_reset_title" = "Làm lại trạm này?";
-"dialog_reset_message" = "Bạn có chắc chắn muốn làm lại trạm này? Kẹo và sao của bạn không bị mất!";
+"dialog_reset_message" = "Đưa trạm hiện tại về mặc định? Số kẹo, sao và các trạm khác vẫn giữ nguyên!";
+"dialog_delete_photo_title" = "Xoá bức ảnh này?";
+"dialog_delete_photo_message" = "Bạn có chắc chắn muốn xoá ảnh này khỏi thư viện không?";
+"dialog_resume_title" = "Tiếp tục Màn %d?";
+"dialog_resume_message" = "Bạn đang có tiến độ đã lưu ở màn này. Muốn tiếp tục hay chơi lại từ đầu?";
 
-"gallery_title" = "Bộ sưu tập ảnh kẹo ngọt";
+"gallery_title" = "Thư viện ảnh kẹo ngọt";
+"gallery_count" = "%d / 50";
+"gallery_full_title" = "Thư viện đầy (50/50)";
 "gallery_full_warning" = "Thư viện đã đầy (50/50)! Hãy xoá bớt ảnh cũ để chụp thêm nhé.";
-"gallery_empty" = "Chưa có ảnh nào! Hãy vào Chế độ Tiệc Tùng để chụp hình!";
+"gallery_empty" = "Chưa có ảnh nào! Hãy vào Chế độ Tiệc Tùng để chụp những bức hình lung linh!";
+"gallery_saved_banner" = "Đã lưu vào Thư viện (%d/50)!";
+"export_success" = "Đã lưu vào ứng dụng Ảnh!";
+"export_failed" = "Không thể lưu ảnh vào máy.";
 
 "settings_title" = "Cài đặt trò chơi";
 "settings_bgm" = "Nhạc nền (BGM)";
 "settings_sfx" = "Âm thanh hiệu ứng (SFX)";
+"settings_language" = "Ngôn ngữ";
+"lang_english" = "English";
+"lang_vietnamese" = "Tiếng Việt";
 "settings_restore" = "Khôi phục mua hàng";
-"settings_privacy" = "An toàn trẻ em (100% Ngoại tuyến)";
+"restore_success" = "Đã đồng bộ & khôi phục giao dịch!";
+"settings_privacy" = "An toàn trẻ em (100% Ngoại tuyến): Không IDFA, không quảng cáo theo dõi, không chat.";
 
 "shop_title" = "Cửa hàng kẹo ngọt";
-"shop_premium_levels" = "Mở Level 11–20 & Tắt quảng cáo";
+"shop_premium_levels" = "Gói VIP (Mở Màn 11–20 & Tắt quảng cáo)";
+"shop_premium_desc" = "Mở toàn bộ Màn 11–20 và tắt vĩnh viễn quảng cáo xen kẽ.";
 "shop_remove_ads" = "Tắt toàn bộ quảng cáo";
+"shop_remove_ads_desc" = "Loại bỏ quảng cáo xen kẽ khi chơi các màn miễn phí.";
 "shop_purchased" = "Đã sở hữu";
+"purchase_success" = "Mở khoá thành công!";
+"purchase_failed" = "Giao dịch bị huỷ hoặc lỗi. Dữ liệu không thay đổi.";
+
+"switch_to_princess" = "Đổi Công chúa";
+"switch_to_unicorn" = "Đổi Kỳ lân";
+
+"spa_instruction" = "Chà bọt biển lên tất cả vết bẩn cho tới khi sạch (>= 80%)!";
+"spa_clean_percent" = "Độ sạch: %d%%";
+"spa_need_more" = "Hãy chà sạch ít nhất 80% trước khi hoàn thành trạm Spa!";
+"hair_instruction" = "Chọn kiểu tóc và màu nhuộm cầu vồng / pastel bên dưới";
+"makeup_instruction" = "Chọn phấn mắt, son, má hồng & vẽ mặt — phấn mắt gọn dưới mi!";
+"makeup_remover" = "Tẩy trang sạch";
+"dressup_instruction" = "Phối đầm, cánh, sừng, vương miện, trang sức & tối đa 10 sticker!";
+"cake_instruction" = "Chọn 1–4 tầng bánh, phủ kem & rắc topping kẹo ngọt!";
+"cake_layers_label" = "Tầng bánh";
+"cake_clear_toppings" = "Xoá topping";
+"pet_instruction" = "Chăm thú cưng kẹo: Cho ăn kẹo, Tắm bọt & Chải lông!";
+"pet_feed" = "Cho ăn kẹo";
+"pet_bath" = "Tắm bọt";
+"pet_groom" = "Chải lông";
+"pet_clean_format" = "Độ sạch: %d%%";
+"photo_instruction" = "Chọn dáng tạo hình, phông nền và bấm Chụp ảnh!";
+"photo_pose_happy" = "Nhảy vui";
+"photo_pose_star" = "Ngôi sao";
+"photo_pose_wave" = "Vẫy tay";
+"photo_saved_banner" = "Đã chụp ảnh!";
+"backdrop_pastel" = "Trời kẹo";
+"backdrop_disco" = "Sân khấu Disco";
+"backdrop_forest" = "Rừng cầu vồng";
+
+"unlock_item_title" = "Mở khoá món đồ";
+"unlock_with_candies" = "Mở khoá (%d Kẹo)";
+"unlock_not_enough_candy" = "Cần %d Kẹo (bạn đang có %d). Thắng màn hoặc xem quảng cáo!";
+"sticker_limit_banner" = "Tối đa 10 sticker! Bấm Xoá sạch để gỡ bớt.";
+"multi_count_format" = "Đã chọn: %d/%d";

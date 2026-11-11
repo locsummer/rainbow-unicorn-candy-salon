@@ -46,10 +46,10 @@ public final class ParentalGateService {
         all.shuffle()
 
         return MathQuestion(
-            numA = a,
-            numB = b,
+            numA: a,
+            numB: b,
             questionText: "\(a) + \(b) = ?",
-            correctAnswer = correct,
+            correctAnswer: correct,
             options: all
         )
     }

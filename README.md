@@ -7,8 +7,8 @@
 [![Tests - 258 Verified](https://img.shields.io/badge/Tests-258%20Cases%20(18%20Groups)-purple?style=for-the-badge)](docs/TEST_CASES.csv)
 
 Game thời trang & thẩm mỹ viện kẹo ngọt **Rainbow Unicorn Candy Salon** được phát triển song song chuẩn Native cho cả hai nền tảng:
-- 🤖 **Android:** 100% Kotlin & Jetpack Compose (minSdk 24, targetSdk 35). File cài đặt [rainbow-unicorn.apk](file:///d:/rainbow-unicorn-candy-salon/rainbow-unicorn.apk) đã được biên dịch sẵn ngay tại thư mục gốc!
-- 🍏 **iOS:** 100% Swift 5.9+, SwiftUI & SpriteKit (iOS 15.6+).
+- 🤖 **Android:** 100% Kotlin & Jetpack Compose (minSdk 24, targetSdk 35, Portrait `sensorPortrait`). File cài đặt [rainbow-unicorn.apk](file:///d:/rainbow-unicorn-candy-salon/rainbow-unicorn.apk) đã được biên dịch sẵn ngay tại thư mục gốc!
+- 🍏 **iOS:** 100% Swift 5.9+, SwiftUI & SpriteKit (iOS 15.6+, Portrait `UIInterfaceOrientationPortrait`).
 
 ---
 
@@ -49,7 +49,7 @@ rainbow-unicorn-candy-salon/
 │   └── golden/                        # 5 bộ test vectors dùng chung
 ├── docs/                              # Tài liệu & Bằng chứng kiểm thử
 │   ├── ANALYSIS.md                    # Khảo sát môi trường và phân tích khoảng trống
-│   ├── ASSUMPTIONS.md                 # Danh sách các giả định hợp lý (ASM-001..ASM-011)
+│   ├── ASSUMPTIONS.md                 # Danh sách các giả định hợp lý (ASM-001..ASM-012)
 │   ├── DEPENDENCIES.md                # Danh mục phụ thuộc (Zero third-party SDK)
 │   ├── PROGRESS.md                    # Nhật ký tiến độ từng giai đoạn G0-G7
 │   ├── TEST_CASES.csv                 # Danh mục 258 test cases

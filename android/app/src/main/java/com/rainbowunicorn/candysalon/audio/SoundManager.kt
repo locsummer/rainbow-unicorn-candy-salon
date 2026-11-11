@@ -10,14 +10,19 @@ class SoundManager {
 
     var bgmEnabled: Boolean = true
         set(value) {
+            if (field == value) return
             field = value
-            if (!value) stopBgm() else startBgm()
+            if (!value) stopBgm() else if (!isPaused) startBgm()
         }
 
     var sfxEnabled: Boolean = true
 
     private val executor = Executors.newSingleThreadExecutor()
+    @Volatile
     private var bgmPlaying = false
+    @Volatile
+    private var isPaused = false
+    @Volatile
     private var bgmTrack: AudioTrack? = null
 
     fun playClick() {
@@ -102,6 +107,7 @@ class SoundManager {
         }
     }
 
+    @Synchronized
     fun stopBgm() {
         bgmPlaying = false
         try {
@@ -112,13 +118,20 @@ class SoundManager {
     }
 
     fun onPause() {
+        isPaused = true
         stopBgm()
     }
 
     fun onResume() {
+        isPaused = false
         if (bgmEnabled) {
             startBgm()
         }
+    }
+
+    fun release() {
+        stopBgm()
+        executor.shutdownNow()
     }
 
     private fun playTone(frequency: Double, durationMs: Int, amplitude: Double) {

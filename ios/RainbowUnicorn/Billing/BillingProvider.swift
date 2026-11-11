@@ -8,6 +8,7 @@ public protocol BillingProvider: AnyObject {
 
 public final class FakeBillingProvider: BillingProvider {
     private var entitlements: Set<String>
+    public var simulateError: Bool = false
 
     public init(entitlements: Set<String> = []) {
         self.entitlements = entitlements
@@ -18,6 +19,10 @@ public final class FakeBillingProvider: BillingProvider {
     }
 
     public func purchase(_ id: String, completion: @escaping (Bool) -> Void) {
+        if simulateError {
+            completion(false)
+            return
+        }
         entitlements.insert(id)
         completion(true)
     }

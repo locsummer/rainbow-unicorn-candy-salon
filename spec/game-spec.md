@@ -212,9 +212,10 @@ Mỗi level bao gồm từ 3 đến 6 trạm được chỉ định trong file `
   - Nếu xác nhận thoát, hệ thống tự động lưu lại trạng thái các trạm đã hoàn thành trong level đó để người chơi có thể tiếp tục sau.
 - **RULE-072 (WYSIWYG Item Preview):**
   - Mỗi ô chọn món đồ trong khay thanh đồ phải hiển thị hình ảnh xem trước (Thumbnail preview) giống hệt với món đồ khi được khoác lên nhân vật (màu sắc, họa tiết, hình dáng chính xác).
-- **RULE-073 (Bottom Tray Scroll Retention & Non-overlapping):**
+- **RULE-073 (Portrait Layout, Bottom Tray Scroll Retention & Non-overlapping):**
+  - Toàn bộ ứng dụng mặc định chạy ở hướng **màn hình dọc (Portrait)** (`sensorPortrait` trên Android, `UIInterfaceOrientationPortrait` trên iOS), tôn trọng vùng an toàn (`SafeArea` / `WindowInsets`) không che khuất bởi tai thỏ hay thanh điều hướng.
   - Khay chứa đồ phía dưới cuộn ngang mượt mà.
-  - Khi chuyển đổi giữa các thẻ danh mục (ví dụ từ Tóc sang Váy), vị trí cuộn của từng thẻ được lưu lại.
+  - Khi chuyển đổi giữa các thẻ danh mục (ví dụ từ Tóc sang Váy), vị trí cuộn của từng thẻ được lưu lại và khôi phục chính xác khi quay lại thẻ đó.
   - Khay đồ có chiều cao cố định và không được che khuất nhân vật chính ở khu vực sân khấu trung tâm.
 - **RULE-074 (Minimum Touch Target Sizes):**
   - Mọi nút bấm tương tác và ô chọn đồ phải có kích thước vùng chạm tối thiểu đạt chuẩn tiếp cận:

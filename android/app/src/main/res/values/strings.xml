@@ -9,65 +9,135 @@
     <string name="btn_exit">Exit</string>
     <string name="btn_back">Back</string>
     <string name="btn_next">Next</string>
+    <string name="btn_start">Start</string>
     <string name="btn_done">Complete</string>
     <string name="btn_reset">Reset</string>
     <string name="btn_undo">Undo</string>
     <string name="btn_redo">Redo</string>
     <string name="btn_buy">Unlock</string>
-    <string name="btn_watch_ad">Watch Ad</string>
+    <string name="btn_watch_ad">Watch Ad (Free)</string>
     <string name="btn_cancel">Cancel</string>
     <string name="btn_confirm">Confirm</string>
+    <string name="btn_close">Close</string>
+    <string name="btn_delete">Delete</string>
+    <string name="btn_clear">Clear</string>
     <string name="btn_edit_look">Edit Look</string>
     <string name="btn_replay">Replay</string>
     <string name="btn_take_photo">Snap Photo</string>
-    <string name="btn_save_photo">Save to Gallery</string>
+    <string name="btn_save_photo">Save to Device</string>
 
-    <string name="station_spa">Cleaning Spa</string>
+    <string name="station_spa">Spa Bath</string>
     <string name="station_hair">Hair Salon</string>
-    <string name="station_makeup">Sweet Makeup</string>
+    <string name="station_makeup">Makeup</string>
     <string name="station_dressup">Dress Up</string>
     <string name="station_cake">Candy Cake</string>
     <string name="station_pet">Pet Care</string>
     <string name="station_photo">Party Photo</string>
 
+    <string name="level_select_title">Story Map (20 Levels)</string>
     <string name="level_title_format">Level %1$d: %2$s</string>
+    <string name="level_short_format">Level %1$d</string>
     <string name="level_request_card">Customer Request</string>
+    <string name="level_stations_label">Stations in this level</string>
     <string name="level_victory">Sweet Victory!</string>
-    <string name="level_try_again">Not Quite Sweet Enough!</string>
+    <string name="level_try_again">Keep Trying!</string>
+    <string name="level_try_again_hint">You need a score of at least 50 and all stations complete. Edit your look anytime!</string>
     <string name="level_premium_locked">Unlock Levels 11–20 with Premium!</string>
+    <string name="level_locked_hint">Win the previous level first!</string>
+    <string name="station_step_format">Step %1$d/%2$d: %3$s</string>
+    <string name="criteria_progress_format">Goals %1$d/%2$d</string>
 
-    <string name="score_match">Match Score: %1$d%%</string>
-    <string name="score_quality">Quality Score: %1$d%%</string>
+    <string name="score_match">Request Match: %1$d%%</string>
+    <string name="score_quality">Station Quality: %1$d%%</string>
     <string name="score_total">Total Score: %1$d / 100</string>
     <string name="candy_earned">+%1$d Candies</string>
     <string name="candy_balance">%1$d Candies</string>
 
     <string name="parental_gate_title">Parental Gate</string>
-    <string name="parental_gate_instruction">Hold button for 3 seconds, then solve math to continue:</string>
-    <string name="parental_gate_hold">Hold 3 Seconds</string>
-    <string name="parental_gate_correct">Correct! Access granted.</string>
-    <string name="parental_gate_wrong">Incorrect. Try again!</string>
+    <string name="parental_gate_instruction">Press and hold the circle for 3 seconds, then solve the math problem:</string>
+    <string name="parental_gate_hold">Hold 3s</string>
+    <string name="parental_gate_correct">Verified! Continuing…</string>
+    <string name="parental_gate_wrong">Incorrect answer. Try another!</string>
 
     <string name="dialog_exit_title">Leave Level?</string>
-    <string name="dialog_exit_message">Are you sure you want to pause and return to the map? Your progress will be saved.</string>
+    <string name="dialog_exit_message">Pause and return to the level map? Your completed stations and makeover will be saved automatically.</string>
 
     <string name="dialog_reset_title">Reset Station?</string>
-    <string name="dialog_reset_message">Are you sure you want to start over in this station? Your candy and stars will be safe!</string>
+    <string name="dialog_reset_message">Reset changes made in this station? Your candies, stars, and other stations stay safe!</string>
 
-    <string name="gallery_title">Sweet Memory Gallery</string>
-    <string name="gallery_count">%1$d / 50 Photos</string>
-    <string name="gallery_full_warning">Gallery is full (50/50)! Please delete older photos to snap more sweet memories.</string>
-    <string name="gallery_empty">No photos yet! Head to Party Mode to snap sweet pictures!</string>
+    <string name="dialog_delete_photo_title">Delete Photo?</string>
+    <string name="dialog_delete_photo_message">Are you sure you want to delete this photo from the gallery?</string>
+
+    <string name="gallery_title">Memory Gallery</string>
+    <string name="gallery_count">%1$d / 50</string>
+    <string name="gallery_full_warning">Gallery is full (50/50). Delete older photos to take more!</string>
+    <string name="gallery_empty">No photos yet! Visit Party Mode to snap cute looks!</string>
+    <string name="export_success">Saved to Photos app!</string>
+    <string name="export_failed">Could not export photo.</string>
+    <string name="gallery_saved_banner">Saved to Gallery (%1$d/50)!</string>
 
     <string name="settings_title">Game Settings</string>
     <string name="settings_bgm">Background Music</string>
     <string name="settings_sfx">Sound Effects</string>
     <string name="settings_language">Language</string>
+    <string name="lang_english">English</string>
+    <string name="lang_vietnamese">Tiếng Việt</string>
     <string name="settings_restore">Restore Purchases</string>
-    <string name="settings_privacy">Child Privacy Policy (Offline &amp; Safe)</string>
+    <string name="restore_success">Purchases synced &amp; restored!</string>
+    <string name="settings_privacy">Kid-Safe Offline App: Zero ads tracking, zero IDFA/GAID, zero chat.</string>
 
     <string name="shop_title">Candy Sweet Shop</string>
-    <string name="shop_premium_levels">Unlock Levels 11–20 &amp; Remove Ads</string>
+    <string name="shop_premium_levels">Premium VIP Pack (Levels 11–20 + No Ads)</string>
+    <string name="shop_premium_desc">Unlock Levels 11–20 and remove all interstitial ads forever.</string>
     <string name="shop_remove_ads">Remove All Ads</string>
+    <string name="shop_remove_ads_desc">Remove interstitial ads between levels while playing free stages.</string>
     <string name="shop_purchased">Purchased</string>
+
+    <string name="role_unicorn">Unicorn</string>
+    <string name="role_princess">Princess</string>
+    <string name="switch_to_princess">To Princess</string>
+    <string name="switch_to_unicorn">To Unicorn</string>
+
+    <string name="spa_instruction" formatted="false">Scrub all dirt spots with your sponge until clean (≥ 80%)!</string>
+    <string name="spa_clean_percent">Cleanliness: %1$d%%</string>
+    <string name="spa_need_more" formatted="false">Scrub until at least 80% clean to finish Spa!</string>
+
+    <string name="hair_instruction">Choose a hairstyle and rainbow or pastel dye below ✨</string>
+    <string name="makeup_instruction">Pick eyeshadow, lipstick, blush &amp; face paint — stays neat inside lash mask!</string>
+    <string name="makeup_remover">Remove Makeup</string>
+    <string name="dressup_instruction">Mix outfits, wings, horns, tiaras, jewelry &amp; up to 10 stickers!</string>
+    <string name="cake_instruction">Pick 1–4 tiers, frost with cream &amp; sprinkle sweet toppings!</string>
+    <string name="cake_layers_label">Cake Tiers</string>
+    <string name="cake_clear_toppings">Clear Toppings</string>
+    <string name="pet_instruction">Care for your candy pet: Feed candy, give a bubble bath &amp; brush fur!</string>
+    <string name="pet_feed">Feed Treat</string>
+    <string name="pet_bath">Wash Pet</string>
+    <string name="pet_groom">Brush Fur</string>
+    <string name="pet_clean_format">Wash: %1$d%%</string>
+    <string name="photo_instruction">Pick a fun pose and backdrop, then tap Snap Photo!</string>
+    <string name="photo_pose_happy">Dance</string>
+    <string name="photo_pose_star">Star Pose</string>
+    <string name="photo_pose_wave">Wave</string>
+    <string name="photo_saved_banner">Photo Snapped! ✨</string>
+    <string name="backdrop_pastel">Candy Sky</string>
+    <string name="backdrop_disco">Disco</string>
+    <string name="backdrop_forest">Rainbow Glade</string>
+
+    <string name="unlock_item_title">Unlock Item</string>
+    <string name="unlock_with_candies">Unlock (%1$d Candies)</string>
+    <string name="unlock_not_enough_candy">Need %1$d candies (you have %2$d). Win levels or watch an ad!</string>
+    <string name="item_unlocked_banner">Unlocked %1$s!</string>
+    <string name="sticker_limit_banner">Max 10 stickers reached! Tap Clear to remove.</string>
+    <string name="btn_remove_item">Remove Current</string>
+    <string name="btn_clear_stickers">Clear All</string>
+    <string name="multi_count_format">Equipped: %1$d/%2$d</string>
+    <string name="btn_backdrop">Backdrop</string>
+    <string name="dialog_resume_title">Continue Level %1$d?</string>
+    <string name="dialog_resume_message">You have saved station progress in this level. Continue where you left off or start fresh?</string>
+    <string name="btn_resume">Continue</string>
+    <string name="btn_start_fresh">Start Fresh</string>
+    <string name="purchase_failed">Purchase was cancelled or failed. Your data was not changed.</string>
+    <string name="purchase_success">Thank you! Unlock completed.</string>
+    <string name="gallery_full_title">Gallery Full (50/50)</string>
+    <string name="permission_storage_denied">Storage permission is needed on Android 9 or older to export photos.</string>
 </resources>

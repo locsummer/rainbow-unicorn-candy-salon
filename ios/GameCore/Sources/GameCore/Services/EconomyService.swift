@@ -46,9 +46,9 @@ public enum EconomyService {
         let newCandyBalance = currentCandyBalance + candyEarned
 
         return AwardResult(
-            newBestStars = newBestStars,
-            candyEarned = candyEarned,
-            newCandyBalance = newCandyBalance
+            newBestStars: newBestStars,
+            candyEarned: candyEarned,
+            newCandyBalance: newCandyBalance
         )
     }
 
@@ -60,25 +60,25 @@ public enum EconomyService {
     ) -> PurchaseResult {
         if alreadyOwnedItemIds.contains(itemId) {
             return PurchaseResult(
-                isSuccess = false,
-                remainingCandy = currentCandyBalance,
-                errorMessage = "Item already unlocked"
+                isSuccess: false,
+                remainingCandy: currentCandyBalance,
+                errorMessage: "Item already unlocked"
             )
         }
 
         if currentCandyBalance < itemPrice {
             return PurchaseResult(
-                isSuccess = false,
-                remainingCandy = currentCandyBalance,
-                errorMessage = "Insufficient candy balance"
+                isSuccess: false,
+                remainingCandy: currentCandyBalance,
+                errorMessage: "Insufficient candy balance"
             )
         }
 
         let remaining = currentCandyBalance - itemPrice
         return PurchaseResult(
-            isSuccess = true,
-            remainingCandy = remaining,
-            unlockedItemId = itemId
+            isSuccess: true,
+            remainingCandy: remaining,
+            unlockedItemId: itemId
         )
     }
 }

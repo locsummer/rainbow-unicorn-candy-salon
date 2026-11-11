@@ -26,18 +26,15 @@ Theo ràng buộc bắt buộc của dự án:
 
 | Thư viện / Dependency | Phiên bản | Nguồn gốc / License | Mục đích & Lý do sử dụng |
 |---|---|---|---|
-| **Kotlin Standard Library & Coroutines** | 1.9.22+ / 1.8.0+ | Apache 2.0 | Xử lý ngôn ngữ, lập trình bất đồng bộ (Coroutines + Flow). |
-| **AndroidX Core KTX** | 1.13.1+ | Apache 2.0 | Tiện ích mở rộng Kotlin cho Android runtime chuẩn. |
-| **AndroidX Lifecycle & ViewModel Compose** | 2.8.6+ | Apache 2.0 | Kiến trúc MVVM, quản lý vòng đời màn hình và StateFlow. |
-| **Jetpack Compose BOM & UI Tooling** | 2024.09.00+ | Apache 2.0 | Bộ công cụ UI khai báo chính thức của Android, dùng Canvas vẽ nhân vật và hạt hiệu ứng. |
-| **AndroidX Activity Compose** | 1.9.2+ | Apache 2.0 | Tích hợp Activity vòng đời với Compose UI. |
-| **AndroidX Navigation Compose** | 2.8.0+ | Apache 2.0 | Điều hướng phân cấp giữa các màn hình trong ứng dụng. |
-| **JUnit 4** (Test) | 4.13.2 | EPL 2.0 | Bộ khung kiểm thử đơn vị tiêu chuẩn trên JVM. |
-| **Kotlinx Coroutines Test** (Test) | 1.8.0+ | Apache 2.0 | Kiểm thử bất đồng bộ với `runTest` và `StandardTestDispatcher`. |
-| **Turbine** (Test) | 1.1.0 | Apache 2.0 | Thư viện kiểm thử phản ứng luồng StateFlow chuyên dụng cho Kotlin. |
-| **AndroidX Compose UI Test** (Test) | 1.7.0+ | Apache 2.0 | Kiểm thử tự động giao diện Compose. |
+| **Kotlin Standard Library & JVM (`:core`)** | 2.0.0 | Apache 2.0 | Module `:core` thuần JVM, hoàn toàn không phụ thuộc thư viện bên thứ ba hay Android SDK. |
+| **AndroidX Core KTX** | 1.13.1 | Apache 2.0 | Tiện ích mở rộng Kotlin cho Android runtime & WindowCompat edge-to-edge. |
+| **AndroidX Lifecycle Runtime KTX** | 2.8.4 | Apache 2.0 | Quản lý vòng đời Activity (`LifecycleEventObserver` tạm dừng/tiếp tục âm thanh BGM và tự lưu state). |
+| **Jetpack Compose BOM (UI, Graphics, Material 3)** | 2024.06.00 | Apache 2.0 | Bộ công cụ UI khai báo chính thức của Android, dùng Canvas vẽ nhân vật 11 lớp và hạt hiệu ứng. |
+| **AndroidX Material Icons Extended** | Compose BOM | Apache 2.0 | Bộ icon chuẩn Material đi kèm nhãn chữ trên các nút điều hướng an toàn cho trẻ em. |
+| **AndroidX Activity Compose** | 1.9.1 | Apache 2.0 | `ComponentActivity`, `setContent`, `ActivityResultRegistryOwner` (xin quyền API <= 28). |
+| **Kotlin Test (`kotlin("test")` + JUnit Platform)** | 2.0.0 | Apache 2.0 / EPL 2.0 | Khung kiểm thử đơn vị thuần JVM trong `:core:test` (Golden Vectors, LevelBot, SaveSchema). |
 
-*Tổng số dependency bên thứ ba ngoài hệ sinh thái AndroidX/Jetpack chính thống: **0** (không có SDK bên ngoài).*
+*Tổng số dependency bên thứ ba ngoài hệ sinh thái AndroidX/Jetpack/Kotlin chính thống: **0** (không có SDK bên ngoài).*
 
 ---
 

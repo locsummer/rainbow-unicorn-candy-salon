@@ -4,287 +4,307 @@
     {
       "id": 1,
       "name": "Candy Cloud Awakening",
+      "nameVi": "Đánh thức mây kẹo bông",
       "theme": "cotton_candy",
       "characterType": "unicorn",
       "requiresPremium": false,
       "stations": ["spa", "hair", "makeup", "dressup"],
       "criteria": [
-        { "id": "c1_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Làm sạch 100% cơ thể bé kỳ lân" },
-        { "id": "c1_hair", "station": "hair", "type": "hair_color", "target": "pastel_pink", "description": "Nhuộm bờm tóc màu hồng kẹo bông pastel" },
-        { "id": "c1_outfit", "station": "dressup", "type": "outfit", "target": "cotton_candy_dress", "description": "Mặc bộ trang phục kẹo bông ngọt ngào" }
+        { "id": "c1_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Làm sạch 100% cơ thể bé kỳ lân", "descriptionEn": "Clean 100% of the unicorn's body" },
+        { "id": "c1_hair", "station": "hair", "type": "hair_color", "target": "pastel_pink", "description": "Nhuộm bờm tóc màu hồng kẹo bông pastel", "descriptionEn": "Dye hair pastel cotton-candy pink" },
+        { "id": "c1_outfit", "station": "dressup", "type": "outfit", "target": "cotton_candy_dress", "description": "Mặc bộ trang phục kẹo bông ngọt ngào", "descriptionEn": "Wear the sweet Cotton Candy Dress" }
       ]
     },
     {
       "id": 2,
       "name": "Rainbow Sparkle Meadow",
+      "nameVi": "Thảo nguyên cầu vồng lấp lánh",
       "theme": "rainbow",
       "characterType": "unicorn",
       "requiresPremium": false,
       "stations": ["spa", "hair", "dressup", "photo"],
       "criteria": [
-        { "id": "c2_clean", "station": "spa", "type": "clean_percent", "target": 100, "description": "Tắm rửa kỳ lân sạch sẽ 100%" },
-        { "id": "c2_horn", "station": "dressup", "type": "horn", "target": "golden_spiral", "description": "Chọn sừng xoắn ánh vàng hoàng kim" },
-        { "id": "c2_wings", "station": "dressup", "type": "wings", "target": "rainbow_feathers", "description": "Gắn đôi cánh lông vũ cầu vồng rực rỡ" }
+        { "id": "c2_clean", "station": "spa", "type": "clean_percent", "target": 100, "description": "Tắm rửa kỳ lân sạch sẽ 100%", "descriptionEn": "Wash the unicorn 100% clean" },
+        { "id": "c2_horn", "station": "dressup", "type": "horn", "target": "golden_spiral", "description": "Chọn sừng xoắn ánh vàng hoàng kim", "descriptionEn": "Equip the Golden Spiral Horn" },
+        { "id": "c2_wings", "station": "dressup", "type": "wings", "target": "rainbow_feathers", "description": "Gắn đôi cánh lông vũ cầu vồng rực rỡ", "descriptionEn": "Attach Rainbow Feather Wings" }
       ]
     },
     {
       "id": 3,
       "name": "Strawberry Sundae Palace",
+      "nameVi": "Cung điện kem dâu tây",
       "theme": "strawberry",
       "characterType": "princess",
       "requiresPremium": false,
       "stations": ["hair", "makeup", "dressup", "cake"],
       "criteria": [
-        { "id": "c3_hair", "station": "hair", "type": "hair_style", "target": "buns_twin", "description": "Tạo kiểu tóc búi đôi tinh nghịch" },
-        { "id": "c3_eye", "station": "makeup", "type": "eyeshadow", "target": "berry_pink", "description": "Tô phấn mắt màu dâu tây ngọt ngào" },
-        { "id": "c3_tiara", "station": "dressup", "type": "tiara", "target": "strawberry_crown", "description": "Đội vương miện đính ngọc dâu tây" },
-        { "id": "c3_cake", "station": "cake", "type": "min_cake_layers", "target": 2, "description": "Làm bánh kẹo ít nhất 2 tầng" }
+        { "id": "c3_hair", "station": "hair", "type": "hair_style", "target": "buns_twin", "description": "Tạo kiểu tóc búi đôi tinh nghịch", "descriptionEn": "Style hair into playful Twin Buns" },
+        { "id": "c3_eye", "station": "makeup", "type": "eyeshadow", "target": "berry_pink", "description": "Tô phấn mắt màu dâu tây ngọt ngào", "descriptionEn": "Apply Berry Pink Eyeshadow" },
+        { "id": "c3_tiara", "station": "dressup", "type": "tiara", "target": "strawberry_crown", "description": "Đội vương miện đính ngọc dâu tây", "descriptionEn": "Wear the Strawberry Jewel Crown" },
+        { "id": "c3_cake", "station": "cake", "type": "min_cake_layers", "target": 2, "description": "Làm bánh kẹo ít nhất 2 tầng", "descriptionEn": "Build a candy cake with at least 2 layers" }
       ]
     },
     {
       "id": 4,
       "name": "Glitter Galaxy Unicorn",
+      "nameVi": "Kỳ lân dải ngân hà lấp lánh",
       "theme": "galaxy",
       "characterType": "unicorn",
       "requiresPremium": false,
       "stations": ["spa", "hair", "dressup", "pet"],
       "criteria": [
-        { "id": "c4_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Chà sạch bùn thiên hà 100%" },
-        { "id": "c4_hair", "station": "hair", "type": "hair_color", "target": "galaxy_purple", "description": "Nhuộm tóc màu tím dải ngân hà" },
-        { "id": "c4_wings", "station": "dressup", "type": "wings", "target": "starlight_wings", "description": "Trang bị cánh ánh sao lấp lánh" },
-        { "id": "c4_pet", "station": "pet", "type": "pet_fed", "target": true, "description": "Cho thú cưng ăn kẹo sao no nê" }
+        { "id": "c4_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Chà sạch bùn thiên hà 100%", "descriptionEn": "Scrub galaxy mud 100% clean" },
+        { "id": "c4_hair", "station": "hair", "type": "hair_color", "target": "galaxy_purple", "description": "Nhuộm tóc màu tím dải ngân hà", "descriptionEn": "Dye hair Galaxy Purple" },
+        { "id": "c4_wings", "station": "dressup", "type": "wings", "target": "starlight_wings", "description": "Trang bị cánh ánh sao lấp lánh", "descriptionEn": "Equip sparkling Starlight Wings" },
+        { "id": "c4_pet", "station": "pet", "type": "pet_fed", "target": true, "description": "Cho thú cưng ăn kẹo sao no nê", "descriptionEn": "Feed the cute pet star candies" }
       ]
     },
     {
       "id": 5,
       "name": "Sweet Dream Bakery",
+      "nameVi": "Tiệm bánh giấc mơ ngọt",
       "theme": "bakery",
       "characterType": "princess",
       "requiresPremium": false,
       "stations": ["hair", "dressup", "cake", "photo"],
       "criteria": [
-        { "id": "c5_hair", "station": "hair", "type": "hair_style", "target": "ponytail_high", "description": "Tóc buộc đuôi ngựa cao năng động" },
-        { "id": "c5_outfit", "station": "dressup", "type": "outfit", "target": "pastry_chef", "description": "Khoác bộ tạp dề thợ làm bánh hoàng gia" },
-        { "id": "c5_cake", "station": "cake", "type": "min_cake_layers", "target": 3, "description": "Xếp bánh kẹo đạt ít nhất 3 tầng" },
-        { "id": "c5_photo", "station": "photo", "type": "photo_taken", "target": true, "description": "Chụp bức ảnh lưu niệm hoàn hảo" }
+        { "id": "c5_hair", "station": "hair", "type": "hair_style", "target": "ponytail_high", "description": "Tóc buộc đuôi ngựa cao năng động", "descriptionEn": "Style hair in a High Ponytail" },
+        { "id": "c5_outfit", "station": "dressup", "type": "outfit", "target": "pastry_chef", "description": "Khoác bộ tạp dề thợ làm bánh hoàng gia", "descriptionEn": "Wear the Royal Pastry Chef Outfit" },
+        { "id": "c5_cake", "station": "cake", "type": "min_cake_layers", "target": 3, "description": "Xếp bánh kẹo đạt ít nhất 3 tầng", "descriptionEn": "Stack a candy cake of at least 3 layers" },
+        { "id": "c5_photo", "station": "photo", "type": "photo_taken", "target": true, "description": "Chụp bức ảnh lưu niệm hoàn hảo", "descriptionEn": "Snap a celebratory keepsake photo" }
       ]
     },
     {
       "id": 6,
       "name": "Bubblegum Pop Star",
+      "nameVi": "Ngôi sao nhạc Pop kẹo gôm",
       "theme": "bubblegum",
       "characterType": "unicorn",
       "requiresPremium": false,
       "stations": ["hair", "makeup", "dressup", "photo"],
       "criteria": [
-        { "id": "c6_hair", "station": "hair", "type": "hair_style", "target": "pop_waves", "description": "Uốn lọn tóc sóng phong cách ngôi sao pop" },
-        { "id": "c6_lip", "station": "makeup", "type": "lipstick", "target": "bubblegum_pink", "description": "Thoa son môi hồng kẹo cao su bóng loáng" },
-        { "id": "c6_paint", "station": "makeup", "type": "face_paint", "target": "glitter_stars", "description": "Vẽ mặt họa tiết ngôi sao lấp lánh" },
-        { "id": "c6_tiara", "station": "dressup", "type": "tiara", "target": "star_crown", "description": "Đội vương miện ngôi sao sân khấu" }
+        { "id": "c6_hair", "station": "hair", "type": "hair_style", "target": "pop_waves", "description": "Uốn lọn tóc sóng phong cách ngôi sao pop", "descriptionEn": "Style hair into Pop Star Waves" },
+        { "id": "c6_lip", "station": "makeup", "type": "lipstick", "target": "bubblegum_pink", "description": "Thoa son môi hồng kẹo cao su bóng loáng", "descriptionEn": "Apply glossy Bubblegum Pink Lipstick" },
+        { "id": "c6_paint", "station": "makeup", "type": "face_paint", "target": "glitter_stars", "description": "Vẽ mặt họa tiết ngôi sao lấp lánh", "descriptionEn": "Add Glitter Stars face paint" },
+        { "id": "c6_tiara", "station": "dressup", "type": "tiara", "target": "star_crown", "description": "Đội vương miện ngôi sao sân khấu", "descriptionEn": "Wear the Pop Star Crown" }
       ]
     },
     {
       "id": 7,
       "name": "Lollipop Lagoon",
+      "nameVi": "Đầm phá kẹo mút",
       "theme": "lagoon",
       "characterType": "princess",
       "requiresPremium": false,
       "stations": ["spa", "hair", "makeup", "dressup"],
       "criteria": [
-        { "id": "c7_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Rửa sạch bụi bẩn tại đầm kẹo 100%" },
-        { "id": "c7_eye", "station": "makeup", "type": "eyeshadow", "target": "lagoon_turquoise", "description": "Đánh phấn mắt xanh ngọc biển hồ" },
-        { "id": "c7_outfit", "station": "dressup", "type": "outfit", "target": "mermaid_gown", "description": "Mặc đầm dạ hội nàng tiên kẹo ngọt" },
-        { "id": "c7_jewelry", "station": "dressup", "type": "jewelry", "target": "pearl_necklace", "description": "Đeo vòng cổ ngọc trai kẹo đường" }
+        { "id": "c7_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Rửa sạch bụi bẩn tại đầm kẹo 100%", "descriptionEn": "Wash off all dirt 100% at the lagoon" },
+        { "id": "c7_eye", "station": "makeup", "type": "eyeshadow", "target": "lagoon_turquoise", "description": "Đánh phấn mắt xanh ngọc biển hồ", "descriptionEn": "Apply Lagoon Turquoise Eyeshadow" },
+        { "id": "c7_outfit", "station": "dressup", "type": "outfit", "target": "mermaid_gown", "description": "Mặc đầm dạ hội nàng tiên kẹo ngọt", "descriptionEn": "Wear the Candy Mermaid Gown" },
+        { "id": "c7_jewelry", "station": "dressup", "type": "jewelry", "target": "pearl_necklace", "description": "Đeo vòng cổ ngọc trai kẹo đường", "descriptionEn": "Wear the Sugar Pearl Necklace" }
       ]
     },
     {
       "id": 8,
       "name": "Magic Pet Carousel",
+      "nameVi": "Vòng xoay thú cưng phép thuật",
       "theme": "carousel",
       "characterType": "unicorn",
       "requiresPremium": false,
       "stations": ["spa", "hair", "pet", "photo"],
       "criteria": [
-        { "id": "c8_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Tắm bọt thơm cho kỳ lân 100%" },
-        { "id": "c8_hair", "station": "hair", "type": "hair_color", "target": "rainbow", "description": "Nhuộm bờm tóc 7 sắc cầu vồng" },
-        { "id": "c8_horn", "station": "dressup", "type": "horn", "target": "crystal_horn", "description": "Gắn sừng pha lê cầu vồng lấp lánh" },
-        { "id": "c8_pet", "station": "pet", "type": "pet_groomed", "target": true, "description": "Chải lông và chăm sóc bé thú cưng mượt mà" }
+        { "id": "c8_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Tắm bọt thơm cho kỳ lân 100%", "descriptionEn": "Give the unicorn a 100% bubble bath" },
+        { "id": "c8_hair", "station": "hair", "type": "hair_color", "target": "rainbow", "description": "Nhuộm bờm tóc 7 sắc cầu vồng", "descriptionEn": "Color mane in 7-color Rainbow" },
+        { "id": "c8_horn", "station": "dressup", "type": "horn", "target": "crystal_horn", "description": "Gắn sừng pha lê cầu vồng lấp lánh", "descriptionEn": "Equip the Rainbow Crystal Horn" },
+        { "id": "c8_pet", "station": "pet", "type": "pet_groomed", "target": true, "description": "Chải lông và chăm sóc bé thú cưng mượt mà", "descriptionEn": "Brush and groom the fluffy pet" }
       ]
     },
     {
       "id": 9,
       "name": "Cotton Candy Royal Ball",
+      "nameVi": "Vũ hội hoàng gia kẹo bông",
       "theme": "royal_ball",
       "characterType": "princess",
       "requiresPremium": false,
       "stations": ["spa", "makeup", "dressup", "cake", "photo"],
       "criteria": [
-        { "id": "c9_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Dưỡng da sạch mịn 100%" },
-        { "id": "c9_blush", "station": "makeup", "type": "blush", "target": "rose_petal", "description": "Dặm phấn má hồng cánh hoa hồng" },
-        { "id": "c9_outfit", "station": "dressup", "type": "outfit", "target": "ball_gown_pink", "description": "Mặc váy dạ hội bồng bềnh hoàng gia" },
-        { "id": "c9_cake", "station": "cake", "type": "min_cake_layers", "target": 3, "description": "Chuẩn bị tháp bánh kẹo đại tiệc từ 3 tầng" },
-        { "id": "c9_photo", "station": "photo", "type": "photo_taken", "target": true, "description": "Lưu bức hình khiêu vũ hoàng gia" }
+        { "id": "c9_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Dưỡng da sạch mịn 100%", "descriptionEn": "Refresh skin 100% clean" },
+        { "id": "c9_blush", "station": "makeup", "type": "blush", "target": "rose_petal", "description": "Dặm phấn má hồng cánh hoa hồng", "descriptionEn": "Apply Rose Petal Blush" },
+        { "id": "c9_outfit", "station": "dressup", "type": "outfit", "target": "ball_gown_pink", "description": "Mặc váy dạ hội bồng bềnh hoàng gia", "descriptionEn": "Wear the Royal Pink Ball Gown" },
+        { "id": "c9_cake", "station": "cake", "type": "min_cake_layers", "target": 3, "description": "Chuẩn bị tháp bánh kẹo đại tiệc từ 3 tầng", "descriptionEn": "Prepare a party cake with at least 3 layers" },
+        { "id": "c9_photo", "station": "photo", "type": "photo_taken", "target": true, "description": "Lưu bức hình khiêu vũ hoàng gia", "descriptionEn": "Capture the royal ball photo" }
       ]
     },
     {
       "id": 10,
       "name": "Grand Rainbow Carnival",
+      "nameVi": "Lễ hội hóa trang cầu vồng",
       "theme": "carnival",
       "characterType": "unicorn",
       "requiresPremium": false,
       "stations": ["spa", "hair", "makeup", "dressup", "cake", "photo"],
       "criteria": [
-        { "id": "c10_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Làm sạch lấp lánh toàn thân 100%" },
-        { "id": "c10_hair", "station": "hair", "type": "hair_color", "target": "rainbow", "description": "Nhuộm bờm tóc dải màu cầu vồng" },
-        { "id": "c10_paint", "station": "makeup", "type": "face_paint", "target": "carnival_mask", "description": "Vẽ mặt nạ lễ hội kẹo ngọt rực rỡ" },
-        { "id": "c10_outfit", "station": "dressup", "type": "outfit", "target": "carnival_cape", "description": "Khoác áo choàng lễ hội carnival" },
-        { "id": "c10_wings", "station": "dressup", "type": "wings", "target": "rainbow_feathers", "description": "Đôi cánh lông vũ cầu vồng khổng lồ" },
-        { "id": "c10_cake", "station": "cake", "type": "min_cake_layers", "target": 3, "description": "Bánh kẹo lễ hội từ 3 tầng trở lên" }
+        { "id": "c10_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Làm sạch lấp lánh toàn thân 100%", "descriptionEn": "Wash sparkling clean 100%" },
+        { "id": "c10_hair", "station": "hair", "type": "hair_color", "target": "rainbow", "description": "Nhuộm bờm tóc dải màu cầu vồng", "descriptionEn": "Dye hair Rainbow spectrum" },
+        { "id": "c10_paint", "station": "makeup", "type": "face_paint", "target": "carnival_mask", "description": "Vẽ mặt nạ lễ hội kẹo ngọt rực rỡ", "descriptionEn": "Paint the Candy Carnival Mask" },
+        { "id": "c10_outfit", "station": "dressup", "type": "outfit", "target": "carnival_cape", "description": "Khoác áo choàng lễ hội carnival", "descriptionEn": "Wear the Carnival Parade Cape" },
+        { "id": "c10_wings", "station": "dressup", "type": "wings", "target": "rainbow_feathers", "description": "Đôi cánh lông vũ cầu vồng khổng lồ", "descriptionEn": "Wear Rainbow Feather Wings" },
+        { "id": "c10_cake", "station": "cake", "type": "min_cake_layers", "target": 3, "description": "Bánh kẹo lễ hội từ 3 tầng trở lên", "descriptionEn": "Stack a carnival cake of at least 3 layers" }
       ]
     },
     {
       "id": 11,
       "name": "Crystal Sugar Mountain",
+      "nameVi": "Đỉnh núi kẹo pha lê đường",
       "theme": "crystal_sugar",
       "characterType": "princess",
       "requiresPremium": true,
       "stations": ["hair", "makeup", "dressup", "cake"],
       "criteria": [
-        { "id": "c11_hair", "station": "hair", "type": "hair_style", "target": "crystal_braid", "description": "Tết bím tóc pha lê kiêu sa" },
-        { "id": "c11_eye", "station": "makeup", "type": "eyeshadow", "target": "shimmer_blue", "description": "Phấn mắt xanh băng tuyết lấp lánh" },
-        { "id": "c11_outfit", "station": "dressup", "type": "outfit", "target": "crystal_dress", "description": "Mặc dạ phục đính pha lê đường tinh xảo" },
-        { "id": "c11_cake", "station": "cake", "type": "min_cake_layers", "target": 3, "description": "Bánh kẹo băng đường từ 3 tầng" }
+        { "id": "c11_hair", "station": "hair", "type": "hair_style", "target": "crystal_braid", "description": "Tết bím tóc pha lê kiêu sa", "descriptionEn": "Style hair in the Crystal Braid" },
+        { "id": "c11_eye", "station": "makeup", "type": "eyeshadow", "target": "shimmer_blue", "description": "Phấn mắt xanh băng tuyết lấp lánh", "descriptionEn": "Apply Shimmer Ice Blue Eyeshadow" },
+        { "id": "c11_outfit", "station": "dressup", "type": "outfit", "target": "crystal_dress", "description": "Mặc dạ phục đính pha lê đường tinh xảo", "descriptionEn": "Wear the Sugar Crystal Dress" },
+        { "id": "c11_cake", "station": "cake", "type": "min_cake_layers", "target": 3, "description": "Bánh kẹo băng đường từ 3 tầng", "descriptionEn": "Make an icy sugar cake of 3+ layers" }
       ]
     },
     {
       "id": 12,
       "name": "Marshmallow Fluff Garden",
+      "nameVi": "Khu vườn kẹo dẻo bồng bềnh",
       "theme": "marshmallow",
       "characterType": "unicorn",
       "requiresPremium": true,
       "stations": ["spa", "hair", "dressup", "pet"],
       "criteria": [
-        { "id": "c12_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Làm sạch bọt kẹo xốp 100%" },
-        { "id": "c12_hair", "station": "hair", "type": "hair_color", "target": "lavender_dream", "description": "Nhuộm bờm tím hoa oải hương dịu ngọt" },
-        { "id": "c12_horn", "station": "dressup", "type": "horn", "target": "marshmallow_twist", "description": "Gắn sừng kẹo dẻo xoắn ốc đáng yêu" },
-        { "id": "c12_pet", "station": "pet", "type": "pet_groomed", "target": true, "description": "Chải lông và làm điệu cho bé cún bông" }
+        { "id": "c12_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Làm sạch bọt kẹo xốp 100%", "descriptionEn": "Wash fluffy foam 100% clean" },
+        { "id": "c12_hair", "station": "hair", "type": "hair_color", "target": "lavender_dream", "description": "Nhuộm bờm tím hoa oải hương dịu ngọt", "descriptionEn": "Dye mane Lavender Dream" },
+        { "id": "c12_horn", "station": "dressup", "type": "horn", "target": "marshmallow_twist", "description": "Gắn sừng kẹo dẻo xoắn ốc đáng yêu", "descriptionEn": "Equip the Marshmallow Twist Horn" },
+        { "id": "c12_pet", "station": "pet", "type": "pet_groomed", "target": true, "description": "Chải lông và làm điệu cho bé cún bông", "descriptionEn": "Brush and style the fluffy puppy" }
       ]
     },
     {
       "id": 13,
       "name": "Peppermint Wonderland",
+      "nameVi": "Xứ sở kẹo bạc hà",
       "theme": "peppermint",
       "characterType": "princess",
       "requiresPremium": true,
       "stations": ["hair", "makeup", "dressup", "photo"],
       "criteria": [
-        { "id": "c13_hair", "station": "hair", "type": "hair_color", "target": "mint_green", "description": "Mái tóc màu xanh bạc hà the mát" },
-        { "id": "c13_lip", "station": "makeup", "type": "lipstick", "target": "cherry_red", "description": "Tô son môi màu đỏ quả anh đào rạng rỡ" },
-        { "id": "c13_outfit", "station": "dressup", "type": "outfit", "target": "peppermint_stripe", "description": "Váy sọc đỏ trắng kẹo gậy giáng sinh" },
-        { "id": "c13_tiara", "station": "dressup", "type": "tiara", "target": "candy_cane_tiara", "description": "Vương miện kẹo gậy giòn tan" }
+        { "id": "c13_hair", "station": "hair", "type": "hair_color", "target": "mint_green", "description": "Mái tóc màu xanh bạc hà the mát", "descriptionEn": "Color hair Cool Mint Green" },
+        { "id": "c13_lip", "station": "makeup", "type": "lipstick", "target": "cherry_red", "description": "Tô son môi màu đỏ quả anh đào rạng rỡ", "descriptionEn": "Apply Cherry Red Lipstick" },
+        { "id": "c13_outfit", "station": "dressup", "type": "outfit", "target": "peppermint_stripe", "description": "Váy sọc đỏ trắng kẹo gậy giáng sinh", "descriptionEn": "Wear the Peppermint Stripe Dress" },
+        { "id": "c13_tiara", "station": "dressup", "type": "tiara", "target": "candy_cane_tiara", "description": "Vương miện kẹo gậy giòn tan", "descriptionEn": "Wear the Candy Cane Tiara" }
       ]
     },
     {
       "id": 14,
       "name": "Sugarplum Fairy Twilight",
+      "nameVi": "Hoàng hôn tiên nữ mận đường",
       "theme": "sugarplum",
       "characterType": "princess",
       "requiresPremium": true,
       "stations": ["spa", "hair", "dressup", "pet", "photo"],
       "criteria": [
-        { "id": "c14_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Spa tắm thơm mận đường 100%" },
-        { "id": "c14_hair", "station": "hair", "type": "hair_color", "target": "plum_violet", "description": "Nhuộm tóc màu tím mận hoàng hôn" },
-        { "id": "c14_wings", "station": "dressup", "type": "wings", "target": "fairy_wings", "description": "Trang bị đôi cánh tiên mận lấp lánh" },
-        { "id": "c14_outfit", "station": "dressup", "type": "outfit", "target": "tutu_plum", "description": "Bộ váy xòe ballet tiên kẹo ngọt" },
-        { "id": "c14_pet", "station": "pet", "type": "pet_fed", "target": true, "description": "Cho rồng con ăn quả kẹo mận ngọt ngào" }
+        { "id": "c14_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Spa tắm thơm mận đường 100%", "descriptionEn": "Complete a 100% sugarplum spa bath" },
+        { "id": "c14_hair", "station": "hair", "type": "hair_color", "target": "plum_violet", "description": "Nhuộm tóc màu tím mận hoàng hôn", "descriptionEn": "Dye hair Sunset Plum Violet" },
+        { "id": "c14_wings", "station": "dressup", "type": "wings", "target": "fairy_wings", "description": "Trang bị đôi cánh tiên mận lấp lánh", "descriptionEn": "Wear sparkling Sugarplum Fairy Wings" },
+        { "id": "c14_outfit", "station": "dressup", "type": "outfit", "target": "tutu_plum", "description": "Bộ váy xòe ballet tiên kẹo ngọt", "descriptionEn": "Wear the Sugarplum Tutu Dress" },
+        { "id": "c14_pet", "station": "pet", "type": "pet_fed", "target": true, "description": "Cho rồng con ăn quả kẹo mận ngọt ngào", "descriptionEn": "Feed the baby dragon sugarplum treats" }
       ]
     },
     {
       "id": 15,
       "name": "Neon Gummy Rave",
+      "nameVi": "Đêm nhạc kẹo dẻo Neon",
       "theme": "neon_gummy",
       "characterType": "unicorn",
       "requiresPremium": true,
       "stations": ["hair", "makeup", "dressup", "photo"],
       "criteria": [
-        { "id": "c15_hair", "station": "hair", "type": "hair_color", "target": "neon_lime", "description": "Bờm tóc màu xanh chanh dạ quang" },
-        { "id": "c15_paint", "station": "makeup", "type": "face_paint", "target": "neon_glow", "description": "Vẽ mặt dạ quang phát sáng trong đêm" },
-        { "id": "c15_outfit", "station": "dressup", "type": "outfit", "target": "cyber_unicorn", "description": "Bộ giáp kẹo dẻo neon phong cách tương lai" },
-        { "id": "c15_wings", "station": "dressup", "type": "wings", "target": "neon_wings", "description": "Cánh neon rực lửa sôi động" }
+        { "id": "c15_hair", "station": "hair", "type": "hair_color", "target": "neon_lime", "description": "Bờm tóc màu xanh chanh dạ quang", "descriptionEn": "Dye hair Neon Lime glow" },
+        { "id": "c15_paint", "station": "makeup", "type": "face_paint", "target": "neon_glow", "description": "Vẽ mặt dạ quang phát sáng trong đêm", "descriptionEn": "Add glowing Neon Glow face paint" },
+        { "id": "c15_outfit", "station": "dressup", "type": "outfit", "target": "cyber_unicorn", "description": "Bộ giáp kẹo dẻo neon phong cách tương lai", "descriptionEn": "Wear the Cyber Gummy Suit" },
+        { "id": "c15_wings", "station": "dressup", "type": "wings", "target": "neon_wings", "description": "Cánh neon rực lửa sôi động", "descriptionEn": "Equip vibrant Neon Wings" }
       ]
     },
     {
       "id": 16,
       "name": "Choco Truffle Fantasy",
+      "nameVi": "Mộng ảo Sô-cô-la Truffle",
       "theme": "choco_truffle",
       "characterType": "princess",
       "requiresPremium": true,
       "stations": ["spa", "dressup", "cake", "photo"],
       "criteria": [
-        { "id": "c16_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Tắm sạch sốt sô-cô-la 100%" },
-        { "id": "c16_outfit", "station": "dressup", "type": "outfit", "target": "chocolate_velvet", "description": "Váy nhung nâu sô-cô-la truffle quý phái" },
-        { "id": "c16_cake", "station": "cake", "type": "min_cake_layers", "target": 4, "description": "Xếp tháp bánh sô-cô-la đạt 4 tầng hoành tráng" },
-        { "id": "c16_photo", "station": "photo", "type": "photo_taken", "target": true, "description": "Chụp bức ảnh sang trọng bên tháp bánh" }
+        { "id": "c16_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Tắm sạch sốt sô-cô-la 100%", "descriptionEn": "Clean off chocolate splashes 100%" },
+        { "id": "c16_outfit", "station": "dressup", "type": "outfit", "target": "chocolate_velvet", "description": "Váy nhung nâu sô-cô-la truffle quý phái", "descriptionEn": "Wear the Chocolate Velvet Gown" },
+        { "id": "c16_cake", "station": "cake", "type": "min_cake_layers", "target": 4, "description": "Xếp tháp bánh sô-cô-la đạt 4 tầng hoành tráng", "descriptionEn": "Build a grand 4-layer chocolate cake" },
+        { "id": "c16_photo", "station": "photo", "type": "photo_taken", "target": true, "description": "Chụp bức ảnh sang trọng bên tháp bánh", "descriptionEn": "Snap a celebratory portrait with the cake" }
       ]
     },
     {
       "id": 17,
       "name": "Enchanted Starlight Safari",
+      "nameVi": "Thám hiểm ánh sao nhiệm màu",
       "theme": "starlight_safari",
       "characterType": "unicorn",
       "requiresPremium": true,
       "stations": ["hair", "dressup", "pet", "cake"],
       "criteria": [
-        { "id": "c17_horn", "station": "dressup", "type": "horn", "target": "star_gem", "description": "Đính viên ngọc sao tinh tú trên đỉnh sừng" },
-        { "id": "c17_wings", "station": "dressup", "type": "wings", "target": "celestial_wings", "description": "Cánh thiên hà rộng mở uy nghi" },
-        { "id": "c17_pet", "station": "pet", "type": "pet_groomed", "target": true, "description": "Chải chuốt cho bạn đồng hành dễ thương" },
-        { "id": "c17_cake", "station": "cake", "type": "min_cake_layers", "target": 2, "description": "Làm bánh dã ngoại từ 2 tầng trở lên" }
+        { "id": "c17_horn", "station": "dressup", "type": "horn", "target": "star_gem", "description": "Đính viên ngọc sao tinh tú trên đỉnh sừng", "descriptionEn": "Equip the Celestial Star-Gem Horn" },
+        { "id": "c17_wings", "station": "dressup", "type": "wings", "target": "celestial_wings", "description": "Cánh thiên hà rộng mở uy nghi", "descriptionEn": "Wear majestic Celestial Wings" },
+        { "id": "c17_pet", "station": "pet", "type": "pet_groomed", "target": true, "description": "Chải chuốt cho bạn đồng hành dễ thương", "descriptionEn": "Groom your starlight pet companion" },
+        { "id": "c17_cake", "station": "cake", "type": "min_cake_layers", "target": 2, "description": "Làm bánh dã ngoại từ 2 tầng trở lên", "descriptionEn": "Bake a safari treat cake (2+ layers)" }
       ]
     },
     {
       "id": 18,
       "name": "Caramel Macaron Soirée",
+      "nameVi": "Dạ tiệc bánh Macaron Caramel",
       "theme": "macaron",
       "characterType": "princess",
       "requiresPremium": true,
       "stations": ["spa", "hair", "makeup", "dressup", "cake"],
       "criteria": [
-        { "id": "c18_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Rửa sạch bụi caramel 100%" },
-        { "id": "c18_hair", "station": "hair", "type": "hair_style", "target": "macaron_twists", "description": "Tạo kiểu tóc búi xoắn bánh macaron kiểu Pháp" },
-        { "id": "c18_eye", "station": "makeup", "type": "eyeshadow", "target": "golden_caramel", "description": "Phấn mắt vàng caramel ngọt lịm" },
-        { "id": "c18_outfit", "station": "dressup", "type": "outfit", "target": "parisian_dress", "description": "Đầm dạ hội phong cách quý tộc Paris" },
-        { "id": "c18_cake", "station": "cake", "type": "min_cake_layers", "target": 3, "description": "Tháp bánh macaron từ 3 tầng" }
+        { "id": "c18_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Rửa sạch bụi caramel 100%", "descriptionEn": "Clean off sugar caramel dust 100%" },
+        { "id": "c18_hair", "station": "hair", "type": "hair_style", "target": "macaron_twists", "description": "Tạo kiểu tóc búi xoắn bánh macaron kiểu Pháp", "descriptionEn": "Style hair in Parisian Macaron Twists" },
+        { "id": "c18_eye", "station": "makeup", "type": "eyeshadow", "target": "golden_caramel", "description": "Phấn mắt vàng caramel ngọt lịm", "descriptionEn": "Apply Golden Caramel Eyeshadow" },
+        { "id": "c18_outfit", "station": "dressup", "type": "outfit", "target": "parisian_dress", "description": "Đầm dạ hội phong cách quý tộc Paris", "descriptionEn": "Wear the Parisian Macaron Dress" },
+        { "id": "c18_cake", "station": "cake", "type": "min_cake_layers", "target": 3, "description": "Tháp bánh macaron từ 3 tầng", "descriptionEn": "Build a 3+ layer macaron tower cake" }
       ]
     },
     {
       "id": 19,
       "name": "Dragon Fruit Rainbow Quest",
+      "nameVi": "Hành trình thanh long cầu vồng",
       "theme": "dragon_fruit",
       "characterType": "unicorn",
       "requiresPremium": true,
       "stations": ["spa", "hair", "makeup", "dressup", "pet"],
       "criteria": [
-        { "id": "c19_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Làm sạch bùn thanh long rừng rậm 100%" },
-        { "id": "c19_hair", "station": "hair", "type": "hair_color", "target": "magenta_glow", "description": "Nhuộm bờm tím hồng cánh sen rực lửa" },
-        { "id": "c19_paint", "station": "makeup", "type": "face_paint", "target": "dragon_sparkle", "description": "Vẽ vảy rồng lấp lánh quanh gò má" },
-        { "id": "c19_outfit", "station": "dressup", "type": "outfit", "target": "dragon_armor_sweet", "description": "Trang bị giáp kẹo rồng dũng cảm" },
-        { "id": "c19_pet", "station": "pet", "type": "pet_clean", "target": 100, "description": "Tắm rửa sạch 100% cho bé rồng con" }
+        { "id": "c19_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Làm sạch bùn thanh long rừng rậm 100%", "descriptionEn": "Clean 100% of jungle dragon-fruit mud" },
+        { "id": "c19_hair", "station": "hair", "type": "hair_color", "target": "magenta_glow", "description": "Nhuộm bờm tím hồng cánh sen rực lửa", "descriptionEn": "Color mane glowing Magenta" },
+        { "id": "c19_paint", "station": "makeup", "type": "face_paint", "target": "dragon_sparkle", "description": "Vẽ vảy rồng lấp lánh quanh gò má", "descriptionEn": "Add Dragon Sparkle scales face paint" },
+        { "id": "c19_outfit", "station": "dressup", "type": "outfit", "target": "dragon_armor_sweet", "description": "Trang bị giáp kẹo rồng dũng cảm", "descriptionEn": "Wear the Sweet Dragon Armor" },
+        { "id": "c19_pet", "station": "pet", "type": "pet_clean", "target": 100, "description": "Tắm rửa sạch 100% cho bé rồng con", "descriptionEn": "Wash the baby dragon pet 100% clean" }
       ]
     },
     {
       "id": 20,
       "name": "The Grand Royal Sweet Coronation",
+      "nameVi": "Đại lễ đăng quang kẹo hoàng gia",
       "theme": "coronation",
       "characterType": "princess",
       "requiresPremium": true,
       "stations": ["spa", "hair", "makeup", "dressup", "cake", "photo"],
       "criteria": [
-        { "id": "c20_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Dưỡng da ngọc ngà hoàn hảo 100%" },
-        { "id": "c20_hair", "station": "hair", "type": "hair_style", "target": "royal_chignon", "description": "Tóc búi vương giả đăng quang tráng lệ" },
-        { "id": "c20_lip", "station": "makeup", "type": "lipstick", "target": "royal_crimson", "description": "Tô son môi đỏ thắm vương quyền" },
-        { "id": "c20_outfit", "station": "dressup", "type": "outfit", "target": "coronation_gown", "description": "Khoác hoàng bào đăng quang dát vàng cầu vồng" },
-        { "id": "c20_tiara", "station": "dressup", "type": "tiara", "target": "imperial_rainbow_crown", "description": "Đội vương miện cầu vồng tối thượng hoàng gia" },
-        { "id": "c20_cake", "station": "cake", "type": "min_cake_layers", "target": 4, "description": "Đại tiệc bánh kẹo đăng quang đạt 4 tầng kỳ vĩ" }
+        { "id": "c20_spa", "station": "spa", "type": "clean_percent", "target": 100, "description": "Dưỡng da ngọc ngà hoàn hảo 100%", "descriptionEn": "Complete a 100% royal spa glow" },
+        { "id": "c20_hair", "station": "hair", "type": "hair_style", "target": "royal_chignon", "description": "Tóc búi vương giả đăng quang tráng lệ", "descriptionEn": "Style hair in the Royal Chignon" },
+        { "id": "c20_lip", "station": "makeup", "type": "lipstick", "target": "royal_crimson", "description": "Tô son môi đỏ thắm vương quyền", "descriptionEn": "Apply Royal Crimson Lipstick" },
+        { "id": "c20_outfit", "station": "dressup", "type": "outfit", "target": "coronation_gown", "description": "Khoác hoàng bào đăng quang dát vàng cầu vồng", "descriptionEn": "Wear the Royal Coronation Gown" },
+        { "id": "c20_tiara", "station": "dressup", "type": "tiara", "target": "imperial_rainbow_crown", "description": "Đội vương miện cầu vồng tối thượng hoàng gia", "descriptionEn": "Wear the Imperial Rainbow Crown" },
+        { "id": "c20_cake", "station": "cake", "type": "min_cake_layers", "target": 4, "description": "Đại tiệc bánh kẹo đăng quang đạt 4 tầng kỳ vĩ", "descriptionEn": "Stack a majestic 4-layer coronation cake" }
       ]
     }
   ]

@@ -18,6 +18,7 @@ object LevelRepository {
             val obj = lvlElement as? JsonElement.JsonObject ?: return@mapNotNull null
             val id = obj.getInt("id") ?: return@mapNotNull null
             val name = obj.getString("name") ?: ""
+            val nameVi = obj.getString("nameVi") ?: name
             val theme = obj.getString("theme") ?: ""
             val charTypeStr = obj.getString("characterType") ?: "unicorn"
             val charType = CharacterType.fromValue(charTypeStr)
@@ -33,6 +34,7 @@ object LevelRepository {
                 val st = crObj.getString("station") ?: ""
                 val type = crObj.getString("type") ?: ""
                 val desc = crObj.getString("description") ?: ""
+                val descEn = crObj.getString("descriptionEn") ?: desc
                 val targetEl = crObj.fields["target"]
                 val target: Any? = when (targetEl) {
                     is JsonElement.JsonString -> targetEl.value
@@ -40,12 +42,13 @@ object LevelRepository {
                     is JsonElement.JsonBoolean -> targetEl.value
                     else -> null
                 }
-                Criterion(id = crId, station = st, type = type, target = target, description = desc)
+                Criterion(id = crId, station = st, type = type, target = target, description = desc, descriptionEn = descEn)
             } ?: emptyList()
 
             Level(
                 id = id,
                 name = name,
+                nameVi = nameVi,
                 theme = theme,
                 characterType = charType,
                 requiresPremium = requiresPremium,
@@ -62,16 +65,18 @@ object LevelRepository {
             val obj = el as? JsonElement.JsonObject ?: return@mapNotNull null
             val id = obj.getString("id") ?: ""
             val name = obj.getString("name") ?: ""
+            val nameEn = obj.getString("nameEn") ?: name
             val slotTypeStr = obj.getString("slotType") ?: "exclusive"
             val slotType = SlotType.fromValue(slotTypeStr)
             val maxSelected = obj.getInt("maxSelected") ?: 1
-            ItemCategory(id = id, name = name, slotType = slotType, maxSelected = maxSelected)
+            ItemCategory(id = id, name = name, nameEn = nameEn, slotType = slotType, maxSelected = maxSelected)
         } ?: emptyList()
 
         val items = root.getArray("items")?.mapNotNull { el ->
             val obj = el as? JsonElement.JsonObject ?: return@mapNotNull null
             val id = obj.getString("id") ?: ""
             val name = obj.getString("name") ?: ""
+            val nameEn = obj.getString("nameEn") ?: name
             val category = obj.getString("category") ?: ""
             val unlocked = obj.getBoolean("unlockedByDefault") ?: true
             val price = obj.getInt("candyPrice") ?: 0
@@ -82,6 +87,7 @@ object LevelRepository {
             Item(
                 id = id,
                 name = name,
+                nameEn = nameEn,
                 category = category,
                 unlockedByDefault = unlocked,
                 candyPrice = price,

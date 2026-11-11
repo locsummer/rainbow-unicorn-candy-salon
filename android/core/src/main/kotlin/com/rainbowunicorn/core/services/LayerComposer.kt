@@ -53,4 +53,21 @@ object LayerComposer {
             makeup = character.makeup.copy(eyeshadow = eyeshadowId)
         )
     }
+
+    fun toggleFacePaint(character: CharacterState, paintId: String): CharacterState {
+        return if (character.facePaints.contains(paintId)) {
+            character.copy(facePaints = character.facePaints - paintId)
+        } else {
+            addFacePaint(character, paintId)
+        }
+    }
+
+    fun removeLastSticker(character: CharacterState): CharacterState {
+        if (character.stickers.isEmpty()) return character
+        return character.copy(stickers = character.stickers.dropLast(1))
+    }
+
+    fun clearMakeup(character: CharacterState): CharacterState {
+        return character.copy(makeup = com.rainbowunicorn.core.models.MakeupState(), facePaints = emptyList())
+    }
 }

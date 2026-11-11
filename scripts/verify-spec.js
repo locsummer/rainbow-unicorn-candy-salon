@@ -54,10 +54,20 @@ levelsData.levels.forEach((lvl, idx) => {
       process.exit(1);
     }
   });
+  if (!lvl.nameVi) {
+    console.error(`FAIL: Level ${expectedId} missing nameVi localization.`);
+    process.exit(1);
+  }
   if (!Array.isArray(lvl.criteria) || lvl.criteria.length < 3 || lvl.criteria.length > 6) {
     console.error(`FAIL: Level ${expectedId} criteria count must be 3-6. Found ${lvl.criteria ? lvl.criteria.length : 0}`);
     process.exit(1);
   }
+  lvl.criteria.forEach(cr => {
+    if (!cr.description || !cr.descriptionEn) {
+      console.error(`FAIL: Level ${expectedId} criterion ${cr.id} missing bilingual description/descriptionEn.`);
+      process.exit(1);
+    }
+  });
 });
 console.log('[PASS] levels.json verified: 20 levels, correct 1-10 free / 11-20 premium, 3-6 stations & criteria.');
 
@@ -67,11 +77,19 @@ const itemsData = JSON.parse(fs.readFileSync(itemsPath, 'utf8'));
 
 const categoryMap = new Map();
 itemsData.categories.forEach(cat => {
+  if (!cat.nameEn) {
+    console.error(`FAIL: Category ${cat.id} missing nameEn`);
+    process.exit(1);
+  }
   categoryMap.set(cat.id, { total: 0, locked: 0, name: cat.name });
 });
 
 const itemIds = new Set();
 itemsData.items.forEach(item => {
+  if (!item.nameEn) {
+    console.error(`FAIL: Item ${item.id} missing nameEn`);
+    process.exit(1);
+  }
   if (itemIds.has(item.id)) {
     console.error(`FAIL: Duplicate item ID detected: ${item.id}`);
     process.exit(1);

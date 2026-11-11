@@ -3,7 +3,7 @@
 Tài liệu này ghi nhận toàn bộ các giả định hợp lý được đưa ra trong quá trình phát triển khi thiếu thông tin cụ thể hoặc cần chuẩn hoá kỹ thuật giữa hai nền tảng:
 
 ## 1. Nền tảng & Hệ thống
-- **ASM-001 (Hướng màn hình):** Toàn bộ trò chơi chạy ở chế độ **Landscape** (Màn hình ngang). Đây là định dạng công thái học lý tưởng cho trẻ em thao tác trên máy tính bảng và điện thoại khi chơi salon/dress-up, đồng thời phù hợp với cấu trúc trạm và thanh công cụ cuộn ngang bên dưới.
+- **ASM-001 (Hướng màn hình):** Toàn bộ trò chơi chạy mặc định ở chế độ **Portrait** (Màn hình dọc). Sau phản hồi thực tế về trải nghiệm cầm dọc một tay/hai tay cho trò chơi làm đẹp nhân vật toàn thân và thanh công cụ cuộn ngang phía dưới, màn hình dọc (Portrait) giúp nhân vật hiển thị cao ráo rõ nét ở sân khấu trung tâm phía trên thanh đồ mà không bị đè chật chội bởi HUD ngang.
 - **ASM-002 (Android SDK versions):**
   - `minSdk = 24` (Android 7.0 Nougat - hỗ trợ >95% thiết bị Android đang lưu hành).
   - `compileSdk = 35` (Android 15).
@@ -14,7 +14,7 @@ Tài liệu này ghi nhận toàn bộ các giả định hợp lý được đ�
 - **ASM-004 (Môi trường kiểm thử iOS):** Do máy chủ host chạy Windows 11 không có macOS/Xcode toolchain, mã nguồn Swift được viết và tổ chức theo tiêu chuẩn Swift Package Manager (`Package.swift`) và Xcode Project (`.xcodeproj`), nhưng các test case yêu cầu Xcode runner được đánh dấu trung thực là `Blocked (No macOS/Xcode toolchain on Windows host)` theo đúng quy tắc kiểm thử của đề bài. Toàn bộ logic lõi được kiểm chứng chéo 100% bằng Golden Vectors trên Android JVM và Node.js test harness.
 
 ## 2. Luật chơi & Cơ chế Trạm
-- **ASM-005 (Độ phân giải và tỷ lệ khung hình chuẩn):** Thiết kế dựa trên tỷ lệ chuẩn 16:9 / 19.5:9 với Safe Area tự động điều chỉnh. Bố cục nhân vật nằm ở trung tâm - trái (tùy trạm), bảng công cụ bên phải hoặc dưới đáy.
+- **ASM-005 (Độ phân giải và tỷ lệ khung hình chuẩn):** Thiết kế chuẩn **Portrait 9:16 / 9:19.5** với Safe Area / System Bars Insets tự động điều chỉnh (`statusBarsPadding`, `navigationBarsPadding`). Bố cục dọc gồm: Top HUD 2 tầng gọn gàng (Exit + tiến độ trạm + thẻ yêu cầu / Undo-Redo-Reset-Done), Sân khấu nhân vật trung tâm rộng thoáng, và Thanh đồ cuộn ngang cố định ở đáy màn hình.
 - **ASM-006 (Cơ chế tính điểm từng trạm - qualityScore):**
   - *Spa làm sạch:* Tỷ lệ % diện tích vết bẩn đã được chà sạch (0.0 đến 1.0, tương ứng 0% đến 100%).
   - *Trang điểm:* Tỷ lệ % nét vẽ/tô nằm trúng vùng cho phép (mask) và không bị lem (0.0 đến 1.0). Nét vẽ ngoài mask bị phạt trừ tỷ lệ.
@@ -49,3 +49,4 @@ Tài liệu này ghi nhận toàn bộ các giả định hợp lý được đ�
   - Tối đa **50 ảnh** trong thư viện nội bộ của game.
   - Khi thư viện đạt 50 ảnh, hệ thống hiển thị thông báo rõ ràng "Thư viện đã đầy (50/50). Hãy xoá bớt ảnh cũ để chụp thêm!" và nút chụp bị khoá cho đến khi người chơi xoá bớt ảnh.
   - File lưu tiến độ game sử dụng tên `save_game.json` với file sao lưu `save_game.bak`. Khi file chính bị lỗi giải mã hoặc hỏng dữ liệu, hệ thống tự động phục hồi từ file `.bak`.
+- **ASM-012 (Lint & UI Verification Zero Third-Party Plugin Policy):** Để tuân thủ chặt chẽ ưu tiên không phụ thuộc thư viện/plugin bên thứ ba (`docs/DEPENDENCIES.md`) và hỗ trợ build hoàn toàn offline trên Windows host, dự án sử dụng trình phân tích tĩnh chính thức **Android Lint** (`:app:lintDebug`), **Kotlin compiler** (`-Werror`-ready), kiểm thử lõi JUnit Platform (`:core:test`), và kịch bản **UI Automator / ADB E2E** chạy trực tiếp trên Android Emulator (`1080x2400` Portrait) thay cho các plugin ngoài (`ktlint`, `detekt`, `Turbine`).

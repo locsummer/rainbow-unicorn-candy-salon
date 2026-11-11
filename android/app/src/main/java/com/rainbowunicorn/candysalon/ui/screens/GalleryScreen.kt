@@ -9,18 +9,23 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Warning
@@ -28,15 +33,19 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -45,58 +54,83 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.rainbowunicorn.candysalon.R
 import com.rainbowunicorn.candysalon.ui.components.ConfirmDialog
 import com.rainbowunicorn.candysalon.ui.components.NavButton
+import com.rainbowunicorn.candysalon.ui.theme.CandyActionPink
 import com.rainbowunicorn.candysalon.ui.theme.CandyDeepPlum
 import com.rainbowunicorn.candysalon.ui.theme.CandyMint
 import com.rainbowunicorn.candysalon.ui.theme.CandyPastelPink
 import com.rainbowunicorn.candysalon.ui.theme.CandyPink
+import kotlinx.coroutines.launch
 import java.io.File
 
 @Composable
 fun GalleryScreen(
     photos: List<File>,
-    onExportPhoto: (File) -> Boolean,
+    onExportPhoto: (File, onComplete: (Boolean) -> Unit) -> Unit,
     onDeletePhoto: (File) -> Boolean,
     onBackClicked: () -> Unit
 ) {
     var selectedPhoto by remember { mutableStateOf<File?>(null) }
     var photoToDelete by remember { mutableStateOf<File?>(null) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    val exportSuccessText = stringResource(R.string.export_success)
+    val exportFailedText = stringResource(R.string.export_failed)
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(CandyPastelPink.copy(alpha = 0.25f))
-            .padding(14.dp)
+            .background(
+                Brush.verticalGradient(
+                    listOf(CandyPastelPink.copy(alpha = 0.3f), Color.White)
+                )
+            )
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .padding(horizontal = 12.dp, vertical = 10.dp)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // Header
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 NavButton(
                     icon = Icons.AutoMirrored.Filled.ArrowBack,
                     label = stringResource(R.string.btn_back),
                     onClick = onBackClicked,
-                    containerColor = CandyPink
+                    containerColor = CandyActionPink,
+                    compact = true
                 )
-                Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = stringResource(R.string.gallery_title) + " (" + stringResource(R.string.gallery_count, photos.size) + ")",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = CandyDeepPlum,
-                    fontWeight = FontWeight.Bold
+                    text = stringResource(R.string.gallery_count, photos.size),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = CandyPink
                 )
             }
 
-            // Warning if 50/50 full (RULE-093)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = stringResource(R.string.gallery_title),
+                style = MaterialTheme.typography.titleLarge,
+                color = CandyDeepPlum,
+                fontWeight = FontWeight.ExtraBold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+
             if (photos.size >= 50) {
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 Card(
                     colors = CardDefaults.cardColors(containerColor = Color(0xFFFFEBEE)),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(14.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
@@ -123,7 +157,13 @@ fun GalleryScreen(
             Spacer(modifier = Modifier.height(10.dp))
 
             if (photos.isEmpty()) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
                     Text(
                         text = stringResource(R.string.gallery_empty),
                         style = MaterialTheme.typography.bodyLarge,
@@ -133,43 +173,46 @@ fun GalleryScreen(
                 }
             } else {
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(5),
+                    columns = GridCells.Fixed(3),
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
                 ) {
                     items(photos, key = { it.absolutePath }) { file ->
                         val bitmap = remember(file) {
                             try {
                                 BitmapFactory.decodeFile(file.absolutePath)?.asImageBitmap()
-                            } catch (_: Exception) { null }
+                            } catch (_: Exception) {
+                                null
+                            }
                         }
 
                         Card(
                             shape = RoundedCornerShape(16.dp),
                             elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
                             modifier = Modifier
-                                .height(90.dp)
+                                .fillMaxWidth()
+                                .aspectRatio(0.76f)
                                 .clip(RoundedCornerShape(16.dp))
                                 .clickable { selectedPhoto = file }
                         ) {
-                            Box(modifier = Modifier.fillMaxSize()) {
-                                if (bitmap != null) {
-                                    Image(
-                                        bitmap = bitmap,
-                                        contentDescription = "Photo",
-                                        contentScale = ContentScale.Crop,
-                                        modifier = Modifier.fillMaxSize()
-                                    )
-                                } else {
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .background(CandyPastelPink),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Text(text = "🖼️", fontSize = 24.sp)
-                                    }
+                            if (bitmap != null) {
+                                Image(
+                                    bitmap = bitmap,
+                                    contentDescription = "Photo",
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            } else {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(CandyPastelPink),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(text = "🖼️", fontSize = 24.sp)
                                 }
                             }
                         }
@@ -178,57 +221,94 @@ fun GalleryScreen(
             }
         }
 
-        // Preview & Action Modal
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
+
         selectedPhoto?.let { photo ->
-            androidx.compose.ui.window.Dialog(onDismissRequest = { selectedPhoto = null }) {
+            Dialog(
+                onDismissRequest = { selectedPhoto = null },
+                properties = DialogProperties(usePlatformDefaultWidth = false)
+            ) {
                 Card(
                     shape = RoundedCornerShape(24.dp),
                     colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
                     modifier = Modifier
-                        .fillMaxWidth(0.6f)
+                        .fillMaxWidth(0.90f)
+                        .widthIn(max = 420.dp)
                         .padding(16.dp)
                 ) {
                     Column(
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier.padding(18.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         val bitmap = remember(photo) {
-                            BitmapFactory.decodeFile(photo.absolutePath)?.asImageBitmap()
+                            try {
+                                BitmapFactory.decodeFile(photo.absolutePath)?.asImageBitmap()
+                            } catch (_: Exception) {
+                                null
+                            }
                         }
                         if (bitmap != null) {
                             Image(
                                 bitmap = bitmap,
                                 contentDescription = "Preview",
                                 modifier = Modifier
-                                    .size(200.dp)
+                                    .fillMaxWidth()
+                                    .aspectRatio(0.75f)
                                     .clip(RoundedCornerShape(16.dp)),
                                 contentScale = ContentScale.Crop
                             )
                         }
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(14.dp))
 
-                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            NavButton(
-                                icon = Icons.Default.Download,
-                                label = "Lưu vào máy",
-                                onClick = {
-                                    onExportPhoto(photo)
-                                    selectedPhoto = null
-                                },
-                                containerColor = CandyMint,
-                                contentColor = CandyDeepPlum
-                            )
+                        NavButton(
+                            icon = Icons.Default.Download,
+                            label = stringResource(R.string.btn_save_photo),
+                            onClick = {
+                                val target = photo
+                                selectedPhoto = null
+                                onExportPhoto(target) { ok ->
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar(if (ok) exportSuccessText else exportFailedText)
+                                    }
+                                }
+                            },
+                            containerColor = CandyMint,
+                            contentColor = CandyDeepPlum,
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
                             NavButton(
                                 icon = Icons.Default.Delete,
-                                label = "Xoá",
+                                label = stringResource(R.string.btn_delete),
                                 onClick = {
                                     photoToDelete = photo
                                     selectedPhoto = null
                                 },
-                                containerColor = Color.Red.copy(alpha = 0.8f),
-                                contentColor = Color.White
+                                containerColor = Color(0xFFE53935),
+                                contentColor = Color.White,
+                                compact = true,
+                                modifier = Modifier.weight(1f)
+                            )
+
+                            NavButton(
+                                icon = Icons.Default.Close,
+                                label = stringResource(R.string.btn_close),
+                                onClick = { selectedPhoto = null },
+                                containerColor = Color(0xFFE0E0E0),
+                                contentColor = CandyDeepPlum,
+                                compact = true,
+                                modifier = Modifier.weight(1f)
                             )
                         }
                     }
@@ -236,11 +316,10 @@ fun GalleryScreen(
             }
         }
 
-        // Delete Confirm Dialog
         photoToDelete?.let { photo ->
             ConfirmDialog(
-                title = "Xoá bức ảnh này?",
-                message = "Bạn có chắc chắn muốn xoá ảnh khỏi thư viện không?",
+                title = stringResource(R.string.dialog_delete_photo_title),
+                message = stringResource(R.string.dialog_delete_photo_message),
                 onConfirm = {
                     onDeletePhoto(photo)
                     photoToDelete = null
