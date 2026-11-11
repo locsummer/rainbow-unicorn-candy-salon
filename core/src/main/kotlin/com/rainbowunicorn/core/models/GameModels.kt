@@ -46,37 +46,53 @@ data class Criterion(
     val station: String,
     val type: String,
     val target: Any?,
-    val description: String
-)
+    val description: String,
+    val descriptionEn: String = description
+) {
+    fun localizedDescription(language: String): String =
+        if (language.equals("vi", ignoreCase = true)) description else descriptionEn.ifBlank { description }
+}
 
 data class Level(
     val id: Int,
     val name: String,
+    val nameVi: String = name,
     val theme: String,
     val characterType: CharacterType,
     val requiresPremium: Boolean,
     val stations: List<StationType>,
     val criteria: List<Criterion>,
     val baseCandyReward: Int = 10
-)
+) {
+    fun localizedName(language: String): String =
+        if (language.equals("vi", ignoreCase = true)) nameVi.ifBlank { name } else name
+}
 
 data class Item(
     val id: String,
     val name: String,
+    val nameEn: String = name,
     val category: String,
     val unlockedByDefault: Boolean,
     val candyPrice: Int,
     val assetId: String,
     val color: String? = null,
     val layer: Int = 0
-)
+) {
+    fun localizedName(language: String): String =
+        if (language.equals("vi", ignoreCase = true)) name else nameEn.ifBlank { name }
+}
 
 data class ItemCategory(
     val id: String,
     val name: String,
+    val nameEn: String = name,
     val slotType: SlotType,
     val maxSelected: Int
-)
+) {
+    fun localizedName(language: String): String =
+        if (language.equals("vi", ignoreCase = true)) name else nameEn.ifBlank { name }
+}
 
 data class MakeupState(
     val eyeshadow: String? = null,
@@ -148,8 +164,23 @@ enum class RenderLayer(val order: Int, val layerName: String) {
     }
 }
 
+data class SavedLevelCheckpoint(
+    val levelId: Int,
+    val currentStationIndex: Int = 0,
+    val completedStations: Set<StationType> = emptySet(),
+    val characterState: CharacterState = CharacterState(),
+    val spaCleanPercent: Double = 0.0,
+    val cakeLayers: Int = 2,
+    val cakeFlavor: String? = "cake_flavor_vanilla_rainbow",
+    val cakeToppings: List<String> = emptyList(),
+    val petFed: Boolean = false,
+    val petClean: Double = 0.0,
+    val petGroomed: Boolean = false,
+    val photoTaken: Boolean = false
+)
+
 data class SaveData(
-    val schemaVersion: Int = 1,
+    val schemaVersion: Int = 2,
     val candyBalance: Int = 50,
     val bestStars: Map<Int, Int> = emptyMap(),
     val unlockedLevels: Set<Int> = setOf(1),
@@ -157,5 +188,7 @@ data class SaveData(
     val purchasedEntitlements: Set<String> = emptySet(),
     val galleryCount: Int = 0,
     val bgmEnabled: Boolean = true,
-    val sfxEnabled: Boolean = true
+    val sfxEnabled: Boolean = true,
+    val language: String = "en",
+    val activeCheckpoint: SavedLevelCheckpoint? = null
 )

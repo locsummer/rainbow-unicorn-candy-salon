@@ -9,9 +9,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 val CandyPink = Color(0xFFFF5996)
+val CandyActionPink = Color(0xFFE0246E)
 val CandyPastelPink = Color(0xFFFFB6C1)
 val CandyPurple = Color(0xFFC792EA)
+val CandyActionPurple = Color(0xFF8E44AD)
 val CandyMint = Color(0xFF7CE8D5)
+val CandySuccessGreen = Color(0xFF00796B)
 val CandyYellow = Color(0xFFFFE57F)
 val CandyOrange = Color(0xFFFFB74D)
 val CandyCream = Color(0xFFFFF9FB)
@@ -19,11 +22,11 @@ val CandyDeepPlum = Color(0xFF4A154B)
 val CandyDarkBg = Color(0xFF2C1035)
 
 val RainbowColorScheme = lightColorScheme(
-    primary = CandyPink,
+    primary = CandyActionPink,
     onPrimary = Color.White,
     primaryContainer = CandyPastelPink,
     onPrimaryContainer = CandyDeepPlum,
-    secondary = CandyPurple,
+    secondary = CandyActionPurple,
     onSecondary = Color.White,
     secondaryContainer = CandyYellow,
     onSecondaryContainer = CandyDeepPlum,
@@ -31,7 +34,8 @@ val RainbowColorScheme = lightColorScheme(
     background = CandyCream,
     onBackground = CandyDeepPlum,
     surface = Color.White,
-    onSurface = CandyDeepPlum
+    onSurface = CandyDeepPlum,
+    surfaceTint = Color.Transparent
 )
 
 val CandyTypography = Typography(

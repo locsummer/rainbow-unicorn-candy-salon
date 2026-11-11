@@ -3,6 +3,7 @@ package com.rainbowunicorn.core.services
 import com.rainbowunicorn.core.models.CharacterState
 import com.rainbowunicorn.core.models.Level
 import com.rainbowunicorn.core.models.SaveData
+import com.rainbowunicorn.core.models.SavedLevelCheckpoint
 import com.rainbowunicorn.core.models.StationOutput
 import com.rainbowunicorn.core.models.StationStatus
 import com.rainbowunicorn.core.models.StationType
@@ -19,18 +20,55 @@ data class LevelSessionState(
 
 class LevelEngine(
     val level: Level,
-    initialCharacter: CharacterState = CharacterState(characterType = level.characterType)
+    initialCharacter: CharacterState = CharacterState(characterType = level.characterType),
+    checkpoint: SavedLevelCheckpoint? = null
 ) {
-    private var currentStationIndex = 0
+    var currentStationIndex: Int = 0
+        private set
     private val stationStatuses = mutableMapOf<StationType, StationStatus>()
     private val stationOutputs = mutableMapOf<StationType, StationOutput>()
-    var characterState: CharacterState = initialCharacter
+    var characterState: CharacterState = checkpoint?.characterState ?: initialCharacter
         private set
     private val undoStack = UndoStack(20)
 
     init {
-        level.stations.forEachIndexed { idx, st ->
-            stationStatuses[st] = if (idx == 0) StationStatus.IN_PROGRESS else StationStatus.NOT_STARTED
+        if (checkpoint != null && checkpoint.levelId == level.id) {
+            currentStationIndex = checkpoint.currentStationIndex.coerceIn(0, (level.stations.size - 1).coerceAtLeast(0))
+            level.stations.forEachIndexed { idx, st ->
+                val isCompleted = checkpoint.completedStations.contains(st)
+                stationStatuses[st] = when {
+                    isCompleted -> StationStatus.COMPLETED
+                    idx == currentStationIndex -> StationStatus.IN_PROGRESS
+                    else -> StationStatus.NOT_STARTED
+                }
+                if (isCompleted) {
+                    stationOutputs[st] = when (st) {
+                        StationType.SPA -> StationOutput(st, true, checkpoint.spaCleanPercent)
+                        StationType.CAKE -> StationOutput(
+                            st,
+                            true,
+                            1.0,
+                            checkpoint.cakeLayers,
+                            checkpoint.cakeFlavor,
+                            checkpoint.cakeToppings
+                        )
+                        StationType.PET -> StationOutput(
+                            st,
+                            true,
+                            1.0,
+                            petFed = checkpoint.petFed,
+                            petClean = checkpoint.petClean,
+                            petGroomed = checkpoint.petGroomed
+                        )
+                        StationType.PHOTO -> StationOutput(st, true, 1.0, photoTaken = checkpoint.photoTaken)
+                        else -> StationOutput(st, true, 1.0)
+                    }
+                }
+            }
+        } else {
+            level.stations.forEachIndexed { idx, st ->
+                stationStatuses[st] = if (idx == 0) StationStatus.IN_PROGRESS else StationStatus.NOT_STARTED
+            }
         }
         undoStack.initialize(characterState)
     }
@@ -38,8 +76,27 @@ class LevelEngine(
     val currentStation: StationType?
         get() = level.stations.getOrNull(currentStationIndex)
 
+    val canUndo: Boolean
+        get() = undoStack.canUndo
+
+    val canRedo: Boolean
+        get() = undoStack.canRedo
+
     val isAllStationsCompleted: Boolean
         get() = level.stations.all { stationStatuses[it] == StationStatus.COMPLETED }
+
+    fun getStationStatus(station: StationType): StationStatus =
+        stationStatuses[station] ?: StationStatus.NOT_STARTED
+
+    fun selectStation(index: Int) {
+        if (index in level.stations.indices) {
+            currentStationIndex = index
+            val st = level.stations[index]
+            if (stationStatuses[st] == StationStatus.NOT_STARTED) {
+                stationStatuses[st] = StationStatus.IN_PROGRESS
+            }
+        }
+    }
 
     fun updateCharacter(transform: (CharacterState) -> CharacterState) {
         val updated = transform(characterState)
@@ -64,7 +121,6 @@ class LevelEngine(
         val reset = characterState.resetCurrentStation(st)
         characterState = reset
         undoStack.push(reset)
-        // Also reset station output
         stationOutputs.remove(st)
         stationStatuses[st] = StationStatus.IN_PROGRESS
         return characterState
@@ -85,13 +141,39 @@ class LevelEngine(
     }
 
     fun finishLevel(): ScoreEvaluation {
-        val eval = ScoringEngine.evaluateLevel(level, characterState, stationOutputs)
-        return eval
+        return ScoringEngine.evaluateLevel(level, characterState, stationOutputs)
+    }
+
+    fun toCheckpoint(
+        spaCleanPercent: Double = stationOutputs[StationType.SPA]?.qualityScore ?: 0.0,
+        cakeLayers: Int = stationOutputs[StationType.CAKE]?.cakeLayers ?: 2,
+        cakeFlavor: String? = stationOutputs[StationType.CAKE]?.cakeFlavor ?: "cake_flavor_vanilla_rainbow",
+        cakeToppings: List<String> = stationOutputs[StationType.CAKE]?.cakeToppings ?: emptyList(),
+        petFed: Boolean = stationOutputs[StationType.PET]?.petFed ?: false,
+        petClean: Double = stationOutputs[StationType.PET]?.petClean ?: 0.0,
+        petGroomed: Boolean = stationOutputs[StationType.PET]?.petGroomed ?: false,
+        photoTaken: Boolean = stationOutputs[StationType.PHOTO]?.photoTaken ?: false
+    ): SavedLevelCheckpoint {
+        val completed = stationStatuses.filterValues { it == StationStatus.COMPLETED }.keys
+        return SavedLevelCheckpoint(
+            levelId = level.id,
+            currentStationIndex = currentStationIndex,
+            completedStations = completed,
+            characterState = characterState,
+            spaCleanPercent = spaCleanPercent,
+            cakeLayers = cakeLayers,
+            cakeFlavor = cakeFlavor,
+            cakeToppings = cakeToppings,
+            petFed = petFed,
+            petClean = petClean,
+            petGroomed = petGroomed,
+            photoTaken = photoTaken
+        )
     }
 
     fun applyResultsToSaveData(saveData: SaveData, evaluation: ScoreEvaluation): SaveData {
         if (!evaluation.isWin) {
-            return saveData // Do not award stars or unlock next level on failure
+            return saveData
         }
 
         val oldBestStars = saveData.bestStars[level.id] ?: 0
@@ -106,7 +188,8 @@ class LevelEngine(
         return saveData.copy(
             candyBalance = award.newCandyBalance,
             bestStars = updatedBestStars,
-            unlockedLevels = updatedUnlocked
+            unlockedLevels = updatedUnlocked,
+            activeCheckpoint = null
         )
     }
 
