@@ -44,15 +44,29 @@ android/
 
 ## 3. Cách Biên Dịch & Chạy Kiểm Thử
 
+> **Yêu cầu JDK:** Gradle 8.7 hỗ trợ **JDK 17 hoặc JDK 21** (không chạy trực tiếp trên JDK 22–25). Script `gradlew.bat` / `gradlew` đã hỗ trợ tự động tìm JDK 17/21 tương thích nếu môi trường chưa cấu hình `JAVA_HOME`.
+
 ### Biên dịch ứng dụng (Debug APK):
-```bash
-./gradlew :app:assembleDebug
+- **Windows (PowerShell / CMD):**
+  ```powershell
+  cd android
+  .\gradlew.bat :app:assembleDebug
+  ```
+- **Git Bash / macOS / Linux:**
+  ```bash
+  cd android
+  ./gradlew :app:assembleDebug
+  ```
+File APK xuất ra tại: `app/build/outputs/apk/debug/app-debug.apk` (và bản cài đặt kiểm chứng sẵn tại thư mục gốc `rainbow-unicorn.apk`).
+
+### Biên dịch Release APK (cần cấu hình keystore để ký khi phát hành):
+```powershell
+.\gradlew.bat :app:assembleRelease
 ```
-File APK xuất ra tại: `app/build/outputs/apk/debug/app-debug.apk` (hoặc file copy sẵn tại thư mục gốc `rainbow-unicorn.apk`).
 
 ### Chạy toàn bộ Unit Tests & Golden Vectors:
-```bash
-./gradlew :core:test --info
+```powershell
+.\gradlew.bat :core:test --info
 ```
 
 Báo cáo kết quả kiểm thử HTML tại: `core/build/reports/tests/test/index.html`.

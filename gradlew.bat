@@ -40,28 +40,61 @@ if defined JAVA_HOME goto findJavaFromJavaHome
 
 set JAVA_EXE=java.exe
 %JAVA_EXE% -version >NUL 2>&1
-if %ERRORLEVEL% equ 0 goto execute
-
-echo.
-echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
-echo.
-echo Please set the JAVA_HOME variable in your environment to match the
-echo location of your Java installation.
-
-goto fail
+if %ERRORLEVEL% equ 0 goto checkJavaVersion
+goto tryFallbackJdk
 
 :findJavaFromJavaHome
 set JAVA_HOME=%JAVA_HOME:"=%
-set JAVA_EXE=%JAVA_HOME%/bin/java.exe
+set JAVA_EXE=%JAVA_HOME%\bin\java.exe
 
-if exist "%JAVA_EXE%" goto execute
+if exist "%JAVA_EXE%" goto checkJavaVersion
+goto tryFallbackJdk
+
+:checkJavaVersion
+set JAVA_MAJOR=0
+set JVER=0
+for /f "usebackq tokens=3" %%g in (`""%JAVA_EXE%" -version 2>&1 | findstr /i version"`) do set "JVER=%%~g"
+for /f "tokens=1 delims=." %%a in ("%JVER%") do set "JAVA_MAJOR=%%a"
+if "%JAVA_MAJOR%"=="1" (
+    for /f "tokens=2 delims=." %%b in ("%JVER%") do set "JAVA_MAJOR=%%b"
+)
+if "%JAVA_MAJOR%"=="" goto tryFallbackJdk
+if %JAVA_MAJOR% LEQ 21 goto execute
+
+echo Note: Detected Java %JVER% (unsupported by Gradle 8.7). Searching for compatible JDK 17/21...
+
+:tryFallbackJdk
+for %%D in (
+    "D:\jdk-21.0.5"
+    "C:\Program Files\JetBrains\IntelliJ IDEA 2024.3.7\jbr"
+    "C:\Program Files\Android\Android Studio\jbr"
+    "D:\Studio\jbr"
+) do (
+    if exist "%%~D\bin\java.exe" (
+        set "JAVA_HOME=%%~D"
+        set "JAVA_EXE=%%~D\bin\java.exe"
+        goto execute
+    )
+)
+for /d %%D in (
+    "C:\Program Files\Eclipse Adoptium\jdk-21*"
+    "C:\Program Files\Eclipse Adoptium\jdk-17*"
+    "C:\Program Files\Java\jdk-21*"
+    "C:\Program Files\Java\jdk-17*"
+    "C:\Program Files\Microsoft\jdk-21*"
+    "C:\Program Files\Microsoft\jdk-17*"
+) do (
+    if exist "%%~D\bin\java.exe" (
+        set "JAVA_HOME=%%~D"
+        set "JAVA_EXE=%%~D\bin\java.exe"
+        goto execute
+    )
+)
 
 echo.
-echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
+echo ERROR: No compatible JDK (17 or 21) found. Current JAVA_HOME="%JAVA_HOME%".
 echo.
-echo Please set the JAVA_HOME variable in your environment to match the
-echo location of your Java installation.
-
+echo Please set JAVA_HOME to a JDK 17 or JDK 21 installation directory.
 goto fail
 
 :execute
