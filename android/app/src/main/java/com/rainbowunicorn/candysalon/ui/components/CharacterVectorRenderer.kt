@@ -258,6 +258,20 @@ object CharacterVectorRenderer {
         val bodyBottomY = neckY + headR * 1.45f
         val shoulderHalfW = headR * 0.62f
 
+        if (characterState.characterType == CharacterType.PRINCESS) {
+            CandySalonStudioRenderer.run {
+                drawPrincess3D(
+                    cx = cx,
+                    headY = headY,
+                    headR = headR,
+                    characterState = characterState,
+                    isBlinking = isBlinking,
+                    swayAngle = tailWagAngle
+                )
+            }
+            return
+        }
+
         val skinColor = if (characterState.characterType == CharacterType.UNICORN) {
             Color(0xFFFFF6FA)
         } else {

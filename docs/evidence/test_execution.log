@@ -113,11 +113,14 @@ Verified 21 Visual Screenshots (`docs/evidence/screens/`):
   13b2_shop_gate_math.png          (173928 bytes) - Parental Gate Step 2 (`9 + 4 = ?` with purple choices `15|13|16`)
   13c_shop_purchased.png           (187876 bytes) - VIP Pack & Remove Ads both marked `✓ Purchased` (`RULE-060`)
   14_level_select_vip_unlocked.png (299745 bytes) - Levels 11-20 VIP badges cleared / VIP pack unlocked
+  15_reference_choose_your_style.png(541620 bytes) - 100% faithful reference reconstruction: 3D Princess, 6-shelf "CLOSET ROOM" closet tower, arched window & rainbow, cupcake, easel portrait, magic wand, rainbow back button, "CHOOSE YOUR STYLE" bottom banner
+  16_interactive_closet_shelves.png(551717 bytes) - Interactive closet shelves (shelf 5 lipstick selected with golden pulsing glow, Undo button enabled)
+  17_navigated_back_home.png       (253063 bytes) - Navigated back to Home menu via top-right rainbow swirl back button
 
 Emulator shutdown: `adb emu kill` exited cleanly (code 0); zero lingering background tasks.
 
 ======================================================================
 6. iOS VERIFICATION STATUS (HONEST PLATFORM REPORTING)
 ======================================================================
-- Source & Resource Completeness: Complete (Swift 5.9+, SwiftUI + SpriteKit Portrait UI, GameCore SPM package, `GoldenVectorTests.swift`, `SaveAndEngineTests.swift`, EN/VI `Localizable.strings`, `L10n.swift`, 0 force unwraps `!`, SHA-256 identical spec/golden files).
+- Source & Resource Completeness: Complete (Swift 5.9+, SwiftUI + SpriteKit Portrait UI, `CandySalonStudioView.swift` matching 100% reference portrait studio layout, GameCore SPM package, `GoldenVectorTests.swift`, `SaveAndEngineTests.swift`, EN/VI `Localizable.strings`, `L10n.swift`, 0 force unwraps `!`, SHA-256 identical spec/golden files).
 - Runtime Execution Status: **Blocked (No macOS/Xcode toolchain on Windows host)** — Xcode / `xcodebuild` / `swift test` cannot execute on Windows 11. Must be executed on macOS 13+ / Xcode 15+ before App Store submission.

@@ -1663,176 +1663,51 @@ public struct PartyModeView: View {
 
     public var body: some View {
         ZStack {
-            CandyColors.pastelPink.opacity(0.25).ignoresSafeArea()
-
-            VStack(spacing: 6) {
-                HStack(spacing: 8) {
-                    NavButton(
-                        iconName: "arrow.backward",
-                        label: L10n.string("btn_exit", language: language),
-                        backgroundColor: CandyColors.pink,
-                        compact: true,
-                        action: onBack
-                    )
-                    CandyBalanceBadge(candyBalance: candyBalance, language: language)
-                    Spacer()
-                    NavButton(
-                        iconName: "camera.fill",
-                        label: L10n.string("btn_take_photo", language: language),
-                        backgroundColor: CandyColors.mint,
-                        foregroundColor: CandyColors.deepPlum,
-                        compact: true,
-                        action: {
-                            if galleryCount >= LocalStorageManager.maxGalleryPhotos {
-                                showGalleryFull = true
-                                return
-                            }
-                            soundManager.playShutter()
-                            photoFlash = true
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) { photoFlash = false }
-                            let snapshot = CharacterSpriteView.renderSnapshot(
-                                characterState: characterState,
-                                backdrop: backdrop,
-                                pose: .happy
-                            )
-                            if onSavePhotoToGallery(snapshot) {
-                                let count = min(galleryCount + 1, LocalStorageManager.maxGalleryPhotos)
-                                showToast(L10n.format("gallery_saved_banner", language: language, count))
-                            } else {
-                                showGalleryFull = true
-                            }
-                        }
-                    )
-                }
-                .padding(.horizontal, 10)
-                .padding(.top, 6)
-
-                HStack(spacing: 8) {
-                    let roleKey = characterState.characterType == .unicorn ? "switch_to_princess" : "switch_to_unicorn"
-                    NavButton(
-                        iconName: "arrow.left.arrow.right",
-                        label: L10n.string(roleKey, language: language),
-                        backgroundColor: CandyColors.purple,
-                        compact: true,
-                        fullWidth: true,
-                        action: {
-                            var copy = characterState
-                            copy.characterType = characterState.characterType == .unicorn ? .princess : .unicorn
-                            commit(copy)
-                            soundManager.playClick()
-                        }
-                    )
-
-                    NavButton(
-                        iconName: "paintpalette.fill",
-                        label: L10n.string("btn_backdrop", language: language),
-                        backgroundColor: CandyColors.yellow,
-                        foregroundColor: CandyColors.deepPlum,
-                        compact: true,
-                        fullWidth: true,
-                        action: {
-                            let all = StageBackdrop.allCases
-                            let idx = (all.firstIndex(of: backdrop) ?? 0) + 1
-                            backdrop = all[idx % all.count]
-                            soundManager.playClick()
-                        }
-                    )
-                }
-                .padding(.horizontal, 10)
-
-                HStack(spacing: 8) {
-                    NavButton(
-                        iconName: "arrow.uturn.backward",
-                        label: L10n.string("btn_undo", language: language),
-                        backgroundColor: .white,
-                        foregroundColor: CandyColors.deepPlum,
-                        isEnabled: canUndo,
-                        compact: true,
-                        fullWidth: true,
-                        action: {
-                            if let prev = undoStack.undo() {
-                                characterState = prev
-                                canUndo = undoStack.canUndo
-                                canRedo = undoStack.canRedo
-                                soundManager.playClick()
-                            }
-                        }
-                    )
-
-                    NavButton(
-                        iconName: "arrow.uturn.forward",
-                        label: L10n.string("btn_redo", language: language),
-                        backgroundColor: .white,
-                        foregroundColor: CandyColors.deepPlum,
-                        isEnabled: canRedo,
-                        compact: true,
-                        fullWidth: true,
-                        action: {
-                            if let next = undoStack.redo() {
-                                characterState = next
-                                canUndo = undoStack.canUndo
-                                canRedo = undoStack.canRedo
-                                soundManager.playClick()
-                            }
-                        }
-                    )
-
-                    NavButton(
-                        iconName: "arrow.clockwise",
-                        label: L10n.string("btn_reset", language: language),
-                        backgroundColor: CandyColors.pastelPink,
-                        foregroundColor: CandyColors.deepPlum,
-                        compact: true,
-                        fullWidth: true,
-                        action: { showResetConfirm = true }
-                    )
-                }
-                .padding(.horizontal, 10)
-
-                ZStack {
-                    CharacterSpriteView(
+            CandySalonStudioView(
+                characterState: $characterState,
+                candyBalance: candyBalance,
+                onBackClicked: onBack,
+                onSavePhoto: {
+                    if galleryCount >= LocalStorageManager.maxGalleryPhotos {
+                        showGalleryFull = true
+                        return
+                    }
+                    soundManager.playShutter()
+                    photoFlash = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) { photoFlash = false }
+                    let snapshot = CharacterSpriteView.renderSnapshot(
                         characterState: characterState,
                         backdrop: backdrop,
-                        pose: .idle,
-                        drawBackdrop: true
+                        pose: .happy
                     )
-                    if photoFlash {
-                        Color.white.opacity(0.85)
+                    if onSavePhotoToGallery(snapshot) {
+                        let count = min(galleryCount + 1, LocalStorageManager.maxGalleryPhotos)
+                        showToast(L10n.format("gallery_saved_banner", language: language, count))
+                    } else {
+                        showGalleryFull = true
                     }
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            )
 
-                BottomItemTray(
-                    categories: partyCategories,
-                    items: items,
-                    language: language,
-                    unlockedItems: unlockedItems,
-                    selectedIdsForCategory: { selectedIds(for: $0) },
-                    onItemSelected: { item in
-                        soundManager.playClick()
-                        equip(item)
-                    },
-                    onLockedItemClicked: { item in
-                        soundManager.playClick()
-                        lockedItemPending = item
-                    },
-                    onClearCategory: { cat in
-                        soundManager.playClick()
-                        var cleared = characterState
-                        switch cat.id {
-                        case "hair_styles": cleared.hairStyleId = nil
-                        case "hair_colors": cleared.hairColorId = nil
-                        case "eyeshadows": cleared.makeup.eyeshadow = nil
-                        case "lipsticks": cleared.makeup.lipstick = nil
-                        case "blushes": cleared.makeup.blush = nil
-                        case "face_paints": cleared.facePaints = []
-                        case "outfits": cleared.outfitId = nil
-                        case "wings": cleared.wingsId = nil
-                        case "horns": cleared.hornId = nil
-                        case "tiaras": cleared.tiaraId = nil
-                        case "jewelry": cleared.jewelryId = nil
-                        case "stickers": cleared.stickers = []
-                        default: break
+            if photoFlash {
+                Color.white.opacity(0.85).ignoresSafeArea()
+            }
+
+            if let toast = toastMessage {
+                VStack {
+                    Spacer()
+                    Text(toast)
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background(Color.black.opacity(0.75))
+                        .cornerRadius(20)
+                        .padding(.bottom, 65)
+                }
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
                         }
                         commit(cleared)
                     }
