@@ -41,6 +41,7 @@ import com.rainbowunicorn.candysalon.R
 import com.rainbowunicorn.candysalon.ui.components.CandyPalette
 import com.rainbowunicorn.candysalon.ui.components.CharacterVectorRenderer
 import com.rainbowunicorn.candysalon.ui.theme.CandyActionPink
+import com.rainbowunicorn.candysalon.ui.theme.CandyActionPurple
 import com.rainbowunicorn.candysalon.ui.theme.CandyDeepPlum
 import com.rainbowunicorn.candysalon.ui.theme.CandyMint
 import com.rainbowunicorn.candysalon.ui.theme.CandyPastelPink
@@ -55,6 +56,9 @@ fun CakeStationView(
     toppings: List<String>,
     onLayersChanged: (Int) -> Unit,
     onClearToppings: () -> Unit,
+    onRemoveTopping: (String) -> Unit = {},
+    onOpenAddModal: () -> Unit = {},
+    onOpenFlavorModal: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val safeLayers = layers.coerceIn(1, 4)
@@ -65,69 +69,160 @@ fun CakeStationView(
             .padding(horizontal = 12.dp, vertical = 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // Interactive Cake Action Buttons Bar (CRUD Operations: Add, Edit, Delete)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            androidx.compose.material3.Button(
+                onClick = onOpenAddModal,
+                shape = RoundedCornerShape(16.dp),
+                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                    containerColor = CandyActionPink,
+                    contentColor = Color.White
+                ),
+                modifier = Modifier
+                    .weight(1.1f)
+                    .heightIn(min = 48.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.btn_add_topping),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1
+                )
+            }
+
+            androidx.compose.material3.Button(
+                onClick = onOpenFlavorModal,
+                shape = RoundedCornerShape(16.dp),
+                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                    containerColor = CandyActionPurple,
+                    contentColor = Color.White
+                ),
+                modifier = Modifier
+                    .weight(1f)
+                    .heightIn(min = 48.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.btn_change_flavor),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1
+                )
+            }
+
+            if (toppings.isNotEmpty()) {
+                androidx.compose.material3.Button(
+                    onClick = onClearToppings,
+                    shape = RoundedCornerShape(16.dp),
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFFFEBEE),
+                        contentColor = Color(0xFFD32F2F)
+                    ),
+                    modifier = Modifier.heightIn(min = 48.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.DeleteSweep,
+                        contentDescription = stringResource(R.string.btn_clear_all_toppings),
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
+        }
+
+        // Removable Topping Chips (Shows equipped toppings with individual DELETE [x] button)
+        if (toppings.isNotEmpty()) {
+            androidx.compose.foundation.lazy.LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                items(toppings.size) { idx ->
+                    val topId = toppings[idx]
+                    val cleanLabel = topId.substringAfter("topping_").replace("_", " ").replaceFirstChar { it.uppercase() }
+                    androidx.compose.material3.Surface(
+                        shape = RoundedCornerShape(14.dp),
+                        color = Color.White,
+                        border = androidx.compose.foundation.BorderStroke(1.dp, CandyPink),
+                        modifier = Modifier.height(34.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = "🍬 $cleanLabel",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = CandyDeepPlum
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Box(
+                                modifier = Modifier
+                                    .size(18.dp)
+                                    .clip(RoundedCornerShape(9.dp))
+                                    .background(Color(0xFFFFCDD2))
+                                    .clickable { onRemoveTopping(topId) },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "✕",
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFFC62828)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         // Tier selector & instruction card
         Card(
             shape = RoundedCornerShape(18.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.94f)),
             elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
         ) {
-            Column(
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "🎂 " + stringResource(R.string.cake_layers_label) + ":",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = CandyDeepPlum
-                    )
-                    for (t in 1..4) {
-                        val selected = safeLayers == t
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .weight(1f)
-                                .heightIn(min = 48.dp)
-                                .clip(RoundedCornerShape(14.dp))
-                                .background(if (selected) CandyActionPink else CandyPastelPink.copy(alpha = 0.35f))
-                                .border(
-                                    width = if (selected) 2.dp else 1.dp,
-                                    color = if (selected) CandyDeepPlum else CandyPurple.copy(alpha = 0.3f),
-                                    shape = RoundedCornerShape(14.dp)
-                                )
-                                .clickable { onLayersChanged(t) }
-                        ) {
-                            Text(
-                                text = "$t",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = if (selected) Color.White else CandyDeepPlum
+                Text(
+                    text = "🎂 " + stringResource(R.string.cake_layers_label) + ":",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = CandyDeepPlum
+                )
+                for (t in 1..4) {
+                    val selected = safeLayers == t
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .weight(1f)
+                            .heightIn(min = 44.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(if (selected) CandyActionPink else CandyPastelPink.copy(alpha = 0.35f))
+                            .border(
+                                width = if (selected) 2.dp else 1.dp,
+                                color = if (selected) CandyDeepPlum else CandyPurple.copy(alpha = 0.3f),
+                                shape = RoundedCornerShape(12.dp)
                             )
-                        }
-                    }
-                    if (toppings.isNotEmpty()) {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .heightIn(min = 48.dp)
-                                .clip(RoundedCornerShape(14.dp))
-                                .background(CandyYellow)
-                                .clickable { onClearToppings() }
-                                .padding(horizontal = 10.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.DeleteSweep,
-                                contentDescription = stringResource(R.string.cake_clear_toppings),
-                                tint = CandyDeepPlum,
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
+                            .clickable { onLayersChanged(t) }
+                    ) {
+                        Text(
+                            text = "$t",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = if (selected) Color.White else CandyDeepPlum
+                        )
                     }
                 }
             }

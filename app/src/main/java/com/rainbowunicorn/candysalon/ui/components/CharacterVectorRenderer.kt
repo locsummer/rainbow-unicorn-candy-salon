@@ -383,7 +383,7 @@ object CharacterVectorRenderer {
         drawStickersLayer(characterState.stickers, cx, headY, bodyBottomY, headR)
     }
 
-    private fun DrawScope.drawWingsLayer(wingsId: String, cx: Float, wingCy: Float, headR: Float) {
+    internal fun DrawScope.drawWingsLayer(wingsId: String, cx: Float, wingCy: Float, headR: Float) {
         val (primary, secondary) = when {
             wingsId.contains("rainbow") -> Color(0xFFFF80AB) to CandyMint
             wingsId.contains("starlight") -> Color(0xFF7986CB) to CandyYellow
@@ -566,72 +566,164 @@ object CharacterVectorRenderer {
         shoulderHalfW: Float,
         pose: CharacterPose
     ) {
-        // Neck & torso silhouette
+        // Torso with soft natural curvature
         val torso = Path().apply {
-            moveTo(cx - headR * 0.2f, neckY - headR * 0.08f)
-            lineTo(cx + headR * 0.2f, neckY - headR * 0.08f)
-            quadraticBezierTo(cx + shoulderHalfW * 0.95f, neckY + headR * 0.22f, cx + headR * 0.72f, bodyBottomY)
+            moveTo(cx - headR * 0.22f, neckY - headR * 0.05f)
+            lineTo(cx + headR * 0.22f, neckY - headR * 0.05f)
+            cubicTo(
+                cx + shoulderHalfW * 1.15f, neckY + headR * 0.25f,
+                cx + headR * 0.85f, bodyBottomY - headR * 0.25f,
+                cx + headR * 0.72f, bodyBottomY
+            )
             lineTo(cx - headR * 0.72f, bodyBottomY)
-            quadraticBezierTo(cx - shoulderHalfW * 0.95f, neckY + headR * 0.22f, cx - headR * 0.2f, neckY - headR * 0.08f)
+            cubicTo(
+                cx - headR * 0.85f, bodyBottomY - headR * 0.25f,
+                cx - shoulderHalfW * 1.15f, neckY + headR * 0.25f,
+                cx - headR * 0.22f, neckY - headR * 0.05f
+            )
             close()
         }
         drawPath(torso, skinColor)
         drawPath(torso, outlineColor, style = Stroke(width = 3f))
 
-        // Arms according to pose
-        val armW = headR * 0.16f
-        val leftHandOffset = when (pose) {
-            CharacterPose.STAR -> Offset(cx - headR * 1.18f, neckY - headR * 0.1f)
-            CharacterPose.HAPPY -> Offset(cx - headR * 1.05f, neckY + headR * 0.15f)
-            else -> Offset(cx - headR * 0.88f, neckY + headR * 0.82f)
-        }
-        val rightHandOffset = when (pose) {
-            CharacterPose.WAVE, CharacterPose.STAR -> Offset(cx + headR * 1.2f, headY + headR * 0.2f)
-            CharacterPose.HAPPY -> Offset(cx + headR * 1.05f, neckY + headR * 0.15f)
-            else -> Offset(cx + headR * 0.88f, neckY + headR * 0.82f)
-        }
-        drawLine(
-            color = skinColor,
-            start = Offset(cx - shoulderHalfW * 0.85f, neckY + headR * 0.28f),
-            end = leftHandOffset,
-            strokeWidth = armW,
-            cap = StrokeCap.Round
-        )
-        drawLine(
-            color = skinColor,
-            start = Offset(cx + shoulderHalfW * 0.85f, neckY + headR * 0.28f),
-            end = rightHandOffset,
-            strokeWidth = armW,
-            cap = StrokeCap.Round
-        )
+        // Cute cartoon forelegs / arms with soft rounded hooves
+        val armW = headR * 0.20f
+        val leftArmStart = Offset(cx - shoulderHalfW * 0.95f, neckY + headR * 0.25f)
+        val rightArmStart = Offset(cx + shoulderHalfW * 0.95f, neckY + headR * 0.25f)
 
-        // Unicorn Ears OR Princess Side Ears
+        val leftArmEnd = when (pose) {
+            CharacterPose.STAR -> Offset(cx - headR * 1.12f, headY + headR * 0.05f)
+            CharacterPose.HAPPY -> Offset(cx - headR * 0.82f, headY + headR * 0.48f)
+            else -> Offset(cx - headR * 0.75f, neckY + headR * 0.75f)
+        }
+        val rightArmEnd = when (pose) {
+            CharacterPose.WAVE, CharacterPose.STAR -> Offset(cx + headR * 1.15f, headY + headR * 0.05f)
+            CharacterPose.HAPPY -> Offset(cx + headR * 0.82f, headY + headR * 0.48f)
+            else -> Offset(cx + headR * 0.75f, neckY + headR * 0.75f)
+        }
+
+        // Left curved arm
+        val leftArmPath = Path().apply {
+            moveTo(leftArmStart.x, leftArmStart.y)
+            quadraticBezierTo(
+                (leftArmStart.x + leftArmEnd.x) * 0.5f - 12f,
+                (leftArmStart.y + leftArmEnd.y) * 0.5f,
+                leftArmEnd.x,
+                leftArmEnd.y
+            )
+        }
+        drawPath(leftArmPath, color = outlineColor, style = Stroke(width = armW + 5f, cap = StrokeCap.Round))
+        drawPath(leftArmPath, color = skinColor, style = Stroke(width = armW, cap = StrokeCap.Round))
+        // Left cute hoof cap
+        drawCircle(CandyPastelPink, radius = armW * 0.72f, center = leftArmEnd)
+        drawCircle(CandyYellow, radius = armW * 0.42f, center = leftArmEnd)
+
+        // Right curved arm
+        val rightArmPath = Path().apply {
+            moveTo(rightArmStart.x, rightArmStart.y)
+            quadraticBezierTo(
+                (rightArmStart.x + rightArmEnd.x) * 0.5f + 12f,
+                (rightArmStart.y + rightArmEnd.y) * 0.5f,
+                rightArmEnd.x,
+                rightArmEnd.y
+            )
+        }
+        drawPath(rightArmPath, color = outlineColor, style = Stroke(width = armW + 5f, cap = StrokeCap.Round))
+        drawPath(rightArmPath, color = skinColor, style = Stroke(width = armW, cap = StrokeCap.Round))
+        // Right cute hoof cap
+        drawCircle(CandyPastelPink, radius = armW * 0.72f, center = rightArmEnd)
+        drawCircle(CandyYellow, radius = armW * 0.42f, center = rightArmEnd)
+
+        // Cute Fluffy Pony Ears
         if (characterType == CharacterType.UNICORN) {
             for (side in listOf(-1f, 1f)) {
                 val earOuter = Path().apply {
-                    moveTo(cx + side * headR * 0.56f, headY - headR * 0.62f)
-                    lineTo(cx + side * headR * 0.92f, headY - headR * 1.32f)
-                    lineTo(cx + side * headR * 0.25f, headY - headR * 0.86f)
+                    moveTo(cx + side * headR * 0.35f, headY - headR * 0.65f)
+                    cubicTo(
+                        cx + side * headR * 0.65f, headY - headR * 0.95f,
+                        cx + side * headR * 1.05f, headY - headR * 1.45f,
+                        cx + side * headR * 0.78f, headY - headR * 1.55f
+                    )
+                    cubicTo(
+                        cx + side * headR * 0.55f, headY - headR * 1.50f,
+                        cx + side * headR * 0.28f, headY - headR * 1.15f,
+                        cx + side * headR * 0.12f, headY - headR * 0.85f
+                    )
                     close()
                 }
                 val earInner = Path().apply {
-                    moveTo(cx + side * headR * 0.56f, headY - headR * 0.68f)
-                    lineTo(cx + side * headR * 0.82f, headY - headR * 1.18f)
-                    lineTo(cx + side * headR * 0.34f, headY - headR * 0.84f)
+                    moveTo(cx + side * headR * 0.40f, headY - headR * 0.75f)
+                    cubicTo(
+                        cx + side * headR * 0.65f, headY - headR * 1.00f,
+                        cx + side * headR * 0.92f, headY - headR * 1.38f,
+                        cx + side * headR * 0.72f, headY - headR * 1.42f
+                    )
+                    cubicTo(
+                        cx + side * headR * 0.55f, headY - headR * 1.38f,
+                        cx + side * headR * 0.35f, headY - headR * 1.12f,
+                        cx + side * headR * 0.22f, headY - headR * 0.90f
+                    )
                     close()
                 }
                 drawPath(earOuter, skinColor)
-                drawPath(earOuter, outlineColor, style = Stroke(width = 3f, join = StrokeJoin.Round))
-                drawPath(earInner, CandyPastelPink.copy(alpha = 0.85f))
+                drawPath(earOuter, outlineColor, style = Stroke(width = 3.2f, join = StrokeJoin.Round))
+                drawPath(earInner, Brush.verticalGradient(listOf(Color(0xFFFF80AB), Color(0xFFFFCDD2))))
+                // Fluffy fur tuft at ear base
+                drawCircle(Color.White, radius = headR * 0.10f, center = Offset(cx + side * headR * 0.28f, headY - headR * 0.75f))
             }
         } else {
             drawCircle(skinColor, radius = headR * 0.16f, center = Offset(cx - headR * 0.96f, headY + headR * 0.06f))
             drawCircle(skinColor, radius = headR * 0.16f, center = Offset(cx + headR * 0.96f, headY + headR * 0.06f))
         }
 
-        // Head Face Circle
-        drawCircle(skinColor, radius = headR, center = Offset(cx, headY))
-        drawCircle(outlineColor, radius = headR, center = Offset(cx, headY), style = Stroke(width = 3f))
+        // Head Contour with Organic Bézier Curves
+        val headPath = Path().apply {
+            moveTo(cx, headY - headR * 0.92f)
+            cubicTo(
+                cx + headR * 0.68f, headY - headR * 0.92f,
+                cx + headR * 0.94f, headY - headR * 0.35f,
+                cx + headR * 0.98f, headY + headR * 0.12f
+            )
+            cubicTo(
+                cx + headR * 1.00f, headY + headR * 0.50f,
+                cx + headR * 0.65f, headY + headR * 0.92f,
+                cx, headY + headR * 0.94f
+            )
+            cubicTo(
+                cx - headR * 0.65f, headY + headR * 0.94f,
+                cx - headR * 1.00f, headY + headR * 0.50f,
+                cx - headR * 0.98f, headY + headR * 0.12f
+            )
+            cubicTo(
+                cx - headR * 0.94f, headY - headR * 0.35f,
+                cx - headR * 0.68f, headY - headR * 0.92f,
+                cx, headY - headR * 0.92f
+            )
+            close()
+        }
+        drawPath(headPath, skinColor)
+        drawPath(headPath, outlineColor, style = Stroke(width = 3.5f))
+
+        // Cute Snout / Muzzle Patch for Unicorn
+        if (characterType == CharacterType.UNICORN) {
+            val muzzleY = headY + headR * 0.44f
+            val muzzleW = headR * 0.72f
+            val muzzleH = headR * 0.45f
+            drawOval(
+                brush = Brush.verticalGradient(listOf(Color(0xFFFFF0F5), Color(0xFFFFDEE9))),
+                topLeft = Offset(cx - muzzleW / 2f, muzzleY),
+                size = Size(muzzleW, muzzleH)
+            )
+            drawOval(
+                color = CandyDeepPlum.copy(alpha = 0.20f),
+                topLeft = Offset(cx - muzzleW / 2f, muzzleY),
+                size = Size(muzzleW, muzzleH),
+                style = Stroke(width = 1.8f)
+            )
+            // Two cute tiny nostrils
+            drawCircle(Color(0xFFFF8FAB), radius = 3.5f, center = Offset(cx - headR * 0.11f, muzzleY + muzzleH * 0.32f))
+            drawCircle(Color(0xFFFF8FAB), radius = 3.5f, center = Offset(cx + headR * 0.11f, muzzleY + muzzleH * 0.32f))
+        }
     }
 
     private fun DrawScope.drawClippedEyeshadow(eyeCenter: Offset, eyeR: Float, shadowColor: Color) {
@@ -664,6 +756,8 @@ object CharacterVectorRenderer {
     private fun DrawScope.drawKawaiiEyes(leftEye: Offset, rightEye: Offset, eyeR: Float, isBlinking: Boolean) {
         val lashColor = Color(0xFF2C1035)
         for (center in listOf(leftEye, rightEye)) {
+            val isLeft = center.x < rightEye.x
+            val sideSign = if (isLeft) -1f else 1f
             if (isBlinking) {
                 drawArc(
                     color = lashColor,
@@ -675,57 +769,101 @@ object CharacterVectorRenderer {
                     style = Stroke(width = 5f, cap = StrokeCap.Round)
                 )
             } else {
-                drawCircle(Color.White, radius = eyeR, center = center)
-                drawCircle(lashColor, radius = eyeR, center = center, style = Stroke(width = 2.5f))
-                drawCircle(Color(0xFF5E2B97), radius = eyeR * 0.68f, center = Offset(center.x, center.y + eyeR * 0.05f))
-                drawCircle(Color(0xFF2A0845), radius = eyeR * 0.38f, center = Offset(center.x, center.y + eyeR * 0.06f))
-                // Catchlights
-                drawCircle(Color.White, radius = eyeR * 0.24f, center = Offset(center.x - eyeR * 0.24f, center.y - eyeR * 0.24f))
-                drawCircle(Color.White, radius = eyeR * 0.11f, center = Offset(center.x + eyeR * 0.22f, center.y + eyeR * 0.22f))
-                // Upper curved eyelashes (RULE-051: drawn strictly over eyeshadow!)
-                drawArc(
-                    color = lashColor,
-                    startAngle = 195f,
-                    sweepAngle = 150f,
-                    useCenter = false,
-                    topLeft = Offset(center.x - eyeR * 1.05f, center.y - eyeR * 1.05f),
-                    size = Size(eyeR * 2.1f, eyeR * 2.1f),
-                    style = Stroke(width = 5f, cap = StrokeCap.Round)
+                // White sclera
+                drawOval(
+                    color = Color.White,
+                    topLeft = Offset(center.x - eyeR * 1.05f, center.y - eyeR * 1.15f),
+                    size = Size(eyeR * 2.1f, eyeR * 2.3f)
                 )
+                drawOval(
+                    color = lashColor.copy(alpha = 0.4f),
+                    topLeft = Offset(center.x - eyeR * 1.05f, center.y - eyeR * 1.15f),
+                    size = Size(eyeR * 2.1f, eyeR * 2.3f),
+                    style = Stroke(width = 2f)
+                )
+                // Glossy gradient iris
+                val irisR = eyeR * 0.82f
+                val irisCenter = Offset(center.x, center.y + eyeR * 0.08f)
+                drawCircle(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(Color(0xFF5E2B97), Color(0xFFAB47BC), Color(0xFF00E5FF)),
+                        startY = irisCenter.y - irisR,
+                        endY = irisCenter.y + irisR
+                    ),
+                    radius = irisR,
+                    center = irisCenter
+                )
+                // Dark pupil
+                drawCircle(Color(0xFF1E0533), radius = irisR * 0.52f, center = irisCenter)
+                // Multi-tier sparkling catchlights
+                drawCircle(Color.White, radius = irisR * 0.38f, center = Offset(irisCenter.x - irisR * 0.30f, irisCenter.y - irisR * 0.30f))
+                drawCircle(Color.White, radius = irisR * 0.18f, center = Offset(irisCenter.x + irisR * 0.32f, irisCenter.y + irisR * 0.32f))
+                drawStarShape(Offset(irisCenter.x + irisR * 0.12f, irisCenter.y - irisR * 0.15f), irisR * 0.16f, Color.White)
+
+                // Upper curved lush eyelashes
+                val lashPath = Path().apply {
+                    moveTo(center.x - sideSign * eyeR * 1.15f, center.y - eyeR * 0.25f)
+                    cubicTo(
+                        center.x - sideSign * eyeR * 0.6f, center.y - eyeR * 1.35f,
+                        center.x + sideSign * eyeR * 0.6f, center.y - eyeR * 1.35f,
+                        center.x + sideSign * eyeR * 1.25f, center.y - eyeR * 0.55f
+                    )
+                    lineTo(center.x + sideSign * eyeR * 1.45f, center.y - eyeR * 0.85f)
+                }
+                drawPath(lashPath, color = lashColor, style = Stroke(width = 5f, cap = StrokeCap.Round))
+                // Soft delicate lower lash
+                drawArc(
+                    color = lashColor.copy(alpha = 0.5f),
+                    startAngle = 20f,
+                    sweepAngle = 140f,
+                    useCenter = false,
+                    topLeft = Offset(center.x - eyeR * 0.75f, center.y + eyeR * 0.65f),
+                    size = Size(eyeR * 1.5f, eyeR * 0.5f),
+                    style = Stroke(width = 2f, cap = StrokeCap.Round)
+                )
+                // Cute curved eyebrow
+                val browPath = Path().apply {
+                    moveTo(center.x - sideSign * eyeR * 0.95f, center.y - eyeR * 1.45f)
+                    quadraticBezierTo(
+                        center.x, center.y - eyeR * 1.85f,
+                        center.x + sideSign * eyeR * 0.95f, center.y - eyeR * 1.40f
+                    )
+                }
+                drawPath(browPath, color = Color(0xFF6A1B9A), style = Stroke(width = 3.5f, cap = StrokeCap.Round))
             }
         }
     }
 
     private fun DrawScope.drawMouthAndLipstick(cx: Float, headY: Float, headR: Float, lipstickId: String?) {
-        val mouthY = headY + headR * 0.50f
+        val mouthY = headY + headR * 0.62f
         if (lipstickId != null) {
             val lipCol = CandyPalette.lipstickColor(lipstickId)
             val lipPath = Path().apply {
-                moveTo(cx - headR * 0.22f, mouthY)
-                quadraticBezierTo(cx - headR * 0.08f, mouthY - headR * 0.11f, cx, mouthY - headR * 0.05f)
-                quadraticBezierTo(cx + headR * 0.08f, mouthY - headR * 0.11f, cx + headR * 0.22f, mouthY)
-                quadraticBezierTo(cx, mouthY + headR * 0.18f, cx - headR * 0.22f, mouthY)
+                moveTo(cx - headR * 0.20f, mouthY)
+                quadraticBezierTo(cx - headR * 0.08f, mouthY - headR * 0.08f, cx, mouthY - headR * 0.04f)
+                quadraticBezierTo(cx + headR * 0.08f, mouthY - headR * 0.08f, cx + headR * 0.20f, mouthY)
+                quadraticBezierTo(cx, mouthY + headR * 0.15f, cx - headR * 0.20f, mouthY)
                 close()
             }
             drawPath(lipPath, lipCol)
             // Lip gloss highlight
             drawLine(
                 color = Color.White.copy(alpha = 0.75f),
-                start = Offset(cx - headR * 0.07f, mouthY + headR * 0.04f),
-                end = Offset(cx + headR * 0.07f, mouthY + headR * 0.04f),
+                start = Offset(cx - headR * 0.06f, mouthY + headR * 0.03f),
+                end = Offset(cx + headR * 0.06f, mouthY + headR * 0.03f),
                 strokeWidth = 3f,
                 cap = StrokeCap.Round
             )
         } else {
-            drawArc(
-                color = CandyDeepPlum,
-                startAngle = 15f,
-                sweepAngle = 150f,
-                useCenter = false,
-                topLeft = Offset(cx - headR * 0.15f, mouthY - headR * 0.06f),
-                size = Size(headR * 0.30f, headR * 0.16f),
-                style = Stroke(width = 4f, cap = StrokeCap.Round)
-            )
+            // Cute cheerful smile with dimples
+            val smilePath = Path().apply {
+                moveTo(cx - headR * 0.15f, mouthY - headR * 0.04f)
+                quadraticBezierTo(cx, mouthY + headR * 0.10f, cx + headR * 0.15f, mouthY - headR * 0.04f)
+            }
+            drawPath(smilePath, color = CandyDeepPlum, style = Stroke(width = 3.5f, cap = StrokeCap.Round))
+            // Sweet rosy dimples
+            drawCircle(Color(0xFFFF8FAB), radius = 2.5f, center = Offset(cx - headR * 0.16f, mouthY - headR * 0.03f))
+            drawCircle(Color(0xFFFF8FAB), radius = 2.5f, center = Offset(cx + headR * 0.16f, mouthY - headR * 0.03f))
         }
     }
 
@@ -803,7 +941,7 @@ object CharacterVectorRenderer {
         }
     }
 
-    private fun DrawScope.drawHornLayer(hornId: String, cx: Float, foreheadY: Float, headR: Float) {
+    internal fun DrawScope.drawHornLayer(hornId: String, cx: Float, foreheadY: Float, headR: Float) {
         val (baseCol, stripeCol) = when {
             hornId.contains("gold") -> Color(0xFFFFD700) to Color(0xFFFFA000)
             hornId.contains("crystal") -> Color(0xFF80DEEA) to Color(0xFFE0F7FA)
@@ -829,24 +967,24 @@ object CharacterVectorRenderer {
             val hw = baseHalf * t * 0.9f
             drawLine(Color.White.copy(alpha = 0.85f), Offset(cx - hw, y), Offset(cx + hw, y + 4f), strokeWidth = 3f)
         }
-        if (hornId.contains("star_gem")) {
-            drawStarShape(Offset(cx, tipY + 4f), headR * 0.14f, CandyYellow)
-        }
+        drawStarShape(Offset(cx, tipY - 2f), headR * 0.16f, CandyYellow)
     }
 
-    private fun DrawScope.drawJewelryLayer(jewelryId: String, cx: Float, headY: Float, neckY: Float, headR: Float) {
+    internal fun DrawScope.drawJewelryLayer(jewelryId: String, cx: Float, headY: Float, neckY: Float, headR: Float) {
         when {
             jewelryId.contains("earrings") -> {
                 for (side in listOf(-1f, 1f)) {
-                    val ex = cx + side * headR * 0.96f
-                    val ey = headY + headR * 0.25f
-                    drawCircle(CandyPink, radius = headR * 0.11f, center = Offset(ex, ey))
-                    drawCircle(CandyYellow, radius = headR * 0.05f, center = Offset(ex, ey))
+                    val ex = cx + side * headR * 0.92f
+                    val ey = headY + headR * 0.22f
+                    drawCircle(CandyPink, radius = headR * 0.12f, center = Offset(ex, ey))
+                    drawCircle(CandyYellow, radius = headR * 0.06f, center = Offset(ex, ey))
+                    drawLine(Color.White, Offset(ex, ey + 4f), Offset(ex, ey + 14f), strokeWidth = 2f)
+                    drawCircle(CandyMint, radius = headR * 0.05f, center = Offset(ex, ey + 15f))
                 }
             }
             jewelryId.contains("choker") -> {
-                drawLine(Color(0xFFF06292), Offset(cx - headR * 0.24f, neckY), Offset(cx + headR * 0.24f, neckY), strokeWidth = 7f, cap = StrokeCap.Round)
-                drawCircle(CandyYellow, radius = headR * 0.09f, center = Offset(cx, neckY + 3f))
+                drawLine(Color(0xFFF06292), Offset(cx - headR * 0.26f, neckY), Offset(cx + headR * 0.26f, neckY), strokeWidth = 8f, cap = StrokeCap.Round)
+                drawCircle(CandyYellow, radius = headR * 0.10f, center = Offset(cx, neckY + 3f))
             }
             jewelryId.contains("diamond") -> {
                 drawArc(
@@ -854,25 +992,25 @@ object CharacterVectorRenderer {
                     startAngle = 20f,
                     sweepAngle = 140f,
                     useCenter = false,
-                    topLeft = Offset(cx - headR * 0.3f, neckY - headR * 0.05f),
-                    size = Size(headR * 0.6f, headR * 0.35f),
+                    topLeft = Offset(cx - headR * 0.32f, neckY - headR * 0.05f),
+                    size = Size(headR * 0.64f, headR * 0.38f),
                     style = Stroke(width = 4f)
                 )
-                drawDiamondShape(Offset(cx, neckY + headR * 0.25f), headR * 0.14f, Color(0xFF00E5FF))
+                drawDiamondShape(Offset(cx, neckY + headR * 0.25f), headR * 0.15f, Color(0xFF00E5FF))
             }
             else -> {
-                // Pearl necklace
-                for (i in -3..3) {
-                    val px = cx + i * headR * 0.095f
-                    val py = neckY + headR * 0.16f - (i * i) * headR * 0.01f
-                    drawCircle(Color(0xFFFFFDE7), radius = headR * 0.055f, center = Offset(px, py))
-                    drawCircle(CandyPastelPink, radius = headR * 0.055f, center = Offset(px, py), style = Stroke(width = 1.5f))
+                // Pearl necklace following neck curve
+                for (i in -4..4) {
+                    val px = cx + i * headR * 0.085f
+                    val py = neckY + headR * 0.14f - (i * i) * headR * 0.008f
+                    drawCircle(Color(0xFFFFFDE7), radius = headR * 0.052f, center = Offset(px, py))
+                    drawCircle(CandyPastelPink, radius = headR * 0.052f, center = Offset(px, py), style = Stroke(width = 1.5f))
                 }
             }
         }
     }
 
-    private fun DrawScope.drawTiaraLayer(tiaraId: String, cx: Float, browY: Float, headR: Float) {
+    internal fun DrawScope.drawTiaraLayer(tiaraId: String, cx: Float, browY: Float, headR: Float) {
         val mainCol = when {
             tiaraId.contains("strawberry") -> Color(0xFFFF69B4)
             tiaraId.contains("candy_cane") -> Color(0xFFEF5350)
@@ -899,7 +1037,7 @@ object CharacterVectorRenderer {
         drawStarShape(Offset(cx, browY - headR * 0.26f), headR * 0.1f, CandyPink)
     }
 
-    private fun DrawScope.drawFacePaintsLayer(facePaints: List<String>, cx: Float, headY: Float, headR: Float) {
+    internal fun DrawScope.drawFacePaintsLayer(facePaints: List<String>, cx: Float, headY: Float, headR: Float) {
         facePaints.forEachIndexed { idx, paintId ->
             val offsetX = cx + (if (idx % 2 == 0) 0.55f else -0.55f) * headR
             val offsetY = headY + (0.08f + idx * 0.12f) * headR
@@ -921,27 +1059,36 @@ object CharacterVectorRenderer {
         }
     }
 
-    private fun DrawScope.drawStickersLayer(
+    internal fun DrawScope.drawStickersLayer(
         stickers: List<String>,
         cx: Float,
         headY: Float,
         bodyBottomY: Float,
         headR: Float
     ) {
-        val midY = (headY + bodyBottomY) * 0.48f
+        val waistY = headY + headR * 1.45f
+        // Exact anatomical anchor spots on body/head (never floating in the void!)
+        val anchorSlots = listOf(
+            Offset(cx - headR * 0.55f, headY + headR * 0.28f), // 0: Left cheek
+            Offset(cx + headR * 0.55f, headY + headR * 0.28f), // 1: Right cheek
+            Offset(cx, headY + headR * 1.15f),                 // 2: Bodice center
+            Offset(cx - headR * 0.28f, headY + headR * 1.25f), // 3: Bodice left
+            Offset(cx + headR * 0.28f, headY + headR * 1.25f), // 4: Bodice right
+            Offset(cx, waistY + headR * 0.35f),                 // 5: Skirt upper center
+            Offset(cx - headR * 0.55f, waistY + headR * 0.45f), // 6: Skirt left
+            Offset(cx + headR * 0.55f, waistY + headR * 0.45f), // 7: Skirt right
+            Offset(cx, bodyBottomY - headR * 0.05f),            // 8: Skirt lower center
+            Offset(cx - headR * 0.45f, headY - headR * 0.55f)  // 9: Forehead / hair pin
+        )
         stickers.take(10).forEachIndexed { idx, stkId ->
-            val angle = -PI / 2.0 + idx * (2.0 * PI / 10.0)
-            val rx = headR * 1.48f
-            val ry = headR * 1.65f
-            val pos = Offset(
-                cx + (rx * cos(angle)).toFloat(),
-                midY + (ry * sin(angle)).toFloat()
-            )
+            val pos = anchorSlots.getOrElse(idx) {
+                Offset(cx + ((idx % 3) - 1) * headR * 0.4f, waistY + (idx / 3) * headR * 0.3f)
+            }
             drawStickerVector(stkId, pos, headR * 0.16f)
         }
     }
 
-    fun DrawScope.drawStickerVector(stickerId: String, center: Offset, r: Float) {
+    internal fun DrawScope.drawStickerVector(stickerId: String, center: Offset, r: Float) {
         when {
             stickerId.contains("heart") -> {
                 val heart = Path().apply {
@@ -970,7 +1117,7 @@ object CharacterVectorRenderer {
         }
     }
 
-    fun DrawScope.drawStarShape(center: Offset, outerRadius: Float, color: Color) {
+    internal fun DrawScope.drawStarShape(center: Offset, outerRadius: Float, color: Color) {
         val innerRadius = outerRadius * 0.45f
         val path = Path()
         for (i in 0 until 10) {
@@ -984,7 +1131,7 @@ object CharacterVectorRenderer {
         drawPath(path, color)
     }
 
-    fun DrawScope.drawDiamondShape(center: Offset, r: Float, color: Color) {
+    internal fun DrawScope.drawDiamondShape(center: Offset, r: Float, color: Color) {
         val path = Path().apply {
             moveTo(center.x, center.y - r)
             lineTo(center.x + r * 0.8f, center.y)
@@ -1008,14 +1155,79 @@ object CharacterVectorRenderer {
         when (item.category) {
             "hair_styles" -> {
                 val brush = Brush.linearGradient(listOf(CandyPurple, CandyPink))
-                drawCircle(brush, radius = r * 0.8f, center = Offset(cx, cy))
-                if (item.id.contains("buns")) {
-                    drawCircle(brush, radius = r * 0.45f, center = Offset(cx - r * 0.75f, cy - r * 0.55f))
-                    drawCircle(brush, radius = r * 0.45f, center = Offset(cx + r * 0.75f, cy - r * 0.55f))
-                } else if (item.id.contains("braid")) {
-                    for (i in 0..2) drawCircle(brush, radius = r * 0.25f, center = Offset(cx - r * 0.5f, cy + i * r * 0.35f))
-                } else if (item.id.contains("ponytail")) {
-                    drawOval(brush, topLeft = Offset(cx, cy - r), size = Size(r * 0.9f, r * 1.4f))
+                when {
+                    item.id.contains("buns") -> {
+                        // Twin buns thumbnail: two distinct round buns with bows
+                        drawCircle(brush, radius = r * 0.42f, center = Offset(cx - r * 0.58f, cy - r * 0.35f))
+                        drawCircle(brush, radius = r * 0.42f, center = Offset(cx + r * 0.58f, cy - r * 0.35f))
+                        drawCircle(CandyPastelPink, radius = r * 0.50f, center = Offset(cx, cy + r * 0.15f))
+                        drawCircle(brush, radius = r * 0.28f, center = Offset(cx, cy - r * 0.30f))
+                        drawCircle(CandyPink, radius = r * 0.14f, center = Offset(cx - r * 0.58f, cy - r * 0.05f))
+                        drawCircle(CandyPink, radius = r * 0.14f, center = Offset(cx + r * 0.58f, cy - r * 0.05f))
+                    }
+                    item.id.contains("ponytail") -> {
+                        // High ponytail thumbnail: sweeping ponytail with hair tie
+                        drawCircle(CandyPastelPink, radius = r * 0.48f, center = Offset(cx - r * 0.15f, cy + r * 0.15f))
+                        val pony = Path().apply {
+                            moveTo(cx, cy - r * 0.5f)
+                            cubicTo(cx + r * 1.1f, cy - r * 0.8f, cx + r * 1.15f, cy + r * 0.4f, cx + r * 0.55f, cy + r * 0.75f)
+                            cubicTo(cx + r * 0.35f, cy + r * 0.5f, cx + r * 0.55f, cy, cx, cy - r * 0.2f)
+                            close()
+                        }
+                        drawPath(pony, brush)
+                        drawCircle(CandyPink, radius = r * 0.16f, center = Offset(cx + r * 0.05f, cy - r * 0.4f))
+                    }
+                    item.id.contains("straight") -> {
+                        // Silky straight hair thumbnail: clean straight strands
+                        drawCircle(CandyPastelPink, radius = r * 0.45f, center = Offset(cx, cy))
+                        for (s in -2..2) {
+                            val sx = cx + s * (r * 0.32f)
+                            drawLine(
+                                brush = brush,
+                                start = Offset(sx, cy - r * 0.75f),
+                                end = Offset(sx, cy + r * 0.85f),
+                                strokeWidth = 8f,
+                                cap = StrokeCap.Round
+                            )
+                        }
+                        // Parted fringe
+                        drawArc(
+                            brush = brush,
+                            startAngle = 190f,
+                            sweepAngle = 160f,
+                            useCenter = true,
+                            topLeft = Offset(cx - r * 0.65f, cy - r * 0.75f),
+                            size = Size(r * 1.3f, r * 0.65f)
+                        )
+                    }
+                    item.id.contains("waves") || item.id.contains("curls") -> {
+                        // Pop waves thumbnail: voluminous wavy hair
+                        drawCircle(CandyPastelPink, radius = r * 0.42f, center = Offset(cx, cy))
+                        for (side in listOf(-1f, 1f)) {
+                            val wavePath = Path().apply {
+                                moveTo(cx + side * r * 0.2f, cy - r * 0.6f)
+                                cubicTo(
+                                    cx + side * r * 0.95f, cy - r * 0.2f,
+                                    cx + side * r * 0.45f, cy + r * 0.2f,
+                                    cx + side * r * 0.85f, cy + r * 0.75f
+                                )
+                            }
+                            drawPath(wavePath, brush = brush, style = Stroke(width = 10f, cap = StrokeCap.Round))
+                        }
+                    }
+                    item.id.contains("braid") -> {
+                        // Braid thumbnail: diagonal braided strand
+                        drawCircle(CandyPastelPink, radius = r * 0.42f, center = Offset(cx, cy))
+                        for (b in 0..4) {
+                            val by = cy - r * 0.4f + b * (r * 0.28f)
+                            val bx = cx - r * 0.35f + b * (r * 0.15f)
+                            drawCircle(brush, radius = r * 0.20f, center = Offset(bx, by))
+                        }
+                        drawCircle(CandyPink, radius = r * 0.14f, center = Offset(cx + r * 0.35f, cy + r * 0.75f))
+                    }
+                    else -> {
+                        drawCircle(brush, radius = r * 0.75f, center = Offset(cx, cy))
+                    }
                 }
             }
             "hair_colors" -> {
@@ -1069,13 +1281,64 @@ object CharacterVectorRenderer {
             "stickers" -> drawStickerVector(item.id, Offset(cx, cy), r * 0.85f)
             "cake_flavors" -> {
                 val (icing, drip) = CandyPalette.cakeFlavorColors(item.id)
-                drawRoundRect(icing, topLeft = Offset(cx - r * 0.9f, cy - r * 0.4f), size = Size(r * 1.8f, r * 0.95f), cornerRadius = CornerRadius(10f, 10f))
-                drawRoundRect(drip, topLeft = Offset(cx - r * 0.9f, cy - r * 0.45f), size = Size(r * 1.8f, r * 0.35f), cornerRadius = CornerRadius(8f, 8f))
+                // Delicious cake slice with 3 sponge layers and drip
+                val cakeSlice = Path().apply {
+                    moveTo(cx - r * 0.9f, cy + r * 0.7f)
+                    lineTo(cx + r * 0.9f, cy + r * 0.7f)
+                    lineTo(cx + r * 0.6f, cy - r * 0.5f)
+                    lineTo(cx - r * 0.6f, cy - r * 0.5f)
+                    close()
+                }
+                drawPath(cakeSlice, icing)
+                // Layer divider lines
+                drawLine(Color(0xFF8D6E63), Offset(cx - r * 0.75f, cy + r * 0.2f), Offset(cx + r * 0.75f, cy + r * 0.2f), strokeWidth = 3f)
+                drawLine(Color(0xFF8D6E63), Offset(cx - r * 0.68f, cy - r * 0.15f), Offset(cx + r * 0.68f, cy - r * 0.15f), strokeWidth = 3f)
+                // Drip frosting on top
+                drawRoundRect(drip, topLeft = Offset(cx - r * 0.7f, cy - r * 0.65f), size = Size(r * 1.4f, r * 0.35f), cornerRadius = CornerRadius(6f, 6f))
             }
             "cake_toppings" -> {
-                drawCircle(color, radius = r * 0.38f, center = Offset(cx - r * 0.35f, cy))
-                drawCircle(CandyYellow, radius = r * 0.32f, center = Offset(cx + r * 0.35f, cy - r * 0.2f))
-                drawCircle(CandyMint, radius = r * 0.28f, center = Offset(cx + r * 0.1f, cy + r * 0.4f))
+                when {
+                    item.id.contains("cherries") -> {
+                        // Pair of glossy cherries with green stem
+                        drawCircle(Color(0xFFD32F2F), radius = r * 0.35f, center = Offset(cx - r * 0.28f, cy + r * 0.25f))
+                        drawCircle(Color.White, radius = r * 0.10f, center = Offset(cx - r * 0.36f, cy + r * 0.16f))
+                        drawCircle(Color(0xFFD32F2F), radius = r * 0.35f, center = Offset(cx + r * 0.28f, cy + r * 0.25f))
+                        drawCircle(Color.White, radius = r * 0.10f, center = Offset(cx + r * 0.20f, cy + r * 0.16f))
+                        // Green curved stems meeting at top
+                        val stemPath = Path().apply {
+                            moveTo(cx - r * 0.28f, cy)
+                            quadraticBezierTo(cx - r * 0.1f, cy - r * 0.4f, cx, cy - r * 0.75f)
+                            quadraticBezierTo(cx + r * 0.1f, cy - r * 0.4f, cx + r * 0.28f, cy)
+                        }
+                        drawPath(stemPath, color = Color(0xFF4CAF50), style = Stroke(width = 3.5f, cap = StrokeCap.Round))
+                        drawCircle(Color(0xFF4CAF50), radius = r * 0.12f, center = Offset(cx, cy - r * 0.75f))
+                    }
+                    item.id.contains("stars") || item.id.contains("glitter") -> {
+                        drawStarShape(Offset(cx, cy), r * 0.95f, CandyYellow)
+                        drawCircle(Color.White, radius = r * 0.20f, center = Offset(cx - r * 0.2f, cy - r * 0.2f))
+                    }
+                    item.id.contains("chocolate") -> {
+                        drawCircle(Color(0xFF4E342E), radius = r * 0.65f, center = Offset(cx, cy))
+                        drawCircle(Color(0xFF6D4C41), radius = r * 0.45f, center = Offset(cx, cy))
+                        drawCircle(Color.White.copy(alpha = 0.5f), radius = r * 0.15f, center = Offset(cx - r * 0.2f, cy - r * 0.2f))
+                    }
+                    item.id.contains("macaron") -> {
+                        drawRoundRect(CandyPurple, topLeft = Offset(cx - r * 0.85f, cy - r * 0.5f), size = Size(r * 1.7f, r * 1.0f), cornerRadius = CornerRadius(14f, 14f))
+                        drawRoundRect(Color.White, topLeft = Offset(cx - r * 0.8f, cy - r * 0.08f), size = Size(r * 1.6f, r * 0.22f), cornerRadius = CornerRadius(4f, 4f))
+                    }
+                    item.id.contains("crystal") -> {
+                        drawDiamondShape(Offset(cx, cy), r * 0.9f, Color(0xFF00E5FF))
+                    }
+                    else -> {
+                        // Multi-color rainbow sprinkles
+                        CandyPalette.RainbowColors.forEachIndexed { i, col ->
+                            val angle = i * (2 * PI / 6).toFloat()
+                            val px = cx + cos(angle) * r * 0.55f
+                            val py = cy + sin(angle) * r * 0.55f
+                            drawCircle(col, radius = r * 0.22f, center = Offset(px, py))
+                        }
+                    }
+                }
             }
             else -> drawRoundRect(color = color, cornerRadius = CornerRadius(12f, 12f))
         }

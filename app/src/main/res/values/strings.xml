@@ -140,4 +140,12 @@
     <string name="purchase_success">Thank you! Unlock completed.</string>
     <string name="gallery_full_title">Gallery Full (50/50)</string>
     <string name="permission_storage_denied">Storage permission is needed on Android 9 or older to export photos.</string>
+    <string name="btn_add_topping">+ Add Topping</string>
+    <string name="btn_change_flavor">Change Frosting</string>
+    <string name="btn_change_layers">Edit Tiers</string>
+    <string name="btn_delete_topping">Remove Topping</string>
+    <string name="btn_clear_all_toppings">Clear All</string>
+    <string name="title_select_topping">Choose Cake Topping</string>
+    <string name="title_select_flavor">Choose Frosting Flavor</string>
+    <string name="title_select_layers">Select Cake Tiers (1–4)</string>
 </resources>

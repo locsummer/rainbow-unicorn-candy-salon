@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.nativeCanvas
+import com.rainbowunicorn.candysalon.ui.theme.CandyPink
 import com.rainbowunicorn.core.models.CharacterState
 import kotlin.math.PI
 import kotlin.math.cos
@@ -964,8 +965,23 @@ object CandySalonStudioRenderer {
         val skinColor = Color(0xFFFFDFC4)
         val skinShadow = Color(0xFFF5C2A0)
 
-        // 1. Back Hair (Royal purple/blue flowing locks down behind shoulders)
-        drawPrincessBackHair(cx = cx, headY = headY, headR = headR, bodyBottomY = skirtBottomY, sway = swayAngle)
+        // 0. Back Wings (drawn behind princess)
+        characterState.wingsId?.let { wingsId ->
+            CharacterVectorRenderer.run {
+                drawWingsLayer(wingsId, cx, neckY + headR * 0.5f, headR * 1.25f)
+            }
+        }
+
+        // 1. Back Hair (Flowing locks responding to hairStyleId and hairColorId)
+        drawPrincessBackHair(
+            cx = cx,
+            headY = headY,
+            headR = headR,
+            bodyBottomY = skirtBottomY,
+            sway = swayAngle,
+            hairStyleId = characterState.hairStyleId,
+            hairColorId = characterState.hairColorId
+        )
 
         // 2. Arms & Shoulders
         drawPrincessShouldersAndArms(
@@ -977,11 +993,23 @@ object CandySalonStudioRenderer {
             skinShadow = skinShadow
         )
 
-        // 3. Bodice (White sparkly top + asymmetrical magenta strap + Candy Heart emblem with cone)
-        drawPrincessBodice(cx = cx, neckY = neckY, waistY = waistY, headR = headR)
+        // 3. Bodice (Sparkly top responding to outfitId)
+        drawPrincessBodice(
+            cx = cx,
+            neckY = neckY,
+            waistY = waistY,
+            headR = headR,
+            outfitId = characterState.outfitId
+        )
 
-        // 4. Skirt (Flared magenta/purple skater skirt starting below waist)
-        drawPrincessSkaterSkirt(cx = cx, waistY = waistY, skirtBottomY = skirtBottomY, headR = headR)
+        // 4. Skirt (Flared skater / ball skirt responding to outfitId)
+        drawPrincessSkaterSkirt(
+            cx = cx,
+            waistY = waistY,
+            skirtBottomY = skirtBottomY,
+            headR = headR,
+            outfitId = characterState.outfitId
+        )
 
         // 5. Neck & Face
         drawPrincessNeckAndFace(
@@ -993,7 +1021,7 @@ object CandySalonStudioRenderer {
             skinShadow = skinShadow
         )
 
-        // 6. Facial Features & Makeup
+        // 6. Facial Features & Makeup (Responding to eyeshadow, lipstick, blush)
         drawPrincessFacialFeatures(
             cx = cx,
             headY = headY,
@@ -1004,11 +1032,41 @@ object CandySalonStudioRenderer {
             blushId = characterState.makeup.blush
         )
 
-        // 7. Jewelry: Star & Bell drop earrings, candy star necklace with unicorn charm
-        drawPrincessJewelry(cx = cx, headY = headY, neckY = neckY, headR = headR)
+        // 7. Jewelry: Drop earrings or necklace responding to jewelryId
+        drawPrincessJewelry(
+            cx = cx,
+            headY = headY,
+            neckY = neckY,
+            headR = headR,
+            jewelryId = characterState.jewelryId
+        )
 
-        // 8. Front Hair: High neon green braided top bun, rainbow crown sweep & framing locks
-        drawPrincessFrontHairAndBun(cx = cx, headY = headY, headR = headR, sway = swayAngle)
+        // 8. Front Hair & Bangs (Responding to hairStyleId and hairColorId)
+        drawPrincessFrontHairAndBun(
+            cx = cx,
+            headY = headY,
+            headR = headR,
+            sway = swayAngle,
+            hairStyleId = characterState.hairStyleId,
+            hairColorId = characterState.hairColorId
+        )
+
+        // 9. Horn & Tiara
+        characterState.hornId?.let { hornId ->
+            CharacterVectorRenderer.run {
+                drawHornLayer(hornId, cx, headY - headR * 0.95f, headR * 1.15f)
+            }
+        }
+        characterState.tiaraId?.let { tiaraId ->
+            CharacterVectorRenderer.run {
+                drawTiaraLayer(tiaraId, cx, headY - headR * 0.85f, headR * 1.25f)
+            }
+        }
+
+        // 10. Stickers (Anchored to body slots: cheeks, bodice, skirt)
+        CharacterVectorRenderer.run {
+            drawStickersLayer(characterState.stickers, cx, headY, skirtBottomY, headR)
+        }
     }
 
     private fun DrawScope.drawPrincessBackHair(
@@ -1016,37 +1074,149 @@ object CandySalonStudioRenderer {
         headY: Float,
         headR: Float,
         bodyBottomY: Float,
-        sway: Float
+        sway: Float,
+        hairStyleId: String? = null,
+        hairColorId: String? = null
     ) {
-        val hairGradient = Brush.verticalGradient(
-            colors = listOf(
-                Color(0xFF7C4DFF), // Purple
-                Color(0xFF2979FF), // Deep Blue
-                Color(0xFF00E5FF)  // Turquoise
-            ),
-            startY = headY,
-            endY = bodyBottomY + headR * 0.4f
-        )
+        val hairGradient = if (hairColorId != null) {
+            CandyPalette.hairBrush(hairColorId, Offset(cx - headR, headY), Offset(cx + headR, bodyBottomY))
+        } else {
+            Brush.verticalGradient(
+                colors = listOf(
+                    Color(0xFF7C4DFF), // Purple
+                    Color(0xFF2979FF), // Deep Blue
+                    Color(0xFF00E5FF)  // Turquoise
+                ),
+                startY = headY,
+                endY = bodyBottomY + headR * 0.4f
+            )
+        }
 
-        for (side in listOf(-1f, 1f)) {
-            withTransform({
-                rotate(degrees = sway * side, pivot = Offset(cx + side * headR * 0.65f, headY))
-            }) {
-                val lock = Path().apply {
-                    moveTo(cx + side * headR * 0.45f, headY)
+        when {
+            hairStyleId?.contains("buns_twin") == true -> {
+                // Large voluminous twin buns on upper sides
+                drawCircle(hairGradient, radius = headR * 0.55f, center = Offset(cx - headR * 0.95f, headY - headR * 0.65f))
+                drawCircle(hairGradient, radius = headR * 0.55f, center = Offset(cx + headR * 0.95f, headY - headR * 0.65f))
+                // Decorative ribbon ties on buns
+                drawCircle(CandyPink, radius = headR * 0.16f, center = Offset(cx - headR * 0.95f, headY - headR * 0.35f))
+                drawCircle(CandyPink, radius = headR * 0.16f, center = Offset(cx + headR * 0.95f, headY - headR * 0.35f))
+                // Flowing locks behind
+                for (side in listOf(-1f, 1f)) {
+                    val lock = Path().apply {
+                        moveTo(cx + side * headR * 0.45f, headY)
+                        cubicTo(
+                            cx + side * headR * 1.35f, headY + headR * 0.6f,
+                            cx + side * headR * 1.45f, bodyBottomY - headR * 0.2f,
+                            cx + side * headR * 1.05f, bodyBottomY + headR * 0.2f
+                        )
+                        cubicTo(
+                            cx + side * headR * 0.85f, bodyBottomY + headR * 0.1f,
+                            cx + side * headR * 0.65f, headY + headR * 1.1f,
+                            cx + side * headR * 0.35f, headY + headR * 0.7f
+                        )
+                        close()
+                    }
+                    drawPath(lock, hairGradient)
+                }
+            }
+            hairStyleId?.contains("ponytail_high") == true -> {
+                // High ponytail swept elegantly
+                val pony = Path().apply {
+                    moveTo(cx, headY - headR * 0.95f)
                     cubicTo(
-                        cx + side * headR * 1.55f, headY + headR * 0.6f,
-                        cx + side * headR * 1.65f, bodyBottomY - headR * 0.2f,
-                        cx + side * headR * 1.25f, bodyBottomY + headR * 0.25f
+                        cx + headR * 1.85f, headY - headR * 1.15f,
+                        cx + headR * 1.95f, bodyBottomY * 0.85f,
+                        cx + headR * 1.25f, bodyBottomY + headR * 0.15f
                     )
                     cubicTo(
-                        cx + side * headR * 0.95f, bodyBottomY + headR * 0.15f,
-                        cx + side * headR * 0.70f, headY + headR * 1.2f,
-                        cx + side * headR * 0.35f, headY + headR * 0.7f
+                        cx + headR * 0.95f, bodyBottomY,
+                        cx + headR * 1.25f, headY + headR * 0.3f,
+                        cx + headR * 0.25f, headY - headR * 0.4f
                     )
                     close()
                 }
-                drawPath(lock, hairGradient)
+                drawPath(pony, hairGradient)
+                // Cute scrunchie at ponytail base
+                drawCircle(CandyPink, radius = headR * 0.22f, center = Offset(cx + headR * 0.25f, headY - headR * 0.85f))
+            }
+            hairStyleId?.contains("straight") == true -> {
+                // Long sleek silky straight hair cascading down past waist
+                for (side in listOf(-1f, 1f)) {
+                    val straightLock = Path().apply {
+                        moveTo(cx + side * headR * 0.45f, headY)
+                        lineTo(cx + side * headR * 1.25f, headY + headR * 0.5f)
+                        lineTo(cx + side * headR * 1.25f, bodyBottomY + headR * 0.45f)
+                        lineTo(cx + side * headR * 0.45f, bodyBottomY + headR * 0.45f)
+                        lineTo(cx + side * headR * 0.25f, headY + headR * 0.8f)
+                        close()
+                    }
+                    drawPath(straightLock, hairGradient)
+                    // Sleek sheen line
+                    drawLine(
+                        color = WhitePure.copy(alpha = 0.45f),
+                        start = Offset(cx + side * headR * 0.85f, headY + headR * 0.2f),
+                        end = Offset(cx + side * headR * 0.85f, bodyBottomY + headR * 0.3f),
+                        strokeWidth = 3f
+                    )
+                }
+            }
+            hairStyleId?.contains("waves") == true || hairStyleId?.contains("curls") == true -> {
+                // Voluminous pop waves
+                for (side in listOf(-1f, 1f)) {
+                    withTransform({
+                        rotate(degrees = sway * side, pivot = Offset(cx + side * headR * 0.65f, headY))
+                    }) {
+                        val waveLock = Path().apply {
+                            moveTo(cx + side * headR * 0.45f, headY)
+                            cubicTo(
+                                cx + side * headR * 1.75f, headY + headR * 0.5f,
+                                cx + side * headR * 1.35f, headY + headR * 1.2f,
+                                cx + side * headR * 1.85f, headY + headR * 1.8f
+                            )
+                            cubicTo(
+                                cx + side * headR * 1.65f, bodyBottomY + headR * 0.3f,
+                                cx + side * headR * 0.85f, bodyBottomY + headR * 0.2f,
+                                cx + side * headR * 0.45f, headY + headR * 0.8f
+                            )
+                            close()
+                        }
+                        drawPath(waveLock, hairGradient)
+                    }
+                }
+            }
+            hairStyleId?.contains("braid") == true -> {
+                // Elegant braid draped over shoulder
+                val braidX = cx - headR * 0.75f
+                for (b in 0..6) {
+                    val by = headY + headR * 0.2f + b * (headR * 0.26f)
+                    drawCircle(hairGradient, radius = headR * 0.22f, center = Offset(braidX, by))
+                    drawCircle(WhitePure.copy(alpha = 0.35f), radius = headR * 0.12f, center = Offset(braidX - headR * 0.05f, by - headR * 0.05f))
+                }
+                drawCircle(CandyPink, radius = headR * 0.15f, center = Offset(braidX, headY + headR * 2.0f))
+            }
+            else -> {
+                // Default signature locks from reference image
+                for (side in listOf(-1f, 1f)) {
+                    withTransform({
+                        rotate(degrees = sway * side, pivot = Offset(cx + side * headR * 0.65f, headY))
+                    }) {
+                        val lock = Path().apply {
+                            moveTo(cx + side * headR * 0.45f, headY)
+                            cubicTo(
+                                cx + side * headR * 1.55f, headY + headR * 0.6f,
+                                cx + side * headR * 1.65f, bodyBottomY - headR * 0.2f,
+                                cx + side * headR * 1.25f, bodyBottomY + headR * 0.25f
+                            )
+                            cubicTo(
+                                cx + side * headR * 0.95f, bodyBottomY + headR * 0.15f,
+                                cx + side * headR * 0.70f, headY + headR * 1.2f,
+                                cx + side * headR * 0.35f, headY + headR * 0.7f
+                            )
+                            close()
+                        }
+                        drawPath(lock, hairGradient)
+                    }
+                }
             }
         }
     }
@@ -1154,11 +1324,17 @@ object CandySalonStudioRenderer {
         cx: Float,
         neckY: Float,
         waistY: Float,
-        headR: Float
+        headR: Float,
+        outfitId: String? = null
     ) {
         val bodiceTopY = neckY + headR * 0.25f
+        val (topColor, skirtColor) = if (outfitId != null) {
+            CandyPalette.outfitColors(outfitId)
+        } else {
+            WhitePure to MagentaHeart
+        }
 
-        // White Sparkly Bodice
+        // Sparkly Bodice
         val bodice = Path().apply {
             moveTo(cx - headR * 0.68f, bodiceTopY)
             cubicTo(cx - headR * 0.2f, bodiceTopY - 6f, cx + headR * 0.2f, bodiceTopY - 6f, cx + headR * 0.68f, bodiceTopY)
@@ -1166,10 +1342,10 @@ object CandySalonStudioRenderer {
             lineTo(cx - headR * 0.55f, waistY)
             close()
         }
-        drawPath(bodice, WhitePure)
+        drawPath(bodice, topColor)
         drawPath(bodice, Color(0xFFCFD8DC).copy(alpha = 0.45f), style = Stroke(width = 2.5f))
 
-        // Asymmetrical Magenta/Purple Strap across left shoulder (viewer's left)
+        // Asymmetrical Strap across left shoulder
         val strap = Path().apply {
             moveTo(cx - headR * 0.82f, neckY + headR * 0.05f)
             lineTo(cx - headR * 0.50f, neckY + headR * 0.05f)
@@ -1177,9 +1353,9 @@ object CandySalonStudioRenderer {
             lineTo(cx + headR * 0.62f, bodiceTopY + headR * 0.65f)
             close()
         }
-        drawPath(strap, MagentaHeart)
+        drawPath(strap, skirtColor)
 
-        // Giant 3D Candy Heart Graphic on Center of Chest
+        // 3D Candy Heart Graphic on Center of Chest
         val heartCenterY = (bodiceTopY + waistY) * 0.48f
         val heartSize = headR * 0.45f
         drawCandyHeartEmblem(cx = cx, cy = heartCenterY, size = heartSize)
@@ -1238,9 +1414,15 @@ object CandySalonStudioRenderer {
         cx: Float,
         waistY: Float,
         skirtBottomY: Float,
-        headR: Float
+        headR: Float,
+        outfitId: String? = null
     ) {
         val skirtW = headR * 1.85f
+        val (topColor, skirtColor) = if (outfitId != null) {
+            CandyPalette.outfitColors(outfitId)
+        } else {
+            Color(0xFF8E24AA) to Color(0xFFC2185B)
+        }
 
         val skirt = Path().apply {
             moveTo(cx - headR * 0.55f, waistY)
@@ -1265,7 +1447,7 @@ object CandySalonStudioRenderer {
         drawPath(
             skirt,
             brush = Brush.verticalGradient(
-                colors = listOf(Color(0xFF8E24AA), Color(0xFFC2185B)),
+                colors = listOf(topColor, skirtColor),
                 startY = waistY,
                 endY = skirtBottomY + headR * 0.20f
             )
@@ -1428,8 +1610,8 @@ object CandySalonStudioRenderer {
         val eyeR = headR * 0.22f
         val skinShadow = Color(0xFFF5C2A0)
 
-        // Shimmering Turquoise Eyeshadow
-        val shadowColor = if (eyeshadowId?.contains("berry") == true) Color(0xFFFF4081) else ScallopCyan
+        // Shimmering Eyeshadow (Responding to eyeshadowId)
+        val shadowColor = if (eyeshadowId != null) CandyPalette.eyeshadowColor(eyeshadowId) else ScallopCyan
         for (side in listOf(-1f, 1f)) {
             val eyeX = cx + side * eyeSpacing
             val lidMask = Path().apply {
@@ -1453,8 +1635,8 @@ object CandySalonStudioRenderer {
             }
         }
 
-        // Rosy Cheek Blush
-        val blushCol = Color(0xFFFF80AB).copy(alpha = 0.55f)
+        // Rosy Cheek Blush (Responding to blushId)
+        val blushCol = if (blushId != null) CandyPalette.blushColor(blushId).copy(alpha = 0.65f) else Color(0xFFFF80AB).copy(alpha = 0.55f)
         drawOval(blushCol, topLeft = Offset(cx - eyeSpacing - headR * 0.28f, eyeY + headR * 0.22f), size = Size(headR * 0.42f, headR * 0.20f))
         drawOval(blushCol, topLeft = Offset(cx + eyeSpacing - headR * 0.14f, eyeY + headR * 0.22f), size = Size(headR * 0.42f, headR * 0.20f))
 
@@ -1518,10 +1700,11 @@ object CandySalonStudioRenderer {
             style = Stroke(width = 2.5f, cap = StrokeCap.Round)
         )
 
-        // Luscious Glossy Lips
+        // Luscious Glossy Lips (Responding to lipstickId)
         val mouthY = headY + headR * 0.55f
         val lipW = headR * 0.35f
         val lipH = headR * 0.22f
+        val lipCol = if (lipstickId != null) CandyPalette.lipstickColor(lipstickId) else Color(0xFFE91E63)
 
         val topLip = Path().apply {
             moveTo(cx - lipW * 0.5f, mouthY)
@@ -1534,12 +1717,12 @@ object CandySalonStudioRenderer {
             cubicTo(cx - lipW * 0.25f, mouthY + lipH * 0.7f, cx + lipW * 0.25f, mouthY + lipH * 0.7f, cx + lipW * 0.5f, mouthY)
             close()
         }
-        drawPath(topLip, Color(0xFFE91E63))
-        drawPath(botLip, Color(0xFFFF4081))
+        drawPath(topLip, lipCol)
+        drawPath(botLip, lipCol.copy(alpha = 0.85f))
 
-        // Gloss highlight & Cyan Ombre Shimmer
+        // Gloss highlight & Ombre Shimmer
         drawArc(
-            color = ScallopCyan.copy(alpha = 0.65f),
+            color = if (lipstickId != null) WhitePure.copy(alpha = 0.5f) else ScallopCyan.copy(alpha = 0.65f),
             startAngle = 20f,
             sweepAngle = 140f,
             useCenter = false,
@@ -1560,8 +1743,17 @@ object CandySalonStudioRenderer {
         cx: Float,
         headY: Float,
         neckY: Float,
-        headR: Float
+        headR: Float,
+        jewelryId: String? = null
     ) {
+        if (jewelryId != null) {
+            CharacterVectorRenderer.run {
+                drawJewelryLayer(jewelryId, cx, headY, neckY, headR)
+            }
+            return
+        }
+
+        // Default star & bell drop earrings and candy necklace
         for (side in listOf(-1f, 1f)) {
             val earX = cx + side * headR * 0.88f
             val earY = headY + headR * 0.18f
@@ -1592,88 +1784,167 @@ object CandySalonStudioRenderer {
         cx: Float,
         headY: Float,
         headR: Float,
-        sway: Float
+        sway: Float,
+        hairStyleId: String? = null,
+        hairColorId: String? = null
     ) {
-        val bunY = headY - headR * 1.05f
-        val bunR = headR * 0.52f
-
-        drawCircle(
-            brush = Brush.radialGradient(
+        val hairGradient = if (hairColorId != null) {
+            CandyPalette.hairBrush(hairColorId, Offset(cx - headR, headY - headR * 1.2f), Offset(cx + headR, headY + headR))
+        } else {
+            Brush.radialGradient(
                 colors = listOf(Color(0xFF00E676), Color(0xFF00B0FF)),
-                center = Offset(cx, bunY),
-                radius = bunR
-            ),
-            radius = bunR,
-            center = Offset(cx, bunY)
-        )
-        for (b in -2..2) {
-            val by = bunY + b * 7f
-            drawArc(
-                color = WhitePure.copy(alpha = 0.55f),
-                startAngle = 190f,
-                sweepAngle = 160f,
-                useCenter = false,
-                topLeft = Offset(cx - bunR * 0.8f, by - 6f),
-                size = Size(bunR * 1.6f, 12f),
-                style = Stroke(width = 2.5f)
+                center = Offset(cx, headY - headR * 1.05f),
+                radius = headR * 0.52f
             )
         }
-        drawPeppermintSwirl(cx - bunR * 0.7f, bunY - bunR * 0.2f, radius = bunR * 0.32f)
 
-        // Rainbow Crown Sweep (Green -> Yellow -> Red -> Magenta -> Purple)
-        val crownPath = Path().apply {
-            moveTo(cx - headR * 0.85f, headY - headR * 0.35f)
-            cubicTo(
-                cx - headR * 0.75f, headY - headR * 0.95f,
-                cx + headR * 0.75f, headY - headR * 0.95f,
-                cx + headR * 0.85f, headY - headR * 0.35f
-            )
-            cubicTo(
-                cx + headR * 0.45f, headY - headR * 0.65f,
-                cx - headR * 0.45f, headY - headR * 0.65f,
-                cx - headR * 0.85f, headY - headR * 0.35f
-            )
-            close()
-        }
-        drawPath(
-            crownPath,
-            brush = Brush.horizontalGradient(
-                colors = listOf(
-                    Color(0xFF00E676),
-                    Color(0xFFFFEA00),
-                    Color(0xFFFF1744),
-                    Color(0xFFD500F9),
-                    Color(0xFF651FFF)
-                ),
-                startX = cx - headR,
-                endX = cx + headR
-            )
-        )
-
-        // Face-Framing Ombre Locks
-        for (side in listOf(-1f, 1f)) {
-            val frontLock = Path().apply {
-                moveTo(cx + side * headR * 0.78f, headY - headR * 0.25f)
-                cubicTo(
-                    cx + side * headR * 1.05f, headY + headR * 0.45f,
-                    cx + side * headR * 0.95f, headY + headR * 1.15f,
-                    cx + side * headR * 0.65f, headY + headR * 1.35f
-                )
-                cubicTo(
-                    cx + side * headR * 0.85f, headY + headR * 0.95f,
-                    cx + side * headR * 0.85f, headY + headR * 0.35f,
-                    cx + side * headR * 0.68f, headY
-                )
-                close()
+        when {
+            hairStyleId?.contains("buns_twin") == true -> {
+                // Front twin buns with peppermint swirl pinwheels
+                val bunR = headR * 0.46f
+                for (side in listOf(-1f, 1f)) {
+                    val bx = cx + side * headR * 0.95f
+                    val by = headY - headR * 0.65f
+                    drawCircle(hairGradient, radius = bunR, center = Offset(bx, by))
+                    drawPeppermintSwirl(bx, by, radius = bunR * 0.55f)
+                }
+                // Center soft scalloped bangs
+                val bangs = Path().apply {
+                    moveTo(cx - headR * 0.85f, headY - headR * 0.25f)
+                    cubicTo(cx - headR * 0.45f, headY - headR * 0.75f, cx + headR * 0.45f, headY - headR * 0.75f, cx + headR * 0.85f, headY - headR * 0.25f)
+                    quadraticBezierTo(cx, headY - headR * 0.35f, cx - headR * 0.85f, headY - headR * 0.25f)
+                    close()
+                }
+                drawPath(bangs, hairGradient)
             }
-            drawPath(
-                frontLock,
-                brush = Brush.verticalGradient(
-                    colors = listOf(Color(0xFF7C4DFF), Color(0xFF00E5FF)),
-                    startY = headY,
-                    endY = headY + headR * 1.35f
+            hairStyleId?.contains("ponytail_high") == true -> {
+                // Swept fringe and side framing locks
+                val fringe = Path().apply {
+                    moveTo(cx - headR * 0.85f, headY - headR * 0.30f)
+                    cubicTo(cx - headR * 0.2f, headY - headR * 0.85f, cx + headR * 0.5f, headY - headR * 0.85f, cx + headR * 0.88f, headY - headR * 0.15f)
+                    quadraticBezierTo(cx + headR * 0.2f, headY - headR * 0.45f, cx - headR * 0.85f, headY - headR * 0.30f)
+                    close()
+                }
+                drawPath(fringe, hairGradient)
+            }
+            hairStyleId?.contains("straight") == true -> {
+                // Sleek straight parted bangs
+                val bangs = Path().apply {
+                    moveTo(cx - headR * 0.88f, headY - headR * 0.25f)
+                    lineTo(cx + headR * 0.88f, headY - headR * 0.25f)
+                    lineTo(cx + headR * 0.88f, headY - headR * 0.75f)
+                    lineTo(cx - headR * 0.88f, headY - headR * 0.75f)
+                    close()
+                }
+                drawPath(bangs, hairGradient)
+                // Sleek bangs fringe cut
+                for (b in -3..3) {
+                    val fx = cx + b * headR * 0.22f
+                    drawLine(
+                        color = WhitePure.copy(alpha = 0.5f),
+                        start = Offset(fx, headY - headR * 0.7f),
+                        end = Offset(fx, headY - headR * 0.3f),
+                        strokeWidth = 2f
+                    )
+                }
+            }
+            hairStyleId?.contains("waves") == true || hairStyleId?.contains("curls") == true -> {
+                // Voluminous side-swept waves
+                val waveBangs = Path().apply {
+                    moveTo(cx - headR * 0.90f, headY - headR * 0.20f)
+                    cubicTo(cx - headR * 0.4f, headY - headR * 0.95f, cx + headR * 0.6f, headY - headR * 0.95f, cx + headR * 0.92f, headY - headR * 0.05f)
+                    quadraticBezierTo(cx + headR * 0.2f, headY - headR * 0.55f, cx - headR * 0.90f, headY - headR * 0.20f)
+                    close()
+                }
+                drawPath(waveBangs, hairGradient)
+            }
+            hairStyleId?.contains("braid") == true -> {
+                // Center-parted neat bangs with side braid strand
+                val braidBangs = Path().apply {
+                    moveTo(cx - headR * 0.85f, headY - headR * 0.20f)
+                    quadraticBezierTo(cx, headY - headR * 0.75f, cx + headR * 0.85f, headY - headR * 0.20f)
+                    quadraticBezierTo(cx, headY - headR * 0.45f, cx - headR * 0.85f, headY - headR * 0.20f)
+                    close()
+                }
+                drawPath(braidBangs, hairGradient)
+            }
+            else -> {
+                // Default reference top bun with peppermint swirl and rainbow sweep
+                val bunY = headY - headR * 1.05f
+                val bunR = headR * 0.52f
+
+                drawCircle(
+                    brush = hairGradient,
+                    radius = bunR,
+                    center = Offset(cx, bunY)
                 )
-            )
+                for (b in -2..2) {
+                    val by = bunY + b * 7f
+                    drawArc(
+                        color = WhitePure.copy(alpha = 0.55f),
+                        startAngle = 190f,
+                        sweepAngle = 160f,
+                        useCenter = false,
+                        topLeft = Offset(cx - bunR * 0.8f, by - 6f),
+                        size = Size(bunR * 1.6f, 12f),
+                        style = Stroke(width = 2.5f)
+                    )
+                }
+                drawPeppermintSwirl(cx - bunR * 0.7f, bunY - bunR * 0.2f, radius = bunR * 0.32f)
+
+                // Rainbow Crown Sweep
+                val crownPath = Path().apply {
+                    moveTo(cx - headR * 0.85f, headY - headR * 0.35f)
+                    cubicTo(
+                        cx - headR * 0.75f, headY - headR * 0.95f,
+                        cx + headR * 0.75f, headY - headR * 0.95f,
+                        cx + headR * 0.85f, headY - headR * 0.35f
+                    )
+                    cubicTo(
+                        cx + headR * 0.45f, headY - headR * 0.65f,
+                        cx - headR * 0.45f, headY - headR * 0.65f,
+                        cx - headR * 0.85f, headY - headR * 0.35f
+                    )
+                    close()
+                }
+                drawPath(
+                    crownPath,
+                    brush = if (hairColorId != null) {
+                        hairGradient
+                    } else {
+                        Brush.horizontalGradient(
+                            colors = listOf(
+                                Color(0xFF00E676),
+                                Color(0xFFFFEA00),
+                                Color(0xFFFF1744),
+                                Color(0xFFD500F9),
+                                Color(0xFF651FFF)
+                            ),
+                            startX = cx - headR,
+                            endX = cx + headR
+                        )
+                    }
+                )
+
+                // Face-Framing Ombre Locks
+                for (side in listOf(-1f, 1f)) {
+                    val frontLock = Path().apply {
+                        moveTo(cx + side * headR * 0.78f, headY - headR * 0.25f)
+                        cubicTo(
+                            cx + side * headR * 1.05f, headY + headR * 0.45f,
+                            cx + side * headR * 0.95f, headY + headR * 1.15f,
+                            cx + side * headR * 0.65f, headY + headR * 1.35f
+                        )
+                        cubicTo(
+                            cx + side * headR * 0.85f, headY + headR * 0.95f,
+                            cx + side * headR * 0.85f, headY + headR * 0.35f,
+                            cx + side * headR * 0.68f, headY
+                        )
+                        close()
+                    }
+                    drawPath(frontLock, brush = hairGradient)
+                }
+            }
         }
     }
 

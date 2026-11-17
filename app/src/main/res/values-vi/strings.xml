@@ -140,4 +140,12 @@
     <string name="purchase_success">Mở khoá thành công!</string>
     <string name="gallery_full_title">Thư viện đầy (50/50)</string>
     <string name="permission_storage_denied">Cần quyền lưu trữ trên Android 9 trở xuống để lưu ảnh ra máy.</string>
+    <string name="btn_add_topping">+ Thêm Topping</string>
+    <string name="btn_change_flavor">Đổi Kem Phủ</string>
+    <string name="btn_change_layers">Sửa Tầng Bánh</string>
+    <string name="btn_delete_topping">Xoá Topping</string>
+    <string name="btn_clear_all_toppings">Xoá Hết</string>
+    <string name="title_select_topping">Chọn Topping Rắc Bánh</string>
+    <string name="title_select_flavor">Chọn Vị Kem Phủ</string>
+    <string name="title_select_layers">Chọn Số Tầng Bánh (1–4)</string>
 </resources>
