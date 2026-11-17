@@ -241,3 +241,120 @@ public struct UnlockItemDialog: View {
         }
     }
 }
+
+public struct ItemSelectionModal: View {
+    public let title: String
+    public let items: [Item]
+    public let language: String
+    public let unlockedItems: Set<String>
+    public let selectedIds: Set<String>
+    public let onItemSelected: (Item) -> Void
+    public let onLockedItemClicked: (Item) -> Void
+    public let onDismiss: () -> Void
+
+    public init(
+        title: String,
+        items: [Item],
+        language: String,
+        unlockedItems: Set<String>,
+        selectedIds: Set<String>,
+        onItemSelected: @escaping (Item) -> Void,
+        onLockedItemClicked: @escaping (Item) -> Void,
+        onDismiss: @escaping () -> Void
+    ) {
+        self.title = title
+        self.items = items
+        self.language = language
+        self.unlockedItems = unlockedItems
+        self.selectedIds = selectedIds
+        self.onItemSelected = onItemSelected
+        self.onLockedItemClicked = onLockedItemClicked
+        self.onDismiss = onDismiss
+    }
+
+    public var body: some View {
+        ZStack {
+            Color.black.opacity(0.45).ignoresSafeArea()
+
+            VStack(spacing: 14) {
+                Text(title)
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundColor(CandyColors.deepPlum)
+
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 10) {
+                        ForEach(items) { item in
+                            let isUnlocked = item.unlockedByDefault || unlockedItems.contains(item.id)
+                            let isSelected = selectedIds.contains(item.id)
+
+                            Button(action: {
+                                if isUnlocked {
+                                    onItemSelected(item)
+                                } else {
+                                    onLockedItemClicked(item)
+                                }
+                            }) {
+                                VStack(spacing: 4) {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(CandyColors.pastelPink.opacity(0.2))
+                                            .frame(width: 52, height: 52)
+
+                                        Circle()
+                                            .fill(CandyColors.pink)
+                                            .frame(width: 30, height: 30)
+
+                                        if !isUnlocked {
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(Color.black.opacity(0.45))
+                                                .frame(width: 52, height: 52)
+                                                .overlay(
+                                                    VStack(spacing: 2) {
+                                                        Image(systemName: "lock.fill")
+                                                            .font(.system(size: 12))
+                                                            .foregroundColor(.white)
+                                                        Text("\(item.candyPrice)🍬")
+                                                            .font(.system(size: 9, weight: .bold))
+                                                            .foregroundColor(.white)
+                                                    }
+                                                )
+                                        }
+                                    }
+
+                                    Text(item.localizedName(language: language))
+                                        .font(.system(size: 10, weight: isSelected ? .bold : .medium, design: .rounded))
+                                        .foregroundColor(CandyColors.deepPlum)
+                                        .lineLimit(2)
+                                        .multilineTextAlignment(.center)
+                                        .frame(width: 68)
+                                }
+                                .padding(6)
+                                .background(isSelected ? CandyColors.yellow.opacity(0.9) : (isUnlocked ? Color.white : Color.gray.opacity(0.12)))
+                                .cornerRadius(16)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(isSelected ? CandyColors.pink : Color.gray.opacity(0.25), lineWidth: isSelected ? 2.5 : 1)
+                                )
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 4)
+                }
+
+                NavButton(
+                    iconName: "xmark",
+                    label: L10n.string("btn_close", language: language),
+                    backgroundColor: CandyColors.pink,
+                    fullWidth: true,
+                    action: onDismiss
+                )
+            }
+            .padding(20)
+            .background(Color.white)
+            .cornerRadius(24)
+            .padding(.horizontal, 20)
+            .frame(maxWidth: 440)
+            .shadow(radius: 12)
+        }
+    }
+}

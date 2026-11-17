@@ -125,3 +125,11 @@
 "unlock_not_enough_candy" = "Cần %d Kẹo (bạn đang có %d). Thắng màn hoặc xem quảng cáo!";
 "sticker_limit_banner" = "Tối đa 10 sticker! Bấm Xoá sạch để gỡ bớt.";
 "multi_count_format" = "Đã chọn: %d/%d";
+"btn_add_topping" = "+ Thêm Topping";
+"btn_change_flavor" = "Đổi Kem Phủ";
+"btn_change_layers" = "Sửa Tầng Bánh";
+"btn_delete_topping" = "Xóa";
+"btn_clear_all_toppings" = "Xóa Hết";
+"title_select_topping" = "Chọn Topping Cho Bánh";
+"title_select_flavor" = "Chọn Hương Vị Kem Phủ";
+"title_select_layers" = "Chọn Số Tầng Bánh";
