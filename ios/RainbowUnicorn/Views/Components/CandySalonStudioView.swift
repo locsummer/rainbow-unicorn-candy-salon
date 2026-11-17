@@ -305,11 +305,112 @@ public struct CandySalonStudioView: View {
     private func drawPrincess3D(context: inout GraphicsContext, cx: CGFloat, headY: CGFloat, headR: CGFloat) {
         let skinCol = Color(red: 1.0, green: 0.87, blue: 0.77)
 
-        // 1. Back hair (purple/cyan)
-        let hairRect = CGRect(x: cx - headR * 1.2, y: headY - headR * 0.5, width: headR * 2.4, height: headR * 3.0)
-        context.fill(Path(roundedRect: hairRect, cornerRadius: headR * 0.8), with: .color(Color(red: 0.49, green: 0.30, blue: 1.0)))
+        let hairColor: Color = {
+            guard let id = characterState.hairColorId else { return Color(red: 0.49, green: 0.30, blue: 1.0) }
+            if id.contains("rainbow") { return Color(red: 1.0, green: 0.42, blue: 0.71) }
+            if id.contains("pastel_pink") { return Color(red: 1.0, green: 0.71, blue: 0.76) }
+            if id.contains("mint") { return Color(red: 0.55, green: 0.95, blue: 0.65) }
+            if id.contains("galaxy") { return Color(red: 0.54, green: 0.17, blue: 0.89) }
+            if id.contains("lavender") { return Color(red: 0.85, green: 0.80, blue: 0.98) }
+            if id.contains("neon_lime") { return Color(red: 0.35, green: 0.95, blue: 0.15) }
+            if id.contains("plum") { return Color(red: 0.56, green: 0.27, blue: 0.52) }
+            if id.contains("magenta") { return Color(red: 1.0, green: 0.0, blue: 0.5) }
+            return Color(red: 0.49, green: 0.30, blue: 1.0)
+        }()
 
-        // 2. Bodice (White + Magenta strap)
+        let (bodiceColor, skirtColor): (Color, Color) = {
+            guard let id = characterState.outfitId else {
+                return (Color.white, Color(red: 0.56, green: 0.14, blue: 0.67))
+            }
+            if id.contains("cotton_candy") {
+                return (Color(red: 1.0, green: 0.80, blue: 0.86), Color(red: 0.70, green: 0.92, blue: 0.98))
+            }
+            if id.contains("mermaid") {
+                return (Color(red: 0.20, green: 0.80, blue: 0.85), Color(red: 0.10, green: 0.55, blue: 0.75))
+            }
+            if id.contains("ball_gown") {
+                return (Color(red: 1.0, green: 0.85, blue: 0.40), Color(red: 0.95, green: 0.40, blue: 0.65))
+            }
+            if id.contains("carnival") {
+                return (Color(red: 1.0, green: 0.40, blue: 0.20), Color(red: 0.60, green: 0.10, blue: 0.70))
+            }
+            if id.contains("crystal") {
+                return (Color(red: 0.85, green: 0.95, blue: 1.0), Color(red: 0.60, green: 0.80, blue: 0.98))
+            }
+            if id.contains("peppermint") {
+                return (Color.white, Color(red: 0.90, green: 0.15, blue: 0.20))
+            }
+            if id.contains("cyber") {
+                return (Color(red: 0.10, green: 0.10, blue: 0.15), Color(red: 0.0, green: 0.90, blue: 0.60))
+            }
+            if id.contains("chocolate") {
+                return (Color(red: 0.95, green: 0.90, blue: 0.80), Color(red: 0.40, green: 0.22, blue: 0.15))
+            }
+            if id.contains("coronation") {
+                return (Color(red: 1.0, green: 0.85, blue: 0.20), Color(red: 0.45, green: 0.10, blue: 0.55))
+            }
+            return (Color.white, Color(red: 0.56, green: 0.14, blue: 0.67))
+        }()
+
+        let shadowColor: Color = {
+            guard let id = characterState.makeup.eyeshadow else { return Color(red: 0.0, green: 0.90, blue: 1.0).opacity(0.85) }
+            if id.contains("berry") { return Color(red: 1.0, green: 0.41, blue: 0.71).opacity(0.85) }
+            if id.contains("turquoise") { return Color(red: 0.25, green: 0.88, blue: 0.82).opacity(0.85) }
+            if id.contains("shimmer_blue") { return Color(red: 0.53, green: 0.81, blue: 0.92).opacity(0.85) }
+            if id.contains("caramel") { return Color(red: 1.0, green: 0.76, blue: 0.03).opacity(0.85) }
+            return Color(red: 0.0, green: 0.90, blue: 1.0).opacity(0.85)
+        }()
+
+        let lipColor: Color = {
+            guard let id = characterState.makeup.lipstick else { return Color(red: 0.91, green: 0.12, blue: 0.39) }
+            if id.contains("bubblegum") { return Color(red: 1.0, green: 0.08, blue: 0.58) }
+            if id.contains("cherry") { return Color(red: 0.86, green: 0.08, blue: 0.24) }
+            if id.contains("peach") { return Color(red: 1.0, green: 0.50, blue: 0.31) }
+            if id.contains("crimson") { return Color(red: 0.60, green: 0.0, blue: 0.14) }
+            return Color(red: 0.91, green: 0.12, blue: 0.39)
+        }()
+
+        // 0. Wings Layer (if equipped)
+        if characterState.wingsId != nil {
+            for side in [-1.0, 1.0] {
+                let wingX = cx + CGFloat(side) * headR * 0.9
+                let wingY = headY + headR * 0.8
+                var wing = Path()
+                wing.addEllipse(in: CGRect(x: wingX - headR * 0.6, y: wingY - headR * 0.8, width: headR * 1.2, height: headR * 1.6))
+                context.fill(wing, with: .color(Color(red: 0.95, green: 0.85, blue: 1.0).opacity(0.75)))
+                context.stroke(wing, with: .color(Color(red: 0.85, green: 0.65, blue: 0.95)), lineWidth: 2)
+            }
+        }
+
+        // 1. Back hair (reactive style & color)
+        let hairStyle = characterState.hairStyleId ?? ""
+        if hairStyle.contains("buns_twin") {
+            // Twin Buns
+            context.fill(Path(ellipseIn: CGRect(x: cx - headR * 1.4, y: headY - headR * 1.1, width: headR * 1.1, height: headR * 1.1)), with: .color(hairColor))
+            context.fill(Path(ellipseIn: CGRect(x: cx + headR * 0.3, y: headY - headR * 1.1, width: headR * 1.1, height: headR * 1.1)), with: .color(hairColor))
+            // Ribbons
+            context.fill(Path(ellipseIn: CGRect(x: cx - headR * 1.1, y: headY - headR * 0.5, width: headR * 0.4, height: headR * 0.4)), with: .color(Color(red: 0.91, green: 0.12, blue: 0.39)))
+            context.fill(Path(ellipseIn: CGRect(x: cx + headR * 0.7, y: headY - headR * 0.5, width: headR * 0.4, height: headR * 0.4)), with: .color(Color(red: 0.91, green: 0.12, blue: 0.39)))
+        } else if hairStyle.contains("ponytail") {
+            // High Ponytail
+            var pony = Path()
+            pony.move(to: CGPoint(x: cx + headR * 0.2, y: headY - headR * 0.8))
+            pony.addQuadCurve(to: CGPoint(x: cx + headR * 1.6, y: headY + headR * 1.6), control: CGPoint(x: cx + headR * 1.8, y: headY - headR * 0.2))
+            pony.addLine(to: CGPoint(x: cx + headR * 1.1, y: headY + headR * 1.6))
+            pony.closeSubpath()
+            context.fill(pony, with: .color(hairColor))
+            context.fill(Path(ellipseIn: CGRect(x: cx + headR * 0.1, y: headY - headR * 0.95, width: headR * 0.4, height: headR * 0.4)), with: .color(Color(red: 0.91, green: 0.12, blue: 0.39)))
+        } else if hairStyle.contains("straight") {
+            // Straight locks
+            let hairRect = CGRect(x: cx - headR * 1.1, y: headY - headR * 0.4, width: headR * 2.2, height: headR * 3.4)
+            context.fill(Path(roundedRect: hairRect, cornerRadius: headR * 0.4), with: .color(hairColor))
+        } else {
+            // Signature Bun + flowing locks
+            let hairRect = CGRect(x: cx - headR * 1.2, y: headY - headR * 0.5, width: headR * 2.4, height: headR * 3.0)
+            context.fill(Path(roundedRect: hairRect, cornerRadius: headR * 0.8), with: .color(hairColor))
+        }
+
+        // 2. Bodice (Reactive outfit)
         let neckY = headY + headR * 0.85
         let waistY = neckY + headR * 0.95
         var bodice = Path()
@@ -318,7 +419,7 @@ public struct CandySalonStudioView: View {
         bodice.addLine(to: CGPoint(x: cx + headR * 0.45, y: waistY))
         bodice.addLine(to: CGPoint(x: cx - headR * 0.45, y: waistY))
         bodice.closeSubpath()
-        context.fill(bodice, with: .color(.white))
+        context.fill(bodice, with: .color(bodiceColor))
 
         // Magenta strap
         var strap = Path()
@@ -336,7 +437,15 @@ public struct CandySalonStudioView: View {
         // Saturn ring
         context.stroke(Path(ellipseIn: CGRect(x: cx - heartR * 1.3, y: heartY - heartR * 0.2, width: heartR * 2.6, height: heartR * 0.6)), with: .color(Color(red: 1.0, green: 0.84, blue: 0.31)), lineWidth: 3)
 
-        // 3. Flared Skater Skirt (Purple with cyan scalloped hem)
+        // Jewelry (if equipped)
+        if characterState.jewelryId != nil {
+            var necklace = Path()
+            necklace.addArc(center: CGPoint(x: cx, y: neckY + headR * 0.1), radius: headR * 0.38, startAngle: .degrees(15), endAngle: .degrees(165), clockwise: false)
+            context.stroke(necklace, with: .color(Color(red: 1.0, green: 0.85, blue: 0.20)), lineWidth: 3)
+            context.fill(Path(ellipseIn: CGRect(x: cx - 6, y: neckY + headR * 0.45, width: 12, height: 12)), with: .color(Color(red: 0.91, green: 0.12, blue: 0.39)))
+        }
+
+        // 3. Flared Skater Skirt (Reactive outfit color)
         let skirtW = headR * 1.70
         let skirtBottomY = waistY + headR * 1.25
         var skirt = Path()
@@ -345,7 +454,7 @@ public struct CandySalonStudioView: View {
         skirt.addLine(to: CGPoint(x: cx + skirtW, y: skirtBottomY))
         skirt.addLine(to: CGPoint(x: cx - skirtW, y: skirtBottomY))
         skirt.closeSubpath()
-        context.fill(skirt, with: .color(Color(red: 0.56, green: 0.14, blue: 0.67)))
+        context.fill(skirt, with: .color(skirtColor))
 
         // Cyan Scalloped Hem
         var hem = Path()
@@ -364,18 +473,28 @@ public struct CandySalonStudioView: View {
         // 4. Head & Face
         context.fill(Path(ellipseIn: CGRect(x: cx - headR * 0.85, y: headY - headR * 0.6, width: headR * 1.7, height: headR * 1.6)), with: .color(skinCol))
 
-        // Turquoise Eyeshadow & Big Almond Eyes
+        // Blush (if equipped)
+        if characterState.makeup.blush != nil {
+            for side in [-1.0, 1.0] {
+                let bx = cx + CGFloat(side) * headR * 0.52
+                let by = headY + headR * 0.25
+                context.fill(Path(ellipseIn: CGRect(x: bx - 14, y: by - 8, width: 28, height: 16)), with: .color(Color(red: 1.0, green: 0.60, blue: 0.75).opacity(0.65)))
+            }
+        }
+
+        // Eyeshadow & Big Almond Eyes
         for side in [-1.0, 1.0] {
             let eyeX = cx + CGFloat(side) * headR * 0.42
             let eyeY = headY + headR * 0.04
-            // Turquoise shadow
-            context.fill(Path(ellipseIn: CGRect(x: eyeX - 16, y: eyeY - 14, width: 32, height: 18)), with: .color(Color(red: 0.0, green: 0.90, blue: 1.0).opacity(0.85)))
+            // Eyeshadow
+            context.fill(Path(ellipseIn: CGRect(x: eyeX - 16, y: eyeY - 14, width: 32, height: 18)), with: .color(shadowColor))
             // Almond Sclera
             context.fill(Path(ellipseIn: CGRect(x: eyeX - 14, y: eyeY - 8, width: 28, height: 16)), with: .color(.white))
             // Blue/Violet Iris
             context.fill(Path(ellipseIn: CGRect(x: eyeX - 8, y: eyeY - 7, width: 16, height: 15)), with: .color(Color(red: 0.16, green: 0.47, blue: 1.0)))
-            // Catchlight
+            // Catchlights
             context.fill(Path(ellipseIn: CGRect(x: eyeX - 5, y: eyeY - 5, width: 5, height: 5)), with: .color(.white))
+            context.fill(Path(ellipseIn: CGRect(x: eyeX + 2, y: eyeY + 1, width: 3, height: 3)), with: .color(.white))
             // Winged Eyeliner
             var liner = Path()
             liner.move(to: CGPoint(x: eyeX - 14, y: eyeY))
@@ -383,14 +502,40 @@ public struct CandySalonStudioView: View {
             context.stroke(liner, with: .color(.black), lineWidth: 3)
         }
 
-        // Lips (glossy pink)
+        // Lips (reactive lipstick color)
         let mouthY = headY + headR * 0.55
-        context.fill(Path(ellipseIn: CGRect(x: cx - 14, y: mouthY - 4, width: 28, height: 12)), with: .color(Color(red: 0.91, green: 0.12, blue: 0.39)))
+        context.fill(Path(ellipseIn: CGRect(x: cx - 14, y: mouthY - 4, width: 28, height: 12)), with: .color(lipColor))
 
-        // 5. High Braided Top Bun (Neon Emerald Green)
-        let bunY = headY - headR * 1.05
-        let bunR = headR * 0.52
-        context.fill(Path(ellipseIn: CGRect(x: cx - bunR, y: bunY - bunR * 0.8, width: bunR * 2, height: bunR * 1.6)), with: .color(Color(red: 0.0, green: 0.90, blue: 0.46)))
+        // Horn (if equipped)
+        if characterState.hornId != nil {
+            var horn = Path()
+            horn.move(to: CGPoint(x: cx - headR * 0.15, y: headY - headR * 0.55))
+            horn.addLine(to: CGPoint(x: cx + headR * 0.15, y: headY - headR * 0.55))
+            horn.addLine(to: CGPoint(x: cx, y: headY - headR * 1.7))
+            horn.closeSubpath()
+            context.fill(horn, with: .color(Color(red: 1.0, green: 0.85, blue: 0.20)))
+            context.stroke(horn, with: .color(Color(red: 0.95, green: 0.50, blue: 0.10)), lineWidth: 2)
+        }
+
+        // Tiara (if equipped)
+        if characterState.tiaraId != nil {
+            var tiara = Path()
+            tiara.move(to: CGPoint(x: cx - headR * 0.5, y: headY - headR * 0.5))
+            tiara.addLine(to: CGPoint(x: cx - headR * 0.35, y: headY - headR * 0.9))
+            tiara.addLine(to: CGPoint(x: cx, y: headY - headR * 0.65))
+            tiara.addLine(to: CGPoint(x: cx + headR * 0.35, y: headY - headR * 0.9))
+            tiara.addLine(to: CGPoint(x: cx + headR * 0.5, y: headY - headR * 0.5))
+            tiara.closeSubpath()
+            context.fill(tiara, with: .color(Color(red: 1.0, green: 0.80, blue: 0.20)))
+            context.stroke(tiara, with: .color(Color(red: 0.90, green: 0.30, blue: 0.60)), lineWidth: 2)
+        }
+
+        // 5. High Braided Top Bun (when not twin buns or ponytail)
+        if !hairStyle.contains("buns_twin") && !hairStyle.contains("ponytail") {
+            let bunY = headY - headR * 1.05
+            let bunR = headR * 0.52
+            context.fill(Path(ellipseIn: CGRect(x: cx - bunR, y: bunY - bunR * 0.8, width: bunR * 2, height: bunR * 1.6)), with: .color(hairColor))
+        }
     }
 
     private func drawRainbowBackButton(context: inout GraphicsContext, cx: CGFloat, cy: CGFloat, radius: CGFloat) {

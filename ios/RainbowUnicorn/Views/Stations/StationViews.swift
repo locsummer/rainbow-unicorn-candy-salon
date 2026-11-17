@@ -118,6 +118,9 @@ public struct CakeStationView: View {
     public let language: String
     public let onLayersChanged: (Int) -> Void
     public let onClearToppings: () -> Void
+    public var onRemoveTopping: (String) -> Void = { _ in }
+    public var onOpenAddModal: () -> Void = {}
+    public var onOpenFlavorModal: () -> Void = {}
 
     public init(
         layers: Int,
@@ -125,7 +128,10 @@ public struct CakeStationView: View {
         toppings: [String],
         language: String,
         onLayersChanged: @escaping (Int) -> Void,
-        onClearToppings: @escaping () -> Void
+        onClearToppings: @escaping () -> Void,
+        onRemoveTopping: @escaping (String) -> Void = { _ in },
+        onOpenAddModal: @escaping () -> Void = {},
+        onOpenFlavorModal: @escaping () -> Void = {}
     ) {
         self.layers = layers
         self.flavor = flavor
@@ -133,6 +139,9 @@ public struct CakeStationView: View {
         self.language = language
         self.onLayersChanged = onLayersChanged
         self.onClearToppings = onClearToppings
+        self.onRemoveTopping = onRemoveTopping
+        self.onOpenAddModal = onOpenAddModal
+        self.onOpenFlavorModal = onOpenFlavorModal
     }
 
     public var body: some View {
@@ -145,10 +154,79 @@ public struct CakeStationView: View {
             return Color(red: 1.0, green: 0.96, blue: 0.88)
         }()
 
-        VStack(spacing: 12) {
-            VStack(spacing: 6) {
+        VStack(spacing: 8) {
+            // Interactive Cake Action Buttons Bar (CRUD Operations: Add, Edit, Delete)
+            HStack(spacing: 8) {
+                Button(action: onOpenAddModal) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "plus.circle.fill")
+                        Text(L10n.string("btn_add_topping", language: language))
+                    }
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .background(CandyColors.pink)
+                    .foregroundColor(.white)
+                    .cornerRadius(16)
+                }
+
+                Button(action: onOpenFlavorModal) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "paintpalette.fill")
+                        Text(L10n.string("btn_change_flavor", language: language))
+                    }
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .background(CandyColors.purple)
+                    .foregroundColor(.white)
+                    .cornerRadius(16)
+                }
+
+                if !toppings.isEmpty {
+                    Button(action: onClearToppings) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "trash")
+                            Text(L10n.string("btn_clear", language: language))
+                        }
+                        .font(.system(size: 12, weight: .bold, design: .rounded))
+                        .padding(.horizontal, 10)
+                        .frame(minHeight: 44)
+                        .background(CandyColors.yellow)
+                        .foregroundColor(CandyColors.deepPlum)
+                        .cornerRadius(16)
+                    }
+                }
+            }
+
+            // Removable Topping Chips Row (Delete specific toppings with ✕)
+            if !toppings.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 6) {
+                        ForEach(Array(toppings.enumerated()), id: \.offset) { _, topId in
+                            HStack(spacing: 4) {
+                                Text(topId.replacingOccurrences(of: "cake_top_", with: "").replacingOccurrences(of: "_", with: " ").capitalized)
+                                    .font(.system(size: 11, weight: .medium, design: .rounded))
+                                    .foregroundColor(CandyColors.deepPlum)
+
+                                Button(action: { onRemoveTopping(topId) }) {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .font(.system(size: 13))
+                                        .foregroundColor(CandyColors.pink)
+                                }
+                            }
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(CandyColors.pastelPink.opacity(0.5))
+                            .cornerRadius(12)
+                        }
+                    }
+                    .padding(.vertical, 2)
+                }
+            }
+
+            // Cake Layers Selector
+            VStack(spacing: 4) {
                 Text(L10n.string("cake_layers_label", language: language))
-                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
                     .foregroundColor(CandyColors.deepPlum)
 
                 HStack(spacing: 8) {
@@ -162,26 +240,11 @@ public struct CakeStationView: View {
                                 .cornerRadius(14)
                         }
                     }
-
-                    if !toppings.isEmpty {
-                        Button(action: onClearToppings) {
-                            HStack(spacing: 4) {
-                                Image(systemName: "trash")
-                                Text(L10n.string("btn_clear", language: language))
-                            }
-                            .font(.system(size: 12, weight: .bold, design: .rounded))
-                            .padding(.horizontal, 10)
-                            .frame(minHeight: 44)
-                            .background(CandyColors.yellow)
-                            .foregroundColor(CandyColors.deepPlum)
-                            .cornerRadius(14)
-                        }
-                    }
                 }
             }
-            .padding(12)
+            .padding(10)
             .background(Color.white.opacity(0.95))
-            .cornerRadius(18)
+            .cornerRadius(16)
 
             Spacer()
 
@@ -196,10 +259,10 @@ public struct CakeStationView: View {
 
                         if i == clampedLayers - 1 && !toppings.isEmpty {
                             HStack(spacing: 6) {
-                                ForEach(Array(toppings.prefix(5).enumerated()), id: \.offset) { _, _ in
+                                ForEach(Array(toppings.prefix(6).enumerated()), id: \.offset) { _, _ in
                                     Circle()
                                         .fill(CandyColors.pink)
-                                        .frame(width: 12, height: 12)
+                                        .frame(width: 14, height: 14)
                                 }
                             }
                             .offset(y: -6)

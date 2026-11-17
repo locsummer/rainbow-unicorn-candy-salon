@@ -782,3 +782,132 @@ fun BottomItemTray(
         }
     }
 }
+
+@Composable
+fun ItemSelectionModal(
+    title: String,
+    items: List<Item>,
+    language: String,
+    unlockedItems: Set<String>,
+    selectedIds: Set<String>,
+    onItemSelected: (Item) -> Unit,
+    onLockedItemClicked: (Item) -> Unit,
+    onDismiss: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Card(
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+            modifier = Modifier
+                .fillMaxWidth(0.92f)
+                .widthIn(max = 440.dp)
+                .padding(16.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(20.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = CandyDeepPlum,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(14.dp))
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    items(items, key = { it.id }) { item ->
+                        val isUnlocked = item.unlockedByDefault || unlockedItems.contains(item.id)
+                        val isSelected = selectedIds.contains(item.id)
+
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .width(88.dp)
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(
+                                    when {
+                                        isSelected -> CandyYellow.copy(alpha = 0.9f)
+                                        isUnlocked -> CandyCream
+                                        else -> Color(0xFFEEEEEE)
+                                    }
+                                )
+                                .border(
+                                    width = if (isSelected) 3.dp else 1.dp,
+                                    color = if (isSelected) CandyPink else CandyPurple.copy(alpha = 0.3f),
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                                .clickable {
+                                    if (isUnlocked) {
+                                        onItemSelected(item)
+                                    } else {
+                                        onLockedItemClicked(item)
+                                    }
+                                }
+                                .padding(6.dp)
+                        ) {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.size(56.dp)
+                            ) {
+                                ItemThumbnailCanvas(item = item, modifier = Modifier.size(48.dp))
+                                if (!isUnlocked) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .background(Color.Black.copy(alpha = 0.48f)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                            Icon(
+                                                imageVector = Icons.Default.Lock,
+                                                contentDescription = "Locked",
+                                                tint = Color.White,
+                                                modifier = Modifier.size(18.dp)
+                                            )
+                                            Text(
+                                                text = "${item.candyPrice}🍬",
+                                                color = Color.White,
+                                                fontSize = 10.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = item.localizedName(language),
+                                fontSize = 10.sp,
+                                lineHeight = 12.sp,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                color = CandyDeepPlum,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(18.dp))
+                NavButton(
+                    icon = Icons.Default.Close,
+                    label = stringResource(R.string.btn_close),
+                    onClick = onDismiss,
+                    containerColor = CandyActionPink,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+    }
+}

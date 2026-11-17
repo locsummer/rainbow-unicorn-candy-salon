@@ -77,6 +77,7 @@ import com.rainbowunicorn.candysalon.ui.components.AnimatedCharacterStage
 import com.rainbowunicorn.candysalon.ui.components.BottomItemTray
 import com.rainbowunicorn.candysalon.ui.components.CharacterPose
 import com.rainbowunicorn.candysalon.ui.components.ConfirmDialog
+import com.rainbowunicorn.candysalon.ui.components.ItemSelectionModal
 import com.rainbowunicorn.candysalon.ui.components.NavButton
 import com.rainbowunicorn.candysalon.ui.components.StageBackdrop
 import com.rainbowunicorn.candysalon.ui.components.UnlockItemDialog
@@ -133,6 +134,8 @@ fun StationScreen(
     var showExitDialog by remember { mutableStateOf(false) }
     var showResetDialog by remember { mutableStateOf(false) }
     var showRequestDialog by remember { mutableStateOf(false) }
+    var showCakeToppingModal by remember { mutableStateOf(false) }
+    var showCakeFlavorModal by remember { mutableStateOf(false) }
     var lockedItemPending by remember { mutableStateOf<Item?>(null) }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -265,7 +268,7 @@ fun StationScreen(
 
     fun equipItem(item: Item) {
         if (item.category == "cake_flavors") {
-            cakeFlavor = item.id
+            cakeFlavor = if (cakeFlavor == item.id) null else item.id
             onCheckpointChanged(buildCheckpoint())
             return
         }
@@ -279,24 +282,47 @@ fun StationScreen(
             return
         }
 
-        if (item.category == "stickers" && characterState.stickers.size >= LayerComposer.MAX_STICKERS) {
-            scope.launch { snackbarHostState.showSnackbar(stickerLimitText) }
-            return
+        if (item.category == "stickers") {
+            if (characterState.stickers.contains(item.id)) {
+                levelEngine.updateCharacter { current ->
+                    current.copy(stickers = current.stickers - item.id)
+                }
+                characterState = levelEngine.characterState
+                syncUndoFlags()
+                onCheckpointChanged(buildCheckpoint())
+                return
+            }
+            if (characterState.stickers.size >= LayerComposer.MAX_STICKERS) {
+                scope.launch { snackbarHostState.showSnackbar(stickerLimitText) }
+                return
+            }
         }
 
         levelEngine.updateCharacter { current ->
             when (item.category) {
-                "hair_styles" -> current.copy(hairStyleId = item.id)
-                "hair_colors" -> current.copy(hairColorId = item.id)
-                "eyeshadows" -> LayerComposer.applyEyeshadow(current, item.id)
-                "lipsticks" -> current.copy(makeup = current.makeup.copy(lipstick = item.id))
-                "blushes" -> current.copy(makeup = current.makeup.copy(blush = item.id))
+                "hair_styles" -> current.copy(hairStyleId = if (current.hairStyleId == item.id) null else item.id)
+                "hair_colors" -> current.copy(hairColorId = if (current.hairColorId == item.id) null else item.id)
+                "eyeshadows" -> if (current.makeup.eyeshadow == item.id) {
+                    current.copy(makeup = current.makeup.copy(eyeshadow = null))
+                } else {
+                    LayerComposer.applyEyeshadow(current, item.id)
+                }
+                "lipsticks" -> current.copy(
+                    makeup = current.makeup.copy(
+                        lipstick = if (current.makeup.lipstick == item.id) null else item.id
+                    )
+                )
+                "blushes" -> current.copy(
+                    makeup = current.makeup.copy(
+                        blush = if (current.makeup.blush == item.id) null else item.id
+                    )
+                )
                 "face_paints" -> LayerComposer.toggleFacePaint(current, item.id)
-                "outfits" -> LayerComposer.equipOutfit(current, item.id)
-                "wings" -> LayerComposer.equipWings(current, item.id)
-                "horns" -> LayerComposer.equipHorn(current, item.id)
-                "tiaras" -> LayerComposer.equipTiara(current, item.id)
-                "jewelry" -> current.copy(jewelryId = item.id)
+                "outfits" -> current.copy(outfitId = if (current.outfitId == item.id) null else item.id)
+                "wings" -> current.copy(wingsId = if (current.wingsId == item.id) null else item.id)
+                "horns" -> current.copy(hornId = if (current.hornId == item.id) null else item.id)
+                "tiaras" -> current.copy(tiaraId = if (current.tiaraId == item.id) null else item.id)
+                "jewelry" -> current.copy(jewelryId = if (current.jewelryId == item.id) null else item.id)
                 "stickers" -> LayerComposer.addSticker(current, item.id).first
                 else -> current
             }
@@ -432,58 +458,111 @@ fun StationScreen(
                 )
             }
 
-            // PORTRAIT TOP HUD ROW 2: Scrollable Station Step Pills + Undo / Redo / Reset
+            // PORTRAIT TOP HUD ROW 2: Dedicated Full-Width Scrollable Station Steps (Zero Truncation)
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 2.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                itemsIndexed(level.stations) { idx, st ->
+                    val status = levelEngine.getStationStatus(st)
+                    val isCurrent = idx == currentStationIndex
+                    Surface(
+                        shape = RoundedCornerShape(16.dp),
+                        color = when {
+                            isCurrent -> CandyActionPurple
+                            status == StationStatus.COMPLETED -> CandyMint.copy(alpha = 0.65f)
+                            else -> Color.White.copy(alpha = 0.9f)
+                        },
+                        shadowElevation = if (isCurrent) 3.dp else 1.dp,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(16.dp))
+                            .border(
+                                width = if (isCurrent) 2.dp else 1.dp,
+                                color = if (isCurrent) CandyDeepPlum else Color.LightGray.copy(alpha = 0.7f),
+                                shape = RoundedCornerShape(16.dp)
+                            )
+                            .clickable {
+                                levelEngine.selectStation(idx)
+                                currentStationIndex = idx
+                            }
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+                        ) {
+                            val prefix = if (status == StationStatus.COMPLETED) "✓ " else "${idx + 1}. "
+                            Text(
+                                text = prefix + stationLocalizedLabel(st),
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (isCurrent) Color.White else CandyDeepPlum,
+                                maxLines = 1
+                            )
+                        }
+                    }
+                }
+            }
+
+            // PORTRAIT TOP HUD ROW 3: Station Prompt + Action Controls (Undo, Redo, Reset with >= 48dp touch targets)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 10.dp),
+                    .padding(horizontal = 10.dp, vertical = 4.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                LazyRow(
-                    modifier = Modifier.weight(1f),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    itemsIndexed(level.stations) { idx, st ->
-                        val status = levelEngine.getStationStatus(st)
-                        val isCurrent = idx == currentStationIndex
-                        Surface(
-                            shape = RoundedCornerShape(14.dp),
-                            color = when {
-                                isCurrent -> CandyActionPurple
-                                status == StationStatus.COMPLETED -> CandyMint.copy(alpha = 0.6f)
-                                else -> Color.White.copy(alpha = 0.85f)
-                            },
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(14.dp))
-                                .border(
-                                    width = if (isCurrent) 2.dp else 1.dp,
-                                    color = if (isCurrent) CandyDeepPlum else Color.LightGray,
-                                    shape = RoundedCornerShape(14.dp)
-                                )
-                                .clickable {
-                                    levelEngine.selectStation(idx)
-                                    currentStationIndex = idx
-                                }
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
-                            ) {
-                                val prefix = if (status == StationStatus.COMPLETED) "✓ " else "${idx + 1}. "
-                                Text(
-                                    text = prefix + stationLocalizedLabel(st),
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = if (isCurrent) Color.White else CandyDeepPlum,
-                                    maxLines = 1
-                                )
+                val instructionText = when (currentStation) {
+                    StationType.SPA -> stringResource(R.string.spa_instruction)
+                    StationType.HAIR -> stringResource(R.string.hair_instruction)
+                    StationType.MAKEUP -> stringResource(R.string.makeup_instruction)
+                    StationType.DRESSUP -> stringResource(R.string.dressup_instruction)
+                    StationType.CAKE -> stringResource(R.string.cake_instruction)
+                    StationType.PET -> stringResource(R.string.pet_instruction)
+                    StationType.PHOTO -> stringResource(R.string.photo_instruction)
+                }
+                Text(
+                    text = instructionText,
+                    fontSize = 11.sp,
+                    color = CandyDeepPlum.copy(alpha = 0.85f),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
+                )
+
+                if (currentStation == StationType.MAKEUP) {
+                    Surface(
+                        shape = RoundedCornerShape(14.dp),
+                        color = CandyPastelPink,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(14.dp))
+                            .clickable {
+                                soundManager.playClick()
+                                levelEngine.updateCharacter { LayerComposer.clearMakeup(it) }
+                                characterState = levelEngine.characterState
+                                syncUndoFlags()
+                                onCheckpointChanged(buildCheckpoint())
                             }
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp)
+                        ) {
+                            Icon(Icons.Default.Spa, contentDescription = null, tint = CandyDeepPlum, modifier = Modifier.size(14.dp))
+                            Spacer(modifier = Modifier.width(3.dp))
+                            Text(
+                                text = stringResource(R.string.makeup_remover),
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = CandyDeepPlum
+                            )
                         }
                     }
                 }
 
-                // Undo / Redo / Reset Mini Controls (compact NavButtons)
+                // Dedicated Undo / Redo / Reset controls
                 NavButton(
                     icon = Icons.AutoMirrored.Filled.Undo,
                     label = stringResource(R.string.btn_undo),
@@ -528,64 +607,6 @@ fun StationScreen(
                 )
             }
 
-            // Helpful Station Hint Banner + Quick Action (e.g. Remove Makeup in MAKEUP stage)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                val instructionText = when (currentStation) {
-                    StationType.SPA -> stringResource(R.string.spa_instruction)
-                    StationType.HAIR -> stringResource(R.string.hair_instruction)
-                    StationType.MAKEUP -> stringResource(R.string.makeup_instruction)
-                    StationType.DRESSUP -> stringResource(R.string.dressup_instruction)
-                    StationType.CAKE -> stringResource(R.string.cake_instruction)
-                    StationType.PET -> stringResource(R.string.pet_instruction)
-                    StationType.PHOTO -> stringResource(R.string.photo_instruction)
-                }
-                Text(
-                    text = instructionText,
-                    fontSize = 11.sp,
-                    color = CandyDeepPlum.copy(alpha = 0.8f),
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
-                )
-
-                if (currentStation == StationType.MAKEUP) {
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Surface(
-                        shape = RoundedCornerShape(14.dp),
-                        color = CandyPastelPink,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(14.dp))
-                            .clickable {
-                                soundManager.playClick()
-                                levelEngine.updateCharacter { LayerComposer.clearMakeup(it) }
-                                characterState = levelEngine.characterState
-                                syncUndoFlags()
-                                onCheckpointChanged(buildCheckpoint())
-                            }
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
-                        ) {
-                            Icon(Icons.Default.Spa, contentDescription = null, tint = CandyDeepPlum, modifier = Modifier.size(14.dp))
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = stringResource(R.string.makeup_remover),
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = CandyDeepPlum
-                            )
-                        }
-                    }
-                }
-            }
-
             // CENTRAL PORTRAIT STAGE (Never overlapped by Top HUD or Bottom Tray!)
             Box(
                 modifier = Modifier
@@ -619,6 +640,19 @@ fun StationScreen(
                                 cakeToppings.clear()
                                 soundManager.playClick()
                                 onCheckpointChanged(buildCheckpoint())
+                            },
+                            onRemoveTopping = { toppingId ->
+                                cakeToppings.remove(toppingId)
+                                soundManager.playClick()
+                                onCheckpointChanged(buildCheckpoint())
+                            },
+                            onOpenAddModal = {
+                                soundManager.playClick()
+                                showCakeToppingModal = true
+                            },
+                            onOpenFlavorModal = {
+                                soundManager.playClick()
+                                showCakeFlavorModal = true
                             }
                         )
                     }
@@ -922,6 +956,47 @@ fun StationScreen(
                     }
                 },
                 onDismiss = { lockedItemPending = null }
+            )
+        }
+
+        // Cake Station Item Selection Modals (Toppings & Flavors)
+        if (showCakeToppingModal) {
+            val toppingItems = remember(items) { items.filter { it.category == "cake_toppings" } }
+            ItemSelectionModal(
+                title = stringResource(R.string.title_select_topping),
+                items = toppingItems,
+                language = language,
+                unlockedItems = unlockedItems,
+                selectedIds = cakeToppings.toSet(),
+                onItemSelected = { item ->
+                    soundManager.playClick()
+                    equipItem(item)
+                },
+                onLockedItemClicked = { item ->
+                    soundManager.playClick()
+                    lockedItemPending = item
+                },
+                onDismiss = { showCakeToppingModal = false }
+            )
+        }
+
+        if (showCakeFlavorModal) {
+            val flavorItems = remember(items) { items.filter { it.category == "cake_flavors" } }
+            ItemSelectionModal(
+                title = stringResource(R.string.title_select_flavor),
+                items = flavorItems,
+                language = language,
+                unlockedItems = unlockedItems,
+                selectedIds = setOfNotNull(cakeFlavor),
+                onItemSelected = { item ->
+                    soundManager.playClick()
+                    equipItem(item)
+                },
+                onLockedItemClicked = { item ->
+                    soundManager.playClick()
+                    lockedItemPending = item
+                },
+                onDismiss = { showCakeFlavorModal = false }
             )
         }
 

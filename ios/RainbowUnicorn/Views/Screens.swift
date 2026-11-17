@@ -639,6 +639,8 @@ public struct StationView: View {
     @State private var showExitDialog: Bool = false
     @State private var showResetDialog: Bool = false
     @State private var showRequestDialog: Bool = false
+    @State private var showCakeToppingModal: Bool = false
+    @State private var showCakeFlavorModal: Bool = false
     @State private var lockedItemPending: Item?
     @State private var bannerMessage: String?
 
@@ -777,7 +779,7 @@ public struct StationView: View {
 
     private func equipItem(_ item: Item) {
         if item.category == "cake_flavors" {
-            cakeFlavor = item.id
+            cakeFlavor = (cakeFlavor == item.id) ? nil : item.id
             onCheckpointChanged(buildCheckpoint())
             return
         }
@@ -790,25 +792,54 @@ public struct StationView: View {
             onCheckpointChanged(buildCheckpoint())
             return
         }
-        if item.category == "stickers" && characterState.stickers.count >= LayerComposer.maxStickers {
-            showToast(L10n.string("sticker_limit_banner", language: language))
-            return
+        if item.category == "stickers" {
+            if let idx = characterState.stickers.firstIndex(of: item.id) {
+                levelEngine.updateCharacter { c in
+                    var st = c.stickers
+                    st.remove(at: idx)
+                    c.stickers = st
+                }
+                characterState = levelEngine.characterState
+                syncUndo()
+                onCheckpointChanged(buildCheckpoint())
+                return
+            }
+            if characterState.stickers.count >= LayerComposer.maxStickers {
+                showToast(L10n.string("sticker_limit_banner", language: language))
+                return
+            }
         }
 
         levelEngine.updateCharacter { c in
             switch item.category {
-            case "hair_styles": c.hairStyleId = item.id
-            case "hair_colors": c.hairColorId = item.id
-            case "eyeshadows": c = LayerComposer.applyEyeshadow(character: c, eyeshadowId: item.id)
-            case "lipsticks": c.makeup.lipstick = item.id
-            case "blushes": c.makeup.blush = item.id
-            case "face_paints": c = LayerComposer.toggleFacePaint(character: c, paintId: item.id)
-            case "outfits": c = LayerComposer.equipOutfit(character: c, outfitId: item.id)
-            case "wings": c = LayerComposer.equipWings(character: c, wingsId: item.id)
-            case "horns": c = LayerComposer.equipHorn(character: c, hornId: item.id)
-            case "tiaras": c = LayerComposer.equipTiara(character: c, tiaraId: item.id)
-            case "jewelry": c.jewelryId = item.id
-            case "stickers": c = LayerComposer.addSticker(character: c, stickerId: item.id).0
+            case "hair_styles":
+                c.hairStyleId = (c.hairStyleId == item.id) ? nil : item.id
+            case "hair_colors":
+                c.hairColorId = (c.hairColorId == item.id) ? nil : item.id
+            case "eyeshadows":
+                if c.makeup.eyeshadow == item.id {
+                    c.makeup.eyeshadow = nil
+                } else {
+                    c = LayerComposer.applyEyeshadow(character: c, eyeshadowId: item.id)
+                }
+            case "lipsticks":
+                c.makeup.lipstick = (c.makeup.lipstick == item.id) ? nil : item.id
+            case "blushes":
+                c.makeup.blush = (c.makeup.blush == item.id) ? nil : item.id
+            case "face_paints":
+                c = LayerComposer.toggleFacePaint(character: c, paintId: item.id)
+            case "outfits":
+                c.outfitId = (c.outfitId == item.id) ? nil : item.id
+            case "wings":
+                c.wingsId = (c.wingsId == item.id) ? nil : item.id
+            case "horns":
+                c.hornId = (c.hornId == item.id) ? nil : item.id
+            case "tiaras":
+                c.tiaraId = (c.tiaraId == item.id) ? nil : item.id
+            case "jewelry":
+                c.jewelryId = (c.jewelryId == item.id) ? nil : item.id
+            case "stickers":
+                c = LayerComposer.addSticker(character: c, stickerId: item.id).0
             default: break
             }
         }
@@ -967,34 +998,64 @@ public struct StationView: View {
                 .padding(.horizontal, 10)
                 .padding(.top, 6)
 
-                // PORTRAIT TOP HUD ROW 2: Stations + Undo/Redo/Reset
-                HStack(spacing: 6) {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 6) {
-                            ForEach(Array(level.stations.enumerated()), id: \.offset) { idx, st in
-                                let status = levelEngine.getStationStatus(st)
-                                let isCurr = idx == currentStationIndex
-                                Button(action: {
-                                    levelEngine.selectStation(index: idx)
-                                    currentStationIndex = idx
-                                }) {
-                                    let prefix = status == .completed ? "✓ " : "\(idx + 1). "
-                                    Text(prefix + L10n.stationLabel(st, language: language))
-                                        .font(.system(size: 11, weight: .bold, design: .rounded))
-                                        .foregroundColor(isCurr ? .white : CandyColors.deepPlum)
-                                        .padding(.horizontal, 10)
-                                        .padding(.vertical, 6)
-                                        .background(
-                                            isCurr ? CandyColors.purple
-                                            : (status == .completed ? CandyColors.mint.opacity(0.6) : Color.white.opacity(0.85))
-                                        )
-                                        .cornerRadius(14)
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 14)
-                                                .stroke(isCurr ? CandyColors.deepPlum : Color.gray.opacity(0.3), lineWidth: isCurr ? 1.8 : 1)
-                                        )
-                                }
+                // PORTRAIT TOP HUD ROW 2: Dedicated Full-Width Scrollable Station Steps (Zero Truncation)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(Array(level.stations.enumerated()), id: \.offset) { idx, st in
+                            let status = levelEngine.getStationStatus(st)
+                            let isCurr = idx == currentStationIndex
+                            Button(action: {
+                                levelEngine.selectStation(index: idx)
+                                currentStationIndex = idx
+                            }) {
+                                let prefix = status == .completed ? "✓ " : "\(idx + 1). "
+                                Text(prefix + L10n.stationLabel(st, language: language))
+                                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                                    .foregroundColor(isCurr ? .white : CandyColors.deepPlum)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(
+                                        isCurr ? CandyColors.purple
+                                        : (status == .completed ? CandyColors.mint.opacity(0.65) : Color.white.opacity(0.9))
+                                    )
+                                    .cornerRadius(16)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .stroke(isCurr ? CandyColors.deepPlum : Color.gray.opacity(0.3), lineWidth: isCurr ? 2 : 1)
+                                    )
                             }
+                        }
+                    }
+                    .padding(.horizontal, 10)
+                }
+
+                // PORTRAIT TOP HUD ROW 3: Station Prompt + Action Controls (Undo, Redo, Reset with >= 44pt touch targets)
+                HStack(spacing: 6) {
+                    Text(L10n.string(instructionKey(for: currentStation), language: language))
+                        .font(.system(size: 11, weight: .medium, design: .rounded))
+                        .foregroundColor(CandyColors.deepPlum.opacity(0.85))
+                        .lineLimit(2)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    if currentStation == .makeup {
+                        Button(action: {
+                            soundManager.playClick()
+                            levelEngine.updateCharacter { $0 = LayerComposer.clearMakeup(character: $0) }
+                            characterState = levelEngine.characterState
+                            syncUndo()
+                            onCheckpointChanged(buildCheckpoint())
+                        }) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "sparkles")
+                                    .font(.system(size: 11))
+                                Text(L10n.string("makeup_remover", language: language))
+                                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                            }
+                            .foregroundColor(CandyColors.deepPlum)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 6)
+                            .background(CandyColors.pastelPink)
+                            .cornerRadius(14)
                         }
                     }
 
@@ -1043,37 +1104,6 @@ public struct StationView: View {
                 }
                 .padding(.horizontal, 10)
 
-                // Hint + Remove Makeup
-                HStack(spacing: 8) {
-                    Text(L10n.string(instructionKey(for: currentStation), language: language))
-                        .font(.system(size: 11, weight: .medium, design: .rounded))
-                        .foregroundColor(CandyColors.deepPlum.opacity(0.8))
-                        .lineLimit(2)
-                    Spacer(minLength: 4)
-                    if currentStation == .makeup {
-                        Button(action: {
-                            soundManager.playClick()
-                            levelEngine.updateCharacter { $0 = LayerComposer.clearMakeup(character: $0) }
-                            characterState = levelEngine.characterState
-                            syncUndo()
-                            onCheckpointChanged(buildCheckpoint())
-                        }) {
-                            HStack(spacing: 4) {
-                                Image(systemName: "sparkles")
-                                    .font(.system(size: 11))
-                                Text(L10n.string("makeup_remover", language: language))
-                                    .font(.system(size: 11, weight: .bold, design: .rounded))
-                            }
-                            .foregroundColor(CandyColors.deepPlum)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 6)
-                            .background(CandyColors.pastelPink)
-                            .cornerRadius(14)
-                        }
-                    }
-                }
-                .padding(.horizontal, 12)
-
                 // CENTRAL PORTRAIT STAGE
                 Group {
                     switch currentStation {
@@ -1102,6 +1132,21 @@ public struct StationView: View {
                                 cakeToppings = []
                                 soundManager.playClick()
                                 onCheckpointChanged(buildCheckpoint())
+                            },
+                            onRemoveTopping: { topId in
+                                if let idx = cakeToppings.firstIndex(of: topId) {
+                                    cakeToppings.remove(at: idx)
+                                    soundManager.playClick()
+                                    onCheckpointChanged(buildCheckpoint())
+                                }
+                            },
+                            onOpenAddModal: {
+                                soundManager.playClick()
+                                showCakeToppingModal = true
+                            },
+                            onOpenFlavorModal: {
+                                soundManager.playClick()
+                                showCakeFlavorModal = true
                             }
                         )
                     case .pet:
@@ -1301,6 +1346,46 @@ public struct StationView: View {
                         }
                     },
                     onDismiss: { lockedItemPending = nil }
+                )
+            }
+
+            if showCakeToppingModal {
+                let toppingItems = items.filter { $0.category == "cake_toppings" }
+                ItemSelectionModal(
+                    title: L10n.string("title_select_topping", language: language),
+                    items: toppingItems,
+                    language: language,
+                    unlockedItems: unlockedItems,
+                    selectedIds: Set(cakeToppings),
+                    onItemSelected: { item in
+                        soundManager.playClick()
+                        equipItem(item)
+                    },
+                    onLockedItemClicked: { item in
+                        soundManager.playClick()
+                        lockedItemPending = item
+                    },
+                    onDismiss: { showCakeToppingModal = false }
+                )
+            }
+
+            if showCakeFlavorModal {
+                let flavorItems = items.filter { $0.category == "cake_flavors" }
+                ItemSelectionModal(
+                    title: L10n.string("title_select_flavor", language: language),
+                    items: flavorItems,
+                    language: language,
+                    unlockedItems: unlockedItems,
+                    selectedIds: cakeFlavor.map { [$0] } ?? [],
+                    onItemSelected: { item in
+                        soundManager.playClick()
+                        equipItem(item)
+                    },
+                    onLockedItemClicked: { item in
+                        soundManager.playClick()
+                        lockedItemPending = item
+                    },
+                    onDismiss: { showCakeFlavorModal = false }
                 )
             }
 
