@@ -1094,24 +1094,18 @@ object CandySalonStudioRenderer {
 
         when {
             hairStyleId?.contains("buns_twin") == true -> {
-                // Large voluminous twin buns on upper sides
-                drawCircle(hairGradient, radius = headR * 0.55f, center = Offset(cx - headR * 0.95f, headY - headR * 0.65f))
-                drawCircle(hairGradient, radius = headR * 0.55f, center = Offset(cx + headR * 0.95f, headY - headR * 0.65f))
-                // Decorative ribbon ties on buns
-                drawCircle(CandyPink, radius = headR * 0.16f, center = Offset(cx - headR * 0.95f, headY - headR * 0.35f))
-                drawCircle(CandyPink, radius = headR * 0.16f, center = Offset(cx + headR * 0.95f, headY - headR * 0.35f))
-                // Flowing locks behind
+                // Soft flowing side tendrils and back hair behind shoulders
                 for (side in listOf(-1f, 1f)) {
                     val lock = Path().apply {
                         moveTo(cx + side * headR * 0.45f, headY)
                         cubicTo(
-                            cx + side * headR * 1.35f, headY + headR * 0.6f,
-                            cx + side * headR * 1.45f, bodyBottomY - headR * 0.2f,
-                            cx + side * headR * 1.05f, bodyBottomY + headR * 0.2f
+                            cx + side * headR * 1.25f, headY + headR * 0.6f,
+                            cx + side * headR * 1.35f, bodyBottomY - headR * 0.2f,
+                            cx + side * headR * 0.95f, bodyBottomY + headR * 0.15f
                         )
                         cubicTo(
-                            cx + side * headR * 0.85f, bodyBottomY + headR * 0.1f,
-                            cx + side * headR * 0.65f, headY + headR * 1.1f,
+                            cx + side * headR * 0.75f, bodyBottomY + headR * 0.05f,
+                            cx + side * headR * 0.65f, headY + headR * 1.0f,
                             cx + side * headR * 0.35f, headY + headR * 0.7f
                         )
                         close()
@@ -1371,43 +1365,27 @@ object CandySalonStudioRenderer {
         drawPath(heart, MagentaHeart)
         drawPath(heart, WhitePure.copy(alpha = 0.85f), style = Stroke(width = 2.5f))
 
-        // Golden Waffle Cone / Horn at bottom tip
-        val cone = Path().apply {
-            moveTo(cx - size * 0.24f, cy + size * 0.60f)
-            lineTo(cx + size * 0.24f, cy + size * 0.60f)
-            lineTo(cx, cy + size * 1.35f)
+        // Center golden sparkle star emblem
+        CharacterVectorRenderer.run {
+            drawStarShape(Offset(cx, cy), size * 0.42f, GoldStar)
+        }
+        drawCircle(WhitePure, radius = size * 0.12f, center = Offset(cx - size * 0.15f, cy - size * 0.25f))
+
+        // Delicate glowing pastel ribbon wings around heart
+        val ribbonLeft = Path().apply {
+            moveTo(cx - size * 0.75f, cy)
+            cubicTo(cx - size * 1.35f, cy - size * 0.25f, cx - size * 1.45f, cy + size * 0.35f, cx - size * 0.85f, cy + size * 0.45f)
             close()
         }
-        drawPath(cone, GoldStar)
-        drawLine(Color(0xFFE65100), Offset(cx - size * 0.16f, cy + size * 0.85f), Offset(cx + size * 0.16f, cy + size * 0.85f), strokeWidth = 1.5f)
-        drawLine(Color(0xFFE65100), Offset(cx - size * 0.10f, cy + size * 1.10f), Offset(cx + size * 0.10f, cy + size * 1.10f), strokeWidth = 1.5f)
-
-        // Saturn-Style Candy Orbital Rings
-        withTransform({
-            rotate(degrees = -18f, pivot = Offset(cx, cy))
-        }) {
-            drawOval(
-                color = GoldStar,
-                topLeft = Offset(cx - size * 1.35f, cy - size * 0.25f),
-                size = Size(size * 2.7f, size * 0.50f),
-                style = Stroke(width = 4f)
-            )
-            drawOval(
-                color = ScallopCyan,
-                topLeft = Offset(cx - size * 1.25f, cy - size * 0.18f),
-                size = Size(size * 2.5f, size * 0.36f),
-                style = Stroke(width = 3f)
-            )
-            drawArc(
-                color = WhitePure,
-                startAngle = 10f,
-                sweepAngle = 160f,
-                useCenter = false,
-                topLeft = Offset(cx - size * 0.8f, cy - size * 0.2f),
-                size = Size(size * 1.6f, size * 0.4f),
-                style = Stroke(width = 3.5f, cap = StrokeCap.Round)
-            )
+        val ribbonRight = Path().apply {
+            moveTo(cx + size * 0.75f, cy)
+            cubicTo(cx + size * 1.35f, cy - size * 0.25f, cx + size * 1.45f, cy + size * 0.35f, cx + size * 0.85f, cy + size * 0.45f)
+            close()
         }
+        drawPath(ribbonLeft, ScallopCyan.copy(alpha = 0.75f))
+        drawPath(ribbonLeft, WhitePure.copy(alpha = 0.85f), style = Stroke(width = 1.5f))
+        drawPath(ribbonRight, ScallopCyan.copy(alpha = 0.75f))
+        drawPath(ribbonRight, WhitePure.copy(alpha = 0.85f), style = Stroke(width = 1.5f))
     }
 
     private fun DrawScope.drawPrincessSkaterSkirt(
@@ -1605,18 +1583,22 @@ object CandySalonStudioRenderer {
         lipstickId: String?,
         blushId: String?
     ) {
-        val eyeSpacing = headR * 0.42f
-        val eyeY = headY + headR * 0.04f
+        val eyeSpacing = headR * 0.40f
+        val eyeY = headY + headR * 0.06f
         val eyeR = headR * 0.22f
         val skinShadow = Color(0xFFF5C2A0)
 
-        // Shimmering Eyeshadow (Responding to eyeshadowId)
-        val shadowColor = if (eyeshadowId != null) CandyPalette.eyeshadowColor(eyeshadowId) else ScallopCyan
+        // Soft Shimmering Eyeshadow (Subtle, elegant pastel contour - no opaque blocks!)
+        val shadowColor = if (eyeshadowId != null) {
+            CandyPalette.eyeshadowColor(eyeshadowId).copy(alpha = 0.45f)
+        } else {
+            Color(0xFFFFB6C1).copy(alpha = 0.18f)
+        }
         for (side in listOf(-1f, 1f)) {
             val eyeX = cx + side * eyeSpacing
             val lidMask = Path().apply {
                 addArc(
-                    oval = Rect(eyeX - eyeR * 1.15f, eyeY - eyeR * 1.25f, eyeX + eyeR * 1.15f, eyeY + eyeR * 0.1f),
+                    oval = Rect(eyeX - eyeR * 1.05f, eyeY - eyeR * 1.15f, eyeX + eyeR * 1.05f, eyeY + eyeR * 0.05f),
                     startAngleDegrees = 180f,
                     sweepAngleDegrees = 180f
                 )
@@ -1625,117 +1607,141 @@ object CandySalonStudioRenderer {
             clipPath(lidMask, clipOp = ClipOp.Intersect) {
                 drawOval(
                     brush = Brush.verticalGradient(
-                        listOf(shadowColor.copy(alpha = 0.95f), shadowColor.copy(alpha = 0.4f)),
-                        startY = eyeY - eyeR * 1.3f,
+                        listOf(shadowColor, shadowColor.copy(alpha = 0.05f)),
+                        startY = eyeY - eyeR * 1.15f,
                         endY = eyeY
                     ),
-                    topLeft = Offset(eyeX - eyeR * 1.2f, eyeY - eyeR * 1.3f),
-                    size = Size(eyeR * 2.4f, eyeR * 1.4f)
+                    topLeft = Offset(eyeX - eyeR * 1.1f, eyeY - eyeR * 1.2f),
+                    size = Size(eyeR * 2.2f, eyeR * 1.3f)
                 )
             }
         }
 
-        // Rosy Cheek Blush (Responding to blushId)
-        val blushCol = if (blushId != null) CandyPalette.blushColor(blushId).copy(alpha = 0.65f) else Color(0xFFFF80AB).copy(alpha = 0.55f)
-        drawOval(blushCol, topLeft = Offset(cx - eyeSpacing - headR * 0.28f, eyeY + headR * 0.22f), size = Size(headR * 0.42f, headR * 0.20f))
-        drawOval(blushCol, topLeft = Offset(cx + eyeSpacing - headR * 0.14f, eyeY + headR * 0.22f), size = Size(headR * 0.42f, headR * 0.20f))
+        // Rosy Cheek Blush (Soft romantic glow)
+        val blushCol = if (blushId != null) {
+            CandyPalette.blushColor(blushId).copy(alpha = 0.48f)
+        } else {
+            Color(0xFFFF80AB).copy(alpha = 0.38f)
+        }
+        drawOval(blushCol, topLeft = Offset(cx - eyeSpacing - headR * 0.24f, eyeY + headR * 0.22f), size = Size(headR * 0.36f, headR * 0.18f))
+        drawOval(blushCol, topLeft = Offset(cx + eyeSpacing - headR * 0.12f, eyeY + headR * 0.22f), size = Size(headR * 0.36f, headR * 0.18f))
 
-        // Almond Anime Eyes
+        // Large Sparkling Anime Eyes
         for (side in listOf(-1f, 1f)) {
             val eyeX = cx + side * eyeSpacing
             if (isBlinking) {
                 drawArc(
                     color = Color(0xFF1A1A24),
-                    startAngle = 10f,
-                    sweepAngle = 160f,
+                    startAngle = 15f,
+                    sweepAngle = 150f,
                     useCenter = false,
-                    topLeft = Offset(eyeX - eyeR, eyeY - eyeR * 0.2f),
-                    size = Size(eyeR * 2f, eyeR * 0.6f),
-                    style = Stroke(width = 4.5f, cap = StrokeCap.Round)
+                    topLeft = Offset(eyeX - eyeR * 0.95f, eyeY - eyeR * 0.2f),
+                    size = Size(eyeR * 1.9f, eyeR * 0.5f),
+                    style = Stroke(width = 4f, cap = StrokeCap.Round)
                 )
             } else {
+                // Eye white (clean almond shape)
                 drawOval(
                     color = WhitePure,
-                    topLeft = Offset(eyeX - eyeR * 1.05f, eyeY - eyeR * 0.68f),
-                    size = Size(eyeR * 2.1f, eyeR * 1.36f)
+                    topLeft = Offset(eyeX - eyeR * 1.02f, eyeY - eyeR * 0.65f),
+                    size = Size(eyeR * 2.04f, eyeR * 1.30f)
                 )
+                // Iris (gorgeous deep blue & cyan multi-tier gradient)
                 val irisR = eyeR * 0.68f
                 drawCircle(
                     brush = Brush.radialGradient(
-                        colors = listOf(Color(0xFF2979FF), Color(0xFF1A237E)),
-                        center = Offset(eyeX, eyeY),
+                        colors = listOf(Color(0xFF00E5FF), Color(0xFF1E88E5), Color(0xFF0D47A1)),
+                        center = Offset(eyeX, eyeY + 2f),
                         radius = irisR
                     ),
                     radius = irisR,
                     center = Offset(eyeX, eyeY)
                 )
-                drawCircle(Color(0xFF0D1B2A), radius = irisR * 0.48f, center = Offset(eyeX, eyeY))
-                drawCircle(WhitePure, radius = irisR * 0.32f, center = Offset(eyeX - irisR * 0.25f, eyeY - irisR * 0.25f))
-                drawCircle(WhitePure, radius = irisR * 0.14f, center = Offset(eyeX + irisR * 0.22f, eyeY + irisR * 0.22f))
+                // Pupil
+                drawCircle(Color(0xFF0A1128), radius = irisR * 0.45f, center = Offset(eyeX, eyeY))
+                // Primary starlight glint
+                drawCircle(WhitePure, radius = irisR * 0.32f, center = Offset(eyeX - irisR * 0.26f, eyeY - irisR * 0.26f))
+                // Secondary twinkle reflection
+                drawCircle(WhitePure, radius = irisR * 0.15f, center = Offset(eyeX + irisR * 0.24f, eyeY + irisR * 0.22f))
 
+                // Delicate fluttering winged lashes
                 val lashLine = Path().apply {
-                    moveTo(eyeX - side * eyeR * 1.05f, eyeY - eyeR * 0.1f)
-                    quadraticBezierTo(eyeX, eyeY - eyeR * 0.85f, eyeX + side * eyeR * 1.15f, eyeY - eyeR * 0.35f)
-                    lineTo(eyeX + side * eyeR * 1.35f, eyeY - eyeR * 0.60f)
+                    moveTo(eyeX - side * eyeR * 0.98f, eyeY - eyeR * 0.12f)
+                    quadraticBezierTo(eyeX, eyeY - eyeR * 0.80f, eyeX + side * eyeR * 1.10f, eyeY - eyeR * 0.32f)
+                    lineTo(eyeX + side * eyeR * 1.30f, eyeY - eyeR * 0.55f)
                 }
-                drawPath(lashLine, color = Color(0xFF1A1A24), style = Stroke(width = 4f, cap = StrokeCap.Round))
+                drawPath(lashLine, color = Color(0xFF1A1A24), style = Stroke(width = 3.5f, cap = StrokeCap.Round))
+
+                // Extra flutter lash tip
+                drawLine(
+                    color = Color(0xFF1A1A24),
+                    start = Offset(eyeX + side * eyeR * 1.02f, eyeY - eyeR * 0.30f),
+                    end = Offset(eyeX + side * eyeR * 1.25f, eyeY - eyeR * 0.38f),
+                    strokeWidth = 2.5f,
+                    cap = StrokeCap.Round
+                )
+
+                // Double eyelid fold
+                drawArc(
+                    color = skinShadow.copy(alpha = 0.55f),
+                    startAngle = 200f,
+                    sweepAngle = 140f,
+                    useCenter = false,
+                    topLeft = Offset(eyeX - eyeR * 0.85f, eyeY - eyeR * 0.95f),
+                    size = Size(eyeR * 1.7f, eyeR * 0.5f),
+                    style = Stroke(width = 1.8f, cap = StrokeCap.Round)
+                )
             }
 
+            // Natural arched soft-brown eyebrows
             val brow = Path().apply {
-                moveTo(eyeX - side * eyeR * 0.95f, eyeY - eyeR * 1.15f)
-                quadraticBezierTo(eyeX, eyeY - eyeR * 1.55f, eyeX + side * eyeR * 0.95f, eyeY - eyeR * 1.10f)
+                moveTo(eyeX - side * eyeR * 0.88f, eyeY - eyeR * 1.10f)
+                quadraticBezierTo(eyeX, eyeY - eyeR * 1.45f, eyeX + side * eyeR * 0.92f, eyeY - eyeR * 1.05f)
             }
-            drawPath(brow, color = Color(0xFF3E2723), style = Stroke(width = 3.5f, cap = StrokeCap.Round))
+            drawPath(brow, color = Color(0xFF4A3728), style = Stroke(width = 3f, cap = StrokeCap.Round))
         }
 
-        // Delicate Nose
-        val noseY = headY + headR * 0.32f
+        // Dainty Anime Button Nose
+        val noseY = headY + headR * 0.30f
         drawArc(
-            color = skinShadow.copy(alpha = 0.7f),
+            color = skinShadow.copy(alpha = 0.65f),
             startAngle = 10f,
             sweepAngle = 160f,
             useCenter = false,
-            topLeft = Offset(cx - 5f, noseY),
-            size = Size(10f, 6f),
-            style = Stroke(width = 2.5f, cap = StrokeCap.Round)
+            topLeft = Offset(cx - 4.5f, noseY),
+            size = Size(9f, 5.5f),
+            style = Stroke(width = 2.2f, cap = StrokeCap.Round)
         )
 
-        // Luscious Glossy Lips (Responding to lipstickId)
-        val mouthY = headY + headR * 0.55f
-        val lipW = headR * 0.35f
-        val lipH = headR * 0.22f
-        val lipCol = if (lipstickId != null) CandyPalette.lipstickColor(lipstickId) else Color(0xFFE91E63)
+        // Sweet Glossy Pink Smiling Lips
+        val mouthY = headY + headR * 0.52f
+        val lipW = headR * 0.34f
+        val lipH = headR * 0.20f
+        val lipCol = if (lipstickId != null) CandyPalette.lipstickColor(lipstickId) else Color(0xFFF06292)
 
         val topLip = Path().apply {
             moveTo(cx - lipW * 0.5f, mouthY)
-            cubicTo(cx - lipW * 0.2f, mouthY - lipH * 0.5f, cx - lipW * 0.05f, mouthY - lipH * 0.4f, cx, mouthY - lipH * 0.2f)
-            cubicTo(cx + lipW * 0.05f, mouthY - lipH * 0.4f, cx + lipW * 0.2f, mouthY - lipH * 0.5f, cx + lipW * 0.5f, mouthY)
+            cubicTo(cx - lipW * 0.2f, mouthY - lipH * 0.45f, cx - lipW * 0.05f, mouthY - lipH * 0.35f, cx, mouthY - lipH * 0.18f)
+            cubicTo(cx + lipW * 0.05f, mouthY - lipH * 0.35f, cx + lipW * 0.2f, mouthY - lipH * 0.45f, cx + lipW * 0.5f, mouthY)
             close()
         }
         val botLip = Path().apply {
             moveTo(cx - lipW * 0.5f, mouthY)
-            cubicTo(cx - lipW * 0.25f, mouthY + lipH * 0.7f, cx + lipW * 0.25f, mouthY + lipH * 0.7f, cx + lipW * 0.5f, mouthY)
+            cubicTo(cx - lipW * 0.22f, mouthY + lipH * 0.65f, cx + lipW * 0.22f, mouthY + lipH * 0.65f, cx + lipW * 0.5f, mouthY)
             close()
         }
         drawPath(topLip, lipCol)
-        drawPath(botLip, lipCol.copy(alpha = 0.85f))
+        drawPath(botLip, lipCol.copy(alpha = 0.9f))
 
-        // Gloss highlight & Ombre Shimmer
+        // Natural soft glossy shine on bottom lip (NO CYAN STRIPES!)
         drawArc(
-            color = if (lipstickId != null) WhitePure.copy(alpha = 0.5f) else ScallopCyan.copy(alpha = 0.65f),
+            color = WhitePure.copy(alpha = 0.65f),
             startAngle = 20f,
             sweepAngle = 140f,
             useCenter = false,
-            topLeft = Offset(cx - lipW * 0.25f, mouthY + 2f),
-            size = Size(lipW * 0.5f, lipH * 0.4f),
-            style = Stroke(width = 3f, cap = StrokeCap.Round)
-        )
-        drawLine(
-            color = WhitePure.copy(alpha = 0.85f),
-            start = Offset(cx - lipW * 0.15f, mouthY + 3f),
-            end = Offset(cx + lipW * 0.15f, mouthY + 3f),
-            strokeWidth = 2.5f,
-            cap = StrokeCap.Round
+            topLeft = Offset(cx - lipW * 0.20f, mouthY + 1.5f),
+            size = Size(lipW * 0.40f, lipH * 0.35f),
+            style = Stroke(width = 2.5f, cap = StrokeCap.Round)
         )
     }
 
@@ -1753,29 +1759,23 @@ object CandySalonStudioRenderer {
             return
         }
 
-        // Default star & bell drop earrings and candy necklace
+        // Default sparkling star earrings and pearl choker necklace
         for (side in listOf(-1f, 1f)) {
-            val earX = cx + side * headR * 0.88f
+            val earX = cx + side * headR * 0.86f
             val earY = headY + headR * 0.18f
 
-            drawStar5(earX, earY, r = 5.5f, color = WhitePure)
-            drawLine(WhitePure, Offset(earX, earY + 5f), Offset(earX, earY + 18f), strokeWidth = 1.5f)
-
-            val bell = Path().apply {
-                moveTo(earX - 5f, earY + 18f)
-                lineTo(earX + 5f, earY + 18f)
-                lineTo(earX + 3f, earY + 28f)
-                lineTo(earX - 3f, earY + 28f)
-                close()
-            }
-            drawPath(bell, Color(0xFF7C4DFF))
+            drawStar5(earX, earY, r = 5.5f, color = GoldStar)
+            drawLine(GoldStar, Offset(earX, earY + 4f), Offset(earX, earY + 16f), strokeWidth = 1.8f)
+            drawCircle(CandyPink, radius = 4.5f, center = Offset(earX, earY + 18f))
+            drawCircle(WhitePure, radius = 2f, center = Offset(earX - 1f, earY + 17f))
         }
 
-        val chokerY = neckY + headR * 0.12f
+        val chokerY = neckY + headR * 0.10f
         for (i in -4..4) {
             val bx = cx + i * (headR * 0.08f)
-            val by = chokerY + (i * i) * 0.5f
-            drawCircle(Color(0xFF7C4DFF), radius = 3.5f, center = Offset(bx, by))
+            val by = chokerY + (i * i) * 0.4f
+            drawCircle(color = Color(0xFFFFFDE7), radius = 3.8f, center = Offset(bx, by))
+            drawCircle(color = Color(0xFFFF80AB), radius = 3.8f, center = Offset(bx, by), style = Stroke(width = 1f))
         }
         drawStar5(cx, chokerY + 8f, r = 6f, color = GoldStar)
     }
@@ -1791,145 +1791,139 @@ object CandySalonStudioRenderer {
         val hairGradient = if (hairColorId != null) {
             CandyPalette.hairBrush(hairColorId, Offset(cx - headR, headY - headR * 1.2f), Offset(cx + headR, headY + headR))
         } else {
-            Brush.radialGradient(
-                colors = listOf(Color(0xFF00E676), Color(0xFF00B0FF)),
-                center = Offset(cx, headY - headR * 1.05f),
-                radius = headR * 0.52f
+            Brush.verticalGradient(
+                colors = listOf(
+                    Color(0xFF7C4DFF), // Royal Purple
+                    Color(0xFF2979FF), // Sapphire Blue
+                    Color(0xFF00E5FF)  // Electric Cyan
+                ),
+                startY = headY - headR * 1.2f,
+                endY = headY + headR
             )
         }
 
         when {
             hairStyleId?.contains("buns_twin") == true -> {
-                // Front twin buns with peppermint swirl pinwheels
+                // Two cute anime side buns with ribbon ties
                 val bunR = headR * 0.46f
                 for (side in listOf(-1f, 1f)) {
-                    val bx = cx + side * headR * 0.95f
+                    val bx = cx + side * headR * 0.88f
                     val by = headY - headR * 0.65f
                     drawCircle(hairGradient, radius = bunR, center = Offset(bx, by))
-                    drawPeppermintSwirl(bx, by, radius = bunR * 0.55f)
+                    drawCircle(WhitePure.copy(alpha = 0.35f), radius = bunR * 0.45f, center = Offset(bx - side * 4f, by - 4f))
+                    // Cute ribbon bows
+                    drawCircle(CandyPink, radius = bunR * 0.32f, center = Offset(bx, by + bunR * 0.65f))
+                    drawCircle(WhitePure, radius = bunR * 0.12f, center = Offset(bx, by + bunR * 0.65f))
                 }
-                // Center soft scalloped bangs
+                // Soft center parted bangs
                 val bangs = Path().apply {
-                    moveTo(cx - headR * 0.85f, headY - headR * 0.25f)
-                    cubicTo(cx - headR * 0.45f, headY - headR * 0.75f, cx + headR * 0.45f, headY - headR * 0.75f, cx + headR * 0.85f, headY - headR * 0.25f)
-                    quadraticBezierTo(cx, headY - headR * 0.35f, cx - headR * 0.85f, headY - headR * 0.25f)
+                    moveTo(cx - headR * 0.82f, headY - headR * 0.22f)
+                    cubicTo(cx - headR * 0.40f, headY - headR * 0.70f, cx + headR * 0.40f, headY - headR * 0.70f, cx + headR * 0.82f, headY - headR * 0.22f)
+                    quadraticBezierTo(cx, headY - headR * 0.35f, cx - headR * 0.82f, headY - headR * 0.22f)
                     close()
                 }
                 drawPath(bangs, hairGradient)
             }
             hairStyleId?.contains("ponytail_high") == true -> {
-                // Swept fringe and side framing locks
+                // Sleek high ponytail sweeping gracefully
                 val fringe = Path().apply {
-                    moveTo(cx - headR * 0.85f, headY - headR * 0.30f)
-                    cubicTo(cx - headR * 0.2f, headY - headR * 0.85f, cx + headR * 0.5f, headY - headR * 0.85f, cx + headR * 0.88f, headY - headR * 0.15f)
-                    quadraticBezierTo(cx + headR * 0.2f, headY - headR * 0.45f, cx - headR * 0.85f, headY - headR * 0.30f)
+                    moveTo(cx - headR * 0.82f, headY - headR * 0.25f)
+                    cubicTo(cx - headR * 0.2f, headY - headR * 0.80f, cx + headR * 0.5f, headY - headR * 0.80f, cx + headR * 0.85f, headY - headR * 0.15f)
+                    quadraticBezierTo(cx + headR * 0.2f, headY - headR * 0.42f, cx - headR * 0.82f, headY - headR * 0.25f)
                     close()
                 }
                 drawPath(fringe, hairGradient)
+                // Cute scrunchie
+                drawCircle(CandyPink, radius = headR * 0.18f, center = Offset(cx + headR * 0.25f, headY - headR * 0.85f))
             }
             hairStyleId?.contains("straight") == true -> {
                 // Sleek straight parted bangs
                 val bangs = Path().apply {
-                    moveTo(cx - headR * 0.88f, headY - headR * 0.25f)
-                    lineTo(cx + headR * 0.88f, headY - headR * 0.25f)
-                    lineTo(cx + headR * 0.88f, headY - headR * 0.75f)
-                    lineTo(cx - headR * 0.88f, headY - headR * 0.75f)
+                    moveTo(cx - headR * 0.85f, headY - headR * 0.22f)
+                    lineTo(cx + headR * 0.85f, headY - headR * 0.22f)
+                    lineTo(cx + headR * 0.85f, headY - headR * 0.70f)
+                    lineTo(cx - headR * 0.85f, headY - headR * 0.70f)
                     close()
                 }
                 drawPath(bangs, hairGradient)
-                // Sleek bangs fringe cut
                 for (b in -3..3) {
-                    val fx = cx + b * headR * 0.22f
+                    val fx = cx + b * headR * 0.20f
                     drawLine(
-                        color = WhitePure.copy(alpha = 0.5f),
-                        start = Offset(fx, headY - headR * 0.7f),
-                        end = Offset(fx, headY - headR * 0.3f),
+                        color = WhitePure.copy(alpha = 0.45f),
+                        start = Offset(fx, headY - headR * 0.65f),
+                        end = Offset(fx, headY - headR * 0.28f),
                         strokeWidth = 2f
                     )
                 }
             }
             hairStyleId?.contains("waves") == true || hairStyleId?.contains("curls") == true -> {
-                // Voluminous side-swept waves
+                // Voluminous side-swept glamorous waves
                 val waveBangs = Path().apply {
-                    moveTo(cx - headR * 0.90f, headY - headR * 0.20f)
-                    cubicTo(cx - headR * 0.4f, headY - headR * 0.95f, cx + headR * 0.6f, headY - headR * 0.95f, cx + headR * 0.92f, headY - headR * 0.05f)
-                    quadraticBezierTo(cx + headR * 0.2f, headY - headR * 0.55f, cx - headR * 0.90f, headY - headR * 0.20f)
+                    moveTo(cx - headR * 0.88f, headY - headR * 0.18f)
+                    cubicTo(cx - headR * 0.35f, headY - headR * 0.85f, cx + headR * 0.55f, headY - headR * 0.85f, cx + headR * 0.88f, headY - headR * 0.05f)
+                    quadraticBezierTo(cx + headR * 0.20f, headY - headR * 0.50f, cx - headR * 0.88f, headY - headR * 0.18f)
                     close()
                 }
                 drawPath(waveBangs, hairGradient)
             }
             hairStyleId?.contains("braid") == true -> {
-                // Center-parted neat bangs with side braid strand
+                // Center-parted neat bangs with braided strand
                 val braidBangs = Path().apply {
-                    moveTo(cx - headR * 0.85f, headY - headR * 0.20f)
-                    quadraticBezierTo(cx, headY - headR * 0.75f, cx + headR * 0.85f, headY - headR * 0.20f)
-                    quadraticBezierTo(cx, headY - headR * 0.45f, cx - headR * 0.85f, headY - headR * 0.20f)
+                    moveTo(cx - headR * 0.82f, headY - headR * 0.18f)
+                    quadraticBezierTo(cx, headY - headR * 0.70f, cx + headR * 0.82f, headY - headR * 0.18f)
+                    quadraticBezierTo(cx, headY - headR * 0.42f, cx - headR * 0.82f, headY - headR * 0.18f)
                     close()
                 }
                 drawPath(braidBangs, hairGradient)
             }
             else -> {
-                // Default reference top bun with peppermint swirl and rainbow sweep
-                val bunY = headY - headR * 1.05f
-                val bunR = headR * 0.52f
+                // Default high glamorous bun with textured braided weave (NO UGLY RAINBOW UNIBROW!)
+                val bunY = headY - headR * 0.98f
+                val bunR = headR * 0.48f
 
                 drawCircle(
                     brush = hairGradient,
                     radius = bunR,
                     center = Offset(cx, bunY)
                 )
+                // Hair weave sheen curves on the bun
                 for (b in -2..2) {
-                    val by = bunY + b * 7f
+                    val by = bunY + b * 6.5f
                     drawArc(
-                        color = WhitePure.copy(alpha = 0.55f),
-                        startAngle = 190f,
-                        sweepAngle = 160f,
+                        color = WhitePure.copy(alpha = 0.45f),
+                        startAngle = 195f,
+                        sweepAngle = 150f,
                         useCenter = false,
-                        topLeft = Offset(cx - bunR * 0.8f, by - 6f),
-                        size = Size(bunR * 1.6f, 12f),
-                        style = Stroke(width = 2.5f)
+                        topLeft = Offset(cx - bunR * 0.75f, by - 5f),
+                        size = Size(bunR * 1.5f, 10f),
+                        style = Stroke(width = 2.2f)
                     )
                 }
-                drawPeppermintSwirl(cx - bunR * 0.7f, bunY - bunR * 0.2f, radius = bunR * 0.32f)
-
-                // Rainbow Crown Sweep
-                val crownPath = Path().apply {
-                    moveTo(cx - headR * 0.85f, headY - headR * 0.35f)
-                    cubicTo(
-                        cx - headR * 0.75f, headY - headR * 0.95f,
-                        cx + headR * 0.75f, headY - headR * 0.95f,
-                        cx + headR * 0.85f, headY - headR * 0.35f
-                    )
-                    cubicTo(
-                        cx + headR * 0.45f, headY - headR * 0.65f,
-                        cx - headR * 0.45f, headY - headR * 0.65f,
-                        cx - headR * 0.85f, headY - headR * 0.35f
-                    )
-                    close()
-                }
-                drawPath(
-                    crownPath,
-                    brush = if (hairColorId != null) {
-                        hairGradient
-                    } else {
-                        Brush.horizontalGradient(
-                            colors = listOf(
-                                Color(0xFF00E676),
-                                Color(0xFFFFEA00),
-                                Color(0xFFFF1744),
-                                Color(0xFFD500F9),
-                                Color(0xFF651FFF)
-                            ),
-                            startX = cx - headR,
-                            endX = cx + headR
-                        )
-                    }
+                // Cute pastel candy hair tie ring at bun base
+                drawRoundRect(
+                    color = CandyPink,
+                    topLeft = Offset(cx - bunR * 0.65f, bunY + bunR * 0.55f),
+                    size = Size(bunR * 1.3f, 10f),
+                    cornerRadius = CornerRadius(5f, 5f)
                 )
 
-                // Face-Framing Ombre Locks
+                // Soft sweeping bangs that naturally frame forehead (NO harsh rainbow bar!)
+                val frontBangs = Path().apply {
+                    moveTo(cx - headR * 0.82f, headY - headR * 0.20f)
+                    cubicTo(
+                        cx - headR * 0.40f, headY - headR * 0.75f,
+                        cx + headR * 0.40f, headY - headR * 0.75f,
+                        cx + headR * 0.82f, headY - headR * 0.20f
+                    )
+                    quadraticBezierTo(cx, headY - headR * 0.38f, cx - headR * 0.82f, headY - headR * 0.20f)
+                    close()
+                }
+                drawPath(frontBangs, hairGradient)
+
+                // Face-Framing Gentle Ombre Locks
                 for (side in listOf(-1f, 1f)) {
                     val frontLock = Path().apply {
-                        moveTo(cx + side * headR * 0.78f, headY - headR * 0.25f)
+                        moveTo(cx + side * headR * 0.78f, headY - headR * 0.20f)
                         cubicTo(
                             cx + side * headR * 1.05f, headY + headR * 0.45f,
                             cx + side * headR * 0.95f, headY + headR * 1.15f,

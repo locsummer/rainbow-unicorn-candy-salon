@@ -1262,23 +1262,124 @@ object CharacterVectorRenderer {
             }
             "outfits" -> {
                 val (top, skirt) = CandyPalette.outfitColors(item.id)
+                // Elegant fairytale dress preview
                 val dress = Path().apply {
-                    moveTo(cx - r * 0.45f, cy - r * 0.85f)
-                    lineTo(cx + r * 0.45f, cy - r * 0.85f)
-                    lineTo(cx + r * 0.35f, cy - r * 0.1f)
-                    lineTo(cx + r * 0.95f, cy + r * 0.95f)
-                    lineTo(cx - r * 0.95f, cy + r * 0.95f)
-                    lineTo(cx - r * 0.35f, cy - r * 0.1f)
+                    moveTo(cx - r * 0.45f, cy - r * 0.75f)
+                    cubicTo(cx - r * 0.2f, cy - r * 0.82f, cx + r * 0.2f, cy - r * 0.82f, cx + r * 0.45f, cy - r * 0.75f)
+                    lineTo(cx + r * 0.30f, cy - r * 0.15f)
+                    cubicTo(cx + r * 0.85f, cy + r * 0.35f, cx + r * 0.95f, cy + r * 0.85f, cx + r * 0.90f, cy + r * 0.95f)
+                    lineTo(cx - r * 0.90f, cy + r * 0.95f)
+                    cubicTo(cx - r * 0.95f, cy + r * 0.85f, cx - r * 0.85f, cy + r * 0.35f, cx - r * 0.30f, cy - r * 0.15f)
                     close()
                 }
                 drawPath(dress, Brush.verticalGradient(listOf(top, skirt)))
-                drawPath(dress, CandyDeepPlum.copy(alpha = 0.25f), style = Stroke(width = 2f))
+                drawPath(dress, CandyDeepPlum.copy(alpha = 0.3f), style = Stroke(width = 2.5f))
+                // Sweetheart waist ribbon
+                drawRoundRect(CandyYellow, topLeft = Offset(cx - r * 0.32f, cy - r * 0.20f), size = Size(r * 0.64f, r * 0.12f), cornerRadius = CornerRadius(4f, 4f))
             }
-            "wings" -> drawWingsLayer(item.id, cx, cy, r * 0.7f)
-            "horns" -> drawHornLayer(item.id, cx, cy + r * 0.7f, r * 1.4f)
-            "tiaras" -> drawTiaraLayer(item.id, cx, cy + r * 0.45f, r * 1.6f)
-            "jewelry" -> drawJewelryLayer(item.id, cx, cy - r * 0.3f, cy, r * 1.4f)
-            "stickers" -> drawStickerVector(item.id, Offset(cx, cy), r * 0.85f)
+            "wings" -> {
+                // Centered radiant wings filling thumbnail
+                drawWingsLayer(item.id, cx, cy, r * 0.92f)
+            }
+            "horns" -> {
+                // Centered sparkling unicorn horn with spiral & stars
+                val hornPath = Path().apply {
+                    moveTo(cx - r * 0.35f, cy + r * 0.75f)
+                    lineTo(cx + r * 0.35f, cy + r * 0.75f)
+                    lineTo(cx, cy - r * 0.95f)
+                    close()
+                }
+                drawPath(hornPath, Brush.verticalGradient(CandyPalette.RainbowColors))
+                drawPath(hornPath, CandyDeepPlum.copy(alpha = 0.3f), style = Stroke(width = 2f))
+                // Spiral ridges
+                for (s in 1..4) {
+                    val sy = cy + r * 0.65f - s * (r * 0.35f)
+                    val sw = r * 0.30f * (1f - s * 0.18f)
+                    drawLine(Color.White.copy(alpha = 0.85f), Offset(cx - sw, sy), Offset(cx + sw, sy - 4f), strokeWidth = 2.5f)
+                }
+                drawStarShape(Offset(cx, cy - r * 0.95f), r * 0.25f, CandyYellow)
+            }
+            "tiaras" -> {
+                // Gorgeous imperial princess tiara centered in card
+                val tiaraPath = Path().apply {
+                    moveTo(cx - r * 0.85f, cy + r * 0.45f)
+                    lineTo(cx - r * 0.80f, cy - r * 0.15f)
+                    lineTo(cx - r * 0.45f, cy + r * 0.10f)
+                    lineTo(cx, cy - r * 0.65f)
+                    lineTo(cx + r * 0.45f, cy + r * 0.10f)
+                    lineTo(cx + r * 0.80f, cy - r * 0.15f)
+                    lineTo(cx + r * 0.85f, cy + r * 0.45f)
+                    close()
+                }
+                drawPath(tiaraPath, Brush.verticalGradient(listOf(CandyYellow, Color(0xFFFFA000))))
+                drawPath(tiaraPath, CandyDeepPlum.copy(alpha = 0.35f), style = Stroke(width = 2.5f))
+                // Jewels on crown peaks
+                drawCircle(CandyPink, radius = r * 0.14f, center = Offset(cx, cy - r * 0.65f))
+                drawCircle(Color(0xFF00E5FF), radius = r * 0.10f, center = Offset(cx - r * 0.80f, cy - r * 0.15f))
+                drawCircle(Color(0xFF00E5FF), radius = r * 0.10f, center = Offset(cx + r * 0.80f, cy - r * 0.15f))
+                drawStarShape(Offset(cx, cy), r * 0.18f, Color.White)
+            }
+            "jewelry" -> {
+                when {
+                    item.id.contains("earrings") -> {
+                        // Dazzling pair of dangling drop earrings right in center
+                        for (side in listOf(-1f, 1f)) {
+                            val ex = cx + side * r * 0.45f
+                            val ey = cy - r * 0.35f
+                            drawCircle(CandyYellow, radius = r * 0.18f, center = Offset(ex, ey))
+                            drawCircle(Color.White, radius = r * 0.08f, center = Offset(ex, ey))
+                            drawLine(Color(0xFFFFD54F), Offset(ex, ey + r * 0.18f), Offset(ex, ey + r * 0.55f), strokeWidth = 3f)
+                            drawStarShape(Offset(ex, ey + r * 0.65f), r * 0.28f, CandyPink)
+                            drawCircle(Color.White, radius = r * 0.08f, center = Offset(ex, ey + r * 0.65f))
+                        }
+                    }
+                    item.id.contains("choker") -> {
+                        // Chic ribbon choker with golden heart pendant
+                        val bandTop = cy - r * 0.22f
+                        drawRoundRect(
+                            color = Color(0xFFE91E63),
+                            topLeft = Offset(cx - r * 0.88f, bandTop),
+                            size = Size(r * 1.76f, r * 0.44f),
+                            cornerRadius = CornerRadius(8f, 8f)
+                        )
+                        drawRoundRect(
+                            color = Color.White.copy(alpha = 0.5f),
+                            topLeft = Offset(cx - r * 0.88f, bandTop),
+                            size = Size(r * 1.76f, r * 0.44f),
+                            cornerRadius = CornerRadius(8f, 8f),
+                            style = Stroke(width = 2f)
+                        )
+                        drawCircle(CandyYellow, radius = r * 0.32f, center = Offset(cx, cy + r * 0.35f))
+                        drawStarShape(Offset(cx, cy + r * 0.35f), r * 0.20f, Color.White)
+                    }
+                    item.id.contains("diamond") -> {
+                        // Sparkling diamond necklace
+                        drawArc(
+                            color = Color(0xFF80DEEA),
+                            startAngle = 10f,
+                            sweepAngle = 160f,
+                            useCenter = false,
+                            topLeft = Offset(cx - r * 0.85f, cy - r * 0.65f),
+                            size = Size(r * 1.7f, r * 1.25f),
+                            style = Stroke(width = 5f, cap = StrokeCap.Round)
+                        )
+                        drawDiamondShape(Offset(cx, cy + r * 0.42f), r * 0.42f, Color(0xFF00E5FF))
+                        drawCircle(Color.White, radius = r * 0.14f, center = Offset(cx, cy + r * 0.42f))
+                    }
+                    else -> {
+                        // Plump, glowing pearl necklace
+                        for (i in -4..4) {
+                            val angle = (i * 18f) * (PI.toFloat() / 180f)
+                            val px = cx + sin(angle) * r * 0.72f
+                            val py = cy - cos(angle) * r * 0.35f + r * 0.32f
+                            drawCircle(Color(0xFFFFFDE7), radius = r * 0.16f, center = Offset(px, py))
+                            drawCircle(CandyPink.copy(alpha = 0.5f), radius = r * 0.16f, center = Offset(px, py), style = Stroke(width = 2f))
+                        }
+                        drawCircle(CandyYellow, radius = r * 0.22f, center = Offset(cx, cy + r * 0.62f))
+                    }
+                }
+            }
+            "stickers" -> drawStickerVector(item.id, Offset(cx, cy), r * 0.92f)
             "cake_flavors" -> {
                 val (icing, drip) = CandyPalette.cakeFlavorColors(item.id)
                 // Delicious cake slice with 3 sponge layers and drip

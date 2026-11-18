@@ -136,6 +136,7 @@ fun StationScreen(
     var showRequestDialog by remember { mutableStateOf(false) }
     var showCakeToppingModal by remember { mutableStateOf(false) }
     var showCakeFlavorModal by remember { mutableStateOf(false) }
+    var activeModalCategory by remember { mutableStateOf<ItemCategory?>(null) }
     var lockedItemPending by remember { mutableStateOf<Item?>(null) }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -364,47 +365,56 @@ fun StationScreen(
             )
             .statusBarsPadding()
             .navigationBarsPadding()
+            .padding(top = 8.dp)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // PORTRAIT TOP HUD ROW 1: Exit | Criteria Progress Pill | Done
+            // PORTRAIT TOP HUD ROW 1: Exit | Criteria Progress Pill | Done (Generous >=48dp touch targets)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 10.dp, vertical = 6.dp),
+                    .padding(horizontal = 10.dp, vertical = 4.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 NavButton(
                     icon = Icons.AutoMirrored.Filled.ArrowBack,
                     label = stringResource(R.string.btn_exit),
-                    onClick = { showExitDialog = true },
+                    onClick = {
+                        soundManager.playClick()
+                        showExitDialog = true
+                    },
                     containerColor = CandyActionPink,
-                    compact = true
+                    modifier = Modifier.height(48.dp)
                 )
 
                 // Interactive Customer Goals Pill (tap anytime to inspect live checklist!)
                 Button(
-                    onClick = { showRequestDialog = true },
-                    shape = RoundedCornerShape(20.dp),
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                    onClick = {
+                        soundManager.playClick()
+                        showRequestDialog = true
+                    },
+                    shape = RoundedCornerShape(24.dp),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (metCount == level.criteria.size) CandyMint else Color.White,
                         contentColor = CandyDeepPlum
                     ),
                     modifier = Modifier
                         .weight(1f)
-                        .heightIn(min = 48.dp)
+                        .height(48.dp)
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.FactCheck,
                         contentDescription = null,
-                        modifier = Modifier.size(18.dp)
+                        tint = if (metCount == level.criteria.size) CandyDeepPlum else CandyActionPurple,
+                        modifier = Modifier.size(20.dp)
                     )
-                    Spacer(modifier = Modifier.width(5.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = stringResource(R.string.criteria_progress_format, metCount, level.criteria.size),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.ExtraBold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -454,7 +464,7 @@ fun StationScreen(
                     },
                     containerColor = CandyMint,
                     contentColor = CandyDeepPlum,
-                    compact = true
+                    modifier = Modifier.height(48.dp)
                 )
             }
 
@@ -470,28 +480,30 @@ fun StationScreen(
                     val status = levelEngine.getStationStatus(st)
                     val isCurrent = idx == currentStationIndex
                     Surface(
-                        shape = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape(18.dp),
                         color = when {
                             isCurrent -> CandyActionPurple
                             status == StationStatus.COMPLETED -> CandyMint.copy(alpha = 0.65f)
-                            else -> Color.White.copy(alpha = 0.9f)
+                            else -> Color.White.copy(alpha = 0.95f)
                         },
                         shadowElevation = if (isCurrent) 3.dp else 1.dp,
                         modifier = Modifier
-                            .clip(RoundedCornerShape(16.dp))
+                            .height(44.dp)
+                            .clip(RoundedCornerShape(18.dp))
                             .border(
                                 width = if (isCurrent) 2.dp else 1.dp,
                                 color = if (isCurrent) CandyDeepPlum else Color.LightGray.copy(alpha = 0.7f),
-                                shape = RoundedCornerShape(16.dp)
+                                shape = RoundedCornerShape(18.dp)
                             )
                             .clickable {
+                                soundManager.playClick()
                                 levelEngine.selectStation(idx)
                                 currentStationIndex = idx
                             }
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
                         ) {
                             val prefix = if (status == StationStatus.COMPLETED) "✓ " else "${idx + 1}. "
                             Text(
@@ -534,10 +546,11 @@ fun StationScreen(
 
                 if (currentStation == StationType.MAKEUP) {
                     Surface(
-                        shape = RoundedCornerShape(14.dp),
+                        shape = RoundedCornerShape(16.dp),
                         color = CandyPastelPink,
                         modifier = Modifier
-                            .clip(RoundedCornerShape(14.dp))
+                            .height(44.dp)
+                            .clip(RoundedCornerShape(16.dp))
                             .clickable {
                                 soundManager.playClick()
                                 levelEngine.updateCharacter { LayerComposer.clearMakeup(it) }
@@ -548,10 +561,10 @@ fun StationScreen(
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp)
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp)
                         ) {
-                            Icon(Icons.Default.Spa, contentDescription = null, tint = CandyDeepPlum, modifier = Modifier.size(14.dp))
-                            Spacer(modifier = Modifier.width(3.dp))
+                            Icon(Icons.Default.Spa, contentDescription = null, tint = CandyDeepPlum, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = stringResource(R.string.makeup_remover),
                                 fontSize = 11.sp,
@@ -562,21 +575,21 @@ fun StationScreen(
                     }
                 }
 
-                // Dedicated Undo / Redo / Reset controls
+                // Dedicated Undo / Redo / Reset controls (Always clickable with audio/tactile feedback)
                 NavButton(
                     icon = Icons.AutoMirrored.Filled.Undo,
                     label = stringResource(R.string.btn_undo),
                     onClick = {
-                        if (levelEngine.undo()) {
+                        soundManager.playClick()
+                        if (canUndo && levelEngine.undo()) {
                             characterState = levelEngine.characterState
                             syncUndoFlags()
-                            soundManager.playClick()
                             onCheckpointChanged(buildCheckpoint())
                         }
                     },
-                    enabled = canUndo,
-                    containerColor = Color.White,
-                    contentColor = CandyDeepPlum,
+                    containerColor = if (canUndo) Color.White else Color.White.copy(alpha = 0.65f),
+                    contentColor = if (canUndo) CandyDeepPlum else CandyDeepPlum.copy(alpha = 0.4f),
+                    modifier = Modifier.height(44.dp),
                     compact = true
                 )
 
@@ -584,25 +597,29 @@ fun StationScreen(
                     icon = Icons.AutoMirrored.Filled.Redo,
                     label = stringResource(R.string.btn_redo),
                     onClick = {
-                        if (levelEngine.redo()) {
+                        soundManager.playClick()
+                        if (canRedo && levelEngine.redo()) {
                             characterState = levelEngine.characterState
                             syncUndoFlags()
-                            soundManager.playClick()
                             onCheckpointChanged(buildCheckpoint())
                         }
                     },
-                    enabled = canRedo,
-                    containerColor = Color.White,
-                    contentColor = CandyDeepPlum,
+                    containerColor = if (canRedo) Color.White else Color.White.copy(alpha = 0.65f),
+                    contentColor = if (canRedo) CandyDeepPlum else CandyDeepPlum.copy(alpha = 0.4f),
+                    modifier = Modifier.height(44.dp),
                     compact = true
                 )
 
                 NavButton(
                     icon = Icons.Default.Refresh,
                     label = stringResource(R.string.btn_reset),
-                    onClick = { showResetDialog = true },
+                    onClick = {
+                        soundManager.playClick()
+                        showResetDialog = true
+                    },
                     containerColor = CandyYellow,
                     contentColor = CandyDeepPlum,
+                    modifier = Modifier.height(44.dp),
                     compact = true
                 )
             }
@@ -864,6 +881,10 @@ fun StationScreen(
                                 onCheckpointChanged(buildCheckpoint())
                             }
                         }
+                    },
+                    onOpenFullModal = { cat ->
+                        soundManager.playClick()
+                        activeModalCategory = cat
                     }
                 )
             }
@@ -997,6 +1018,43 @@ fun StationScreen(
                     lockedItemPending = item
                 },
                 onDismiss = { showCakeFlavorModal = false }
+            )
+        }
+
+        // Full Screen 3-Column Grid Selection Modal for Any Station Category
+        activeModalCategory?.let { modalCat ->
+            val catItems = remember(modalCat.id, items) { items.filter { it.category == modalCat.id } }
+            ItemSelectionModal(
+                title = modalCat.localizedName(language),
+                items = catItems,
+                language = language,
+                unlockedItems = unlockedItems,
+                selectedIds = when (modalCat.id) {
+                    "hair_styles" -> setOfNotNull(characterState.hairStyleId)
+                    "hair_colors" -> setOfNotNull(characterState.hairColorId)
+                    "eyeshadows" -> setOfNotNull(characterState.makeup.eyeshadow)
+                    "lipsticks" -> setOfNotNull(characterState.makeup.lipstick)
+                    "blushes" -> setOfNotNull(characterState.makeup.blush)
+                    "face_paints" -> characterState.facePaints.toSet()
+                    "outfits" -> setOfNotNull(characterState.outfitId)
+                    "wings" -> setOfNotNull(characterState.wingsId)
+                    "horns" -> setOfNotNull(characterState.hornId)
+                    "tiaras" -> setOfNotNull(characterState.tiaraId)
+                    "jewelry" -> setOfNotNull(characterState.jewelryId)
+                    "stickers" -> characterState.stickers.toSet()
+                    "cake_flavors" -> setOfNotNull(cakeFlavor)
+                    "cake_toppings" -> cakeToppings.toSet()
+                    else -> emptySet()
+                },
+                onItemSelected = { item ->
+                    soundManager.playClick()
+                    equipItem(item)
+                },
+                onLockedItemClicked = { item ->
+                    soundManager.playClick()
+                    lockedItemPending = item
+                },
+                onDismiss = { activeModalCategory = null }
             )
         }
 

@@ -28,12 +28,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DeleteOutline
@@ -589,7 +593,8 @@ fun BottomItemTray(
     onItemSelected: (Item) -> Unit,
     onLockedItemClicked: (Item) -> Unit,
     modifier: Modifier = Modifier,
-    onClearCategory: ((ItemCategory) -> Unit)? = null
+    onClearCategory: ((ItemCategory) -> Unit)? = null,
+    onOpenFullModal: ((ItemCategory) -> Unit)? = null
 ) {
     var selectedCategoryIndex by remember(categories.map { it.id }) { mutableIntStateOf(0) }
     val tabScrollIndices = remember { mutableStateMapOf<String, Int>() }
@@ -618,12 +623,12 @@ fun BottomItemTray(
     val activeIds = selectedIdsForCategory(currentCategory.id)
 
     Card(
-        shape = RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp),
+        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
         modifier = modifier
             .fillMaxWidth()
-            .height(182.dp)
+            .height(200.dp)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             ScrollableTabRow(
@@ -634,13 +639,30 @@ fun BottomItemTray(
                 modifier = Modifier.height(44.dp)
             ) {
                 categories.forEachIndexed { index, cat ->
+                    val tabEmoji = when (cat.id) {
+                        "hair_styles" -> "💇 "
+                        "hair_colors" -> "🎨 "
+                        "eyeshadows" -> "✨ "
+                        "lipsticks" -> "💄 "
+                        "blushes" -> "🌸 "
+                        "face_paints" -> "🎭 "
+                        "outfits" -> "👗 "
+                        "wings" -> "🧚 "
+                        "horns" -> "🦄 "
+                        "tiaras" -> "👑 "
+                        "jewelry" -> "💎 "
+                        "stickers" -> "⭐ "
+                        "cake_flavors" -> "🍰 "
+                        "cake_toppings" -> "🍬 "
+                        else -> "🎀 "
+                    }
                     Tab(
                         selected = selectedCategoryIndex == index,
                         onClick = { selectedCategoryIndex = index },
                         modifier = Modifier.height(44.dp),
                         text = {
                             Text(
-                                text = cat.localizedName(language),
+                                text = tabEmoji + cat.localizedName(language),
                                 fontSize = 13.sp,
                                 fontWeight = if (selectedCategoryIndex == index) FontWeight.Bold else FontWeight.Medium,
                                 maxLines = 1
@@ -670,27 +692,57 @@ fun BottomItemTray(
                     color = CandyDeepPlum.copy(alpha = 0.7f)
                 )
 
-                if (onClearCategory != null && activeIds.isNotEmpty()) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(12.dp))
-                            .clickable { onClearCategory(currentCategory) }
-                            .padding(horizontal = 8.dp, vertical = 2.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.DeleteOutline,
-                            contentDescription = stringResource(R.string.btn_clear),
-                            tint = CandyPink,
-                            modifier = Modifier.size(14.dp)
-                        )
-                        Spacer(modifier = Modifier.width(3.dp))
-                        Text(
-                            text = stringResource(R.string.btn_clear),
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = CandyPink
-                        )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    if (onOpenFullModal != null) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(CandyPastelPink.copy(alpha = 0.5f))
+                                .clickable { onOpenFullModal(currentCategory) }
+                                .padding(horizontal = 8.dp, vertical = 2.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.AutoAwesome,
+                                contentDescription = stringResource(R.string.btn_grid_modal),
+                                tint = CandyDeepPlum,
+                                modifier = Modifier.size(13.dp)
+                            )
+                            Spacer(modifier = Modifier.width(3.dp))
+                            Text(
+                                text = stringResource(R.string.btn_grid_modal),
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = CandyDeepPlum
+                            )
+                        }
+                    }
+
+                    if (onClearCategory != null && activeIds.isNotEmpty()) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(12.dp))
+                                .clickable { onClearCategory(currentCategory) }
+                                .padding(horizontal = 8.dp, vertical = 2.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.DeleteOutline,
+                                contentDescription = stringResource(R.string.btn_clear),
+                                tint = CandyPink,
+                                modifier = Modifier.size(14.dp)
+                            )
+                            Spacer(modifier = Modifier.width(3.dp))
+                            Text(
+                                text = stringResource(R.string.btn_clear),
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = CandyPink
+                            )
+                        }
                     }
                 }
             }
@@ -711,11 +763,11 @@ fun BottomItemTray(
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
-                            .width(82.dp)
-                            .clip(RoundedCornerShape(16.dp))
+                            .width(92.dp)
+                            .clip(RoundedCornerShape(18.dp))
                             .background(
                                 when {
-                                    isSelected -> CandyYellow.copy(alpha = 0.9f)
+                                    isSelected -> CandyYellow.copy(alpha = 0.95f)
                                     isUnlocked -> CandyCream
                                     else -> Color(0xFFEEEEEE)
                                 }
@@ -723,7 +775,7 @@ fun BottomItemTray(
                             .border(
                                 width = if (isSelected) 3.dp else 1.dp,
                                 color = if (isSelected) CandyPink else CandyPurple.copy(alpha = 0.3f),
-                                shape = RoundedCornerShape(16.dp)
+                                shape = RoundedCornerShape(18.dp)
                             )
                             .clickable {
                                 if (isUnlocked) {
@@ -732,19 +784,37 @@ fun BottomItemTray(
                                     onLockedItemClicked(item)
                                 }
                             }
-                            .padding(4.dp)
+                            .padding(horizontal = 4.dp, vertical = 6.dp)
                     ) {
                         Box(
                             contentAlignment = Alignment.Center,
-                            modifier = Modifier.size(56.dp)
+                            modifier = Modifier.size(62.dp)
                         ) {
-                            ItemThumbnailCanvas(item = item, modifier = Modifier.size(48.dp))
+                            ItemThumbnailCanvas(item = item, modifier = Modifier.size(56.dp))
+
+                            if (isSelected) {
+                                Box(
+                                    modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .size(18.dp)
+                                        .clip(CircleShape)
+                                        .background(CandyPink),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Check,
+                                        contentDescription = null,
+                                        tint = Color.White,
+                                        modifier = Modifier.size(12.dp)
+                                    )
+                                }
+                            }
 
                             if (!isUnlocked) {
                                 Box(
                                     modifier = Modifier
                                         .fillMaxSize()
-                                        .clip(RoundedCornerShape(12.dp))
+                                        .clip(RoundedCornerShape(14.dp))
                                         .background(Color.Black.copy(alpha = 0.48f)),
                                     contentAlignment = Alignment.Center
                                 ) {
@@ -769,7 +839,7 @@ fun BottomItemTray(
                         Text(
                             text = item.localizedName(language),
                             fontSize = 10.sp,
-                            lineHeight = 11.sp,
+                            lineHeight = 12.sp,
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                             color = CandyDeepPlum,
                             maxLines = 2,
@@ -799,31 +869,65 @@ fun ItemSelectionModal(
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Card(
-            shape = RoundedCornerShape(24.dp),
+            shape = RoundedCornerShape(28.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
-            elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 12.dp),
             modifier = Modifier
-                .fillMaxWidth(0.92f)
-                .widthIn(max = 440.dp)
-                .padding(16.dp)
+                .fillMaxWidth(0.95f)
+                .widthIn(max = 480.dp)
+                .heightIn(min = 400.dp, max = 560.dp)
+                .padding(horizontal = 10.dp, vertical = 16.dp)
         ) {
             Column(
                 modifier = Modifier
-                    .padding(20.dp)
-                    .fillMaxWidth(),
+                    .fillMaxSize()
+                    .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = CandyDeepPlum,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(14.dp))
-                LazyRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                // Header with soft title banner & close icon
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = CandyDeepPlum,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 18.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clip(CircleShape)
+                            .background(CandyPastelPink.copy(alpha = 0.5f))
+                            .clickable { onDismiss() }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = stringResource(R.string.btn_close),
+                            tint = CandyDeepPlum,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+
+                // Generous 3-column Grid that properly displays all accessories and fills the modal!
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    contentPadding = PaddingValues(vertical = 4.dp)
                 ) {
                     items(items, key = { it.id }) { item ->
                         val isUnlocked = item.unlockedByDefault || unlockedItems.contains(item.id)
@@ -832,19 +936,19 @@ fun ItemSelectionModal(
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier
-                                .width(88.dp)
-                                .clip(RoundedCornerShape(16.dp))
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(18.dp))
                                 .background(
                                     when {
-                                        isSelected -> CandyYellow.copy(alpha = 0.9f)
+                                        isSelected -> CandyYellow.copy(alpha = 0.95f)
                                         isUnlocked -> CandyCream
-                                        else -> Color(0xFFEEEEEE)
+                                        else -> Color(0xFFF5F5F5)
                                     }
                                 )
                                 .border(
                                     width = if (isSelected) 3.dp else 1.dp,
-                                    color = if (isSelected) CandyPink else CandyPurple.copy(alpha = 0.3f),
-                                    shape = RoundedCornerShape(16.dp)
+                                    color = if (isSelected) CandyPink else CandyPurple.copy(alpha = 0.25f),
+                                    shape = RoundedCornerShape(18.dp)
                                 )
                                 .clickable {
                                     if (isUnlocked) {
@@ -853,19 +957,38 @@ fun ItemSelectionModal(
                                         onLockedItemClicked(item)
                                     }
                                 }
-                                .padding(6.dp)
+                                .padding(horizontal = 4.dp, vertical = 8.dp)
                         ) {
                             Box(
                                 contentAlignment = Alignment.Center,
-                                modifier = Modifier.size(56.dp)
+                                modifier = Modifier.size(64.dp)
                             ) {
-                                ItemThumbnailCanvas(item = item, modifier = Modifier.size(48.dp))
+                                ItemThumbnailCanvas(item = item, modifier = Modifier.size(56.dp))
+
+                                if (isSelected) {
+                                    Box(
+                                        modifier = Modifier
+                                            .align(Alignment.TopEnd)
+                                            .size(20.dp)
+                                            .clip(CircleShape)
+                                            .background(CandyPink),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Check,
+                                            contentDescription = null,
+                                            tint = Color.White,
+                                            modifier = Modifier.size(14.dp)
+                                        )
+                                    }
+                                }
+
                                 if (!isUnlocked) {
                                     Box(
                                         modifier = Modifier
                                             .fillMaxSize()
-                                            .clip(RoundedCornerShape(12.dp))
-                                            .background(Color.Black.copy(alpha = 0.48f)),
+                                            .clip(RoundedCornerShape(14.dp))
+                                            .background(Color.Black.copy(alpha = 0.52f)),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -873,39 +996,44 @@ fun ItemSelectionModal(
                                                 imageVector = Icons.Default.Lock,
                                                 contentDescription = "Locked",
                                                 tint = Color.White,
-                                                modifier = Modifier.size(18.dp)
+                                                modifier = Modifier.size(20.dp)
                                             )
                                             Text(
                                                 text = "${item.candyPrice}🍬",
                                                 color = Color.White,
-                                                fontSize = 10.sp,
+                                                fontSize = 11.sp,
                                                 fontWeight = FontWeight.Bold
                                             )
                                         }
                                     }
                                 }
                             }
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(6.dp))
                             Text(
                                 text = item.localizedName(language),
-                                fontSize = 10.sp,
-                                lineHeight = 12.sp,
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                fontSize = 11.sp,
+                                lineHeight = 13.sp,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
                                 color = CandyDeepPlum,
                                 maxLines = 2,
                                 overflow = TextOverflow.Ellipsis,
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(horizontal = 2.dp)
                             )
                         }
                     }
                 }
-                Spacer(modifier = Modifier.height(18.dp))
+
+                Spacer(modifier = Modifier.height(10.dp))
+
                 NavButton(
-                    icon = Icons.Default.Close,
-                    label = stringResource(R.string.btn_close),
+                    icon = Icons.Default.Check,
+                    label = stringResource(R.string.btn_done),
                     onClick = onDismiss,
                     containerColor = CandyActionPink,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
                 )
             }
         }
