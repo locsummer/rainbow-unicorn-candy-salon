@@ -10,6 +10,7 @@ public struct BottomItemTray: View {
     public let onItemSelected: (Item) -> Void
     public let onLockedItemClicked: (Item) -> Void
     public let onClearCategory: ((ItemCategory) -> Void)?
+    public let onOpenFullModal: ((ItemCategory) -> Void)?
 
     @State private var selectedCategoryIndex = 0
     @State private var savedVisibleIdByTab: [String: String] = [:]
@@ -22,7 +23,8 @@ public struct BottomItemTray: View {
         selectedIdsForCategory: @escaping (String) -> Set<String>,
         onItemSelected: @escaping (Item) -> Void,
         onLockedItemClicked: @escaping (Item) -> Void,
-        onClearCategory: ((ItemCategory) -> Void)? = nil
+        onClearCategory: ((ItemCategory) -> Void)? = nil,
+        onOpenFullModal: ((ItemCategory) -> Void)? = nil
     ) {
         self.categories = categories
         self.items = items
@@ -32,6 +34,28 @@ public struct BottomItemTray: View {
         self.onItemSelected = onItemSelected
         self.onLockedItemClicked = onLockedItemClicked
         self.onClearCategory = onClearCategory
+        self.onOpenFullModal = onOpenFullModal
+    }
+
+    private func categoryEmoji(_ catId: String) -> String {
+        switch catId {
+        case "hair_styles": return "💇 "
+        case "hair_colors": return "🎨 "
+        case "makeup": return "✨ "
+        case "lipsticks": return "💄 "
+        case "eyeshadows": return "🎨 "
+        case "blushes": return "🌸 "
+        case "face_paints": return "🎭 "
+        case "outfits": return "👗 "
+        case "wings": return "🧚 "
+        case "horns": return "🦄 "
+        case "tiaras": return "👑 "
+        case "jewelry": return "💎 "
+        case "stickers": return "⭐ "
+        case "cake_frostings": return "🍰 "
+        case "cake_toppings": return "🍬 "
+        default: return "✨ "
+        }
     }
 
     public var body: some View {
@@ -43,38 +67,60 @@ public struct BottomItemTray: View {
             let catItems = items.filter { $0.category == currentCategory.id }
             let activeIds = selectedIdsForCategory(currentCategory.id)
 
-            VStack(spacing: 6) {
-                // Category Tabs
+            VStack(spacing: 8) {
+                // Category Tabs with Emojis
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
                         ForEach(Array(categories.enumerated()), id: \.element.id) { index, cat in
                             let isSelected = index == safeIndex
                             Button(action: { selectedCategoryIndex = index }) {
-                                Text(cat.localizedName(language: language))
-                                    .font(.system(size: 13, weight: isSelected ? .bold : .medium, design: .rounded))
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 8)
-                                    .background(isSelected ? CandyColors.pink : CandyColors.pastelPink.opacity(0.35))
-                                    .foregroundColor(isSelected ? .white : CandyColors.deepPlum)
-                                    .cornerRadius(16)
+                                HStack(spacing: 4) {
+                                    Text(categoryEmoji(cat.id))
+                                        .font(.system(size: 13))
+                                    Text(cat.localizedName(language: language))
+                                        .font(.system(size: 13, weight: isSelected ? .bold : .medium, design: .rounded))
+                                }
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(isSelected ? CandyColors.pink : CandyColors.pastelPink.opacity(0.35))
+                                .foregroundColor(isSelected ? .white : CandyColors.deepPlum)
+                                .cornerRadius(16)
                             }
                         }
                     }
                     .padding(.horizontal, 10)
                 }
 
-                // Multi-count & Clear row
-                HStack {
+                // Multi-count, Modal Open & Clear row
+                HStack(spacing: 8) {
                     if currentCategory.maxSelected > 1 {
                         Text(L10n.format("multi_count_format", language: language, activeIds.count, currentCategory.maxSelected))
-                            .font(.system(size: 11, weight: .semibold, design: .rounded))
-                            .foregroundColor(CandyColors.deepPlum.opacity(0.75))
+                            .font(.system(size: 12, weight: .bold, design: .rounded))
+                            .foregroundColor(CandyColors.deepPlum.opacity(0.85))
                     } else {
                         Text(currentCategory.localizedName(language: language))
-                            .font(.system(size: 11, weight: .semibold, design: .rounded))
-                            .foregroundColor(CandyColors.deepPlum.opacity(0.75))
+                            .font(.system(size: 12, weight: .bold, design: .rounded))
+                            .foregroundColor(CandyColors.deepPlum.opacity(0.85))
                     }
+
                     Spacer()
+
+                    if let openModalAction = onOpenFullModal {
+                        Button(action: { openModalAction(currentCategory) }) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "square.grid.3x3.fill")
+                                    .font(.system(size: 11, weight: .bold))
+                                Text(L10n.string("btn_grid_modal", language: language))
+                                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                            }
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(CandyColors.purple.opacity(0.14))
+                            .foregroundColor(CandyColors.purple)
+                            .cornerRadius(10)
+                        }
+                    }
+
                     if let clearAction = onClearCategory, !activeIds.isEmpty {
                         Button(action: { clearAction(currentCategory) }) {
                             HStack(spacing: 3) {
@@ -83,13 +129,17 @@ public struct BottomItemTray: View {
                                 Text(L10n.string("btn_clear", language: language))
                                     .font(.system(size: 11, weight: .bold, design: .rounded))
                             }
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 5)
+                            .background(CandyColors.pink.opacity(0.12))
                             .foregroundColor(CandyColors.pink)
+                            .cornerRadius(10)
                         }
                     }
                 }
                 .padding(.horizontal, 12)
 
-                // Items Scroll Strip with per-tab scroll position retention (RULE-073)
+                // Items Scroll Strip
                 ScrollViewReader { proxy in
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 10) {
@@ -108,10 +158,27 @@ public struct BottomItemTray: View {
                                     VStack(spacing: 4) {
                                         ZStack {
                                             ItemThumbnailView(item: item)
+                                                .frame(width: 54, height: 54)
+                                                .background(Color.white)
+                                                .cornerRadius(12)
+
+                                            if isSelected {
+                                                VStack {
+                                                    HStack {
+                                                        Spacer()
+                                                        Image(systemName: "checkmark.circle.fill")
+                                                            .font(.system(size: 14))
+                                                            .foregroundColor(CandyColors.pink)
+                                                            .background(Circle().fill(Color.white).padding(1))
+                                                    }
+                                                    Spacer()
+                                                }
+                                            }
+
                                             if !isUnlocked {
-                                                RoundedRectangle(cornerRadius: 10)
-                                                    .fill(Color.black.opacity(0.5))
-                                                    .frame(width: 52, height: 52)
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .fill(Color.black.opacity(0.55))
+                                                    .frame(width: 54, height: 54)
                                                 VStack(spacing: 1) {
                                                     Image(systemName: "lock.fill")
                                                         .font(.system(size: 14))
@@ -123,10 +190,10 @@ public struct BottomItemTray: View {
                                             }
                                         }
                                         Text(item.localizedName(language: language))
-                                            .font(.system(size: 10, weight: isSelected ? .bold : .medium, design: .rounded))
+                                            .font(.system(size: 11, weight: isSelected ? .bold : .medium, design: .rounded))
                                             .foregroundColor(CandyColors.deepPlum)
                                             .lineLimit(1)
-                                            .frame(width: 66)
+                                            .frame(width: 72)
                                     }
                                     .padding(6)
                                     .background(isSelected ? CandyColors.yellow : (isUnlocked ? CandyColors.cream : Color(white: 0.93)))
@@ -148,11 +215,14 @@ public struct BottomItemTray: View {
                     }
                 }
             }
-            .padding(.vertical, 8)
+            .padding(.vertical, 10)
             .frame(maxWidth: .infinity)
-            .background(Color.white.opacity(0.96))
-            .cornerRadius(20)
-            .shadow(color: Color.black.opacity(0.1), radius: 6, x: 0, y: -2)
+            .background(Color.white.opacity(0.97))
+            .cornerRadius(22)
+            .shadow(color: Color.black.opacity(0.12), radius: 8, x: 0, y: -2)
+        }
+    }
+}
         }
     }
 }
@@ -252,6 +322,12 @@ public struct ItemSelectionModal: View {
     public let onLockedItemClicked: (Item) -> Void
     public let onDismiss: () -> Void
 
+    private let columns = [
+        GridItem(.flexible(), spacing: 10),
+        GridItem(.flexible(), spacing: 10),
+        GridItem(.flexible(), spacing: 10)
+    ]
+
     public init(
         title: String,
         items: [Item],
@@ -274,15 +350,26 @@ public struct ItemSelectionModal: View {
 
     public var body: some View {
         ZStack {
-            Color.black.opacity(0.45).ignoresSafeArea()
+            Color.black.opacity(0.55).ignoresSafeArea()
 
-            VStack(spacing: 14) {
-                Text(title)
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
-                    .foregroundColor(CandyColors.deepPlum)
+            VStack(spacing: 12) {
+                // Header
+                HStack {
+                    Text("✨ " + title)
+                        .font(.system(size: 18, weight: .heavy, design: .rounded))
+                        .foregroundColor(CandyColors.deepPlum)
+                    Spacer()
+                    Button(action: onDismiss) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(CandyColors.deepPlum.opacity(0.4))
+                    }
+                }
+                .padding(.horizontal, 4)
 
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 10) {
+                // 3-Column Grid encompassing full modal
+                ScrollView(.vertical, showsIndicators: true) {
+                    LazyVGrid(columns: columns, spacing: 12) {
                         ForEach(items) { item in
                             let isUnlocked = item.unlockedByDefault || unlockedItems.contains(item.id)
                             let isSelected = selectedIds.contains(item.id)
@@ -294,27 +381,37 @@ public struct ItemSelectionModal: View {
                                     onLockedItemClicked(item)
                                 }
                             }) {
-                                VStack(spacing: 4) {
+                                VStack(spacing: 6) {
                                     ZStack {
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .fill(CandyColors.pastelPink.opacity(0.2))
-                                            .frame(width: 52, height: 52)
+                                        ItemThumbnailView(item: item)
+                                            .frame(width: 58, height: 58)
+                                            .background(Color.white)
+                                            .cornerRadius(14)
+                                            .shadow(color: Color.black.opacity(0.06), radius: 3, x: 0, y: 1)
 
-                                        Circle()
-                                            .fill(CandyColors.pink)
-                                            .frame(width: 30, height: 30)
+                                        if isSelected {
+                                            VStack {
+                                                HStack {
+                                                    Spacer()
+                                                    Image(systemName: "checkmark.circle.fill")
+                                                        .font(.system(size: 16))
+                                                        .foregroundColor(CandyColors.pink)
+                                                        .background(Circle().fill(Color.white).padding(2))
+                                                }
+                                                Spacer()
+                                            }
+                                        }
 
                                         if !isUnlocked {
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .fill(Color.black.opacity(0.45))
-                                                .frame(width: 52, height: 52)
+                                            RoundedRectangle(cornerRadius: 14)
+                                                .fill(Color.black.opacity(0.55))
                                                 .overlay(
                                                     VStack(spacing: 2) {
                                                         Image(systemName: "lock.fill")
-                                                            .font(.system(size: 12))
+                                                            .font(.system(size: 14))
                                                             .foregroundColor(.white)
                                                         Text("\(item.candyPrice)🍬")
-                                                            .font(.system(size: 9, weight: .bold))
+                                                            .font(.system(size: 10, weight: .bold))
                                                             .foregroundColor(.white)
                                                     }
                                                 )
@@ -322,39 +419,42 @@ public struct ItemSelectionModal: View {
                                     }
 
                                     Text(item.localizedName(language: language))
-                                        .font(.system(size: 10, weight: isSelected ? .bold : .medium, design: .rounded))
-                                        .foregroundColor(CandyColors.deepPlum)
-                                        .lineLimit(2)
+                                        .font(.system(size: 11, weight: isSelected ? .bold : .medium, design: .rounded))
+                                        .foregroundColor(isSelected ? CandyColors.pink : CandyColors.deepPlum)
+                                        .lineLimit(1)
                                         .multilineTextAlignment(.center)
-                                        .frame(width: 68)
                                 }
-                                .padding(6)
-                                .background(isSelected ? CandyColors.yellow.opacity(0.9) : (isUnlocked ? Color.white : Color.gray.opacity(0.12)))
+                                .padding(8)
+                                .frame(maxWidth: .infinity)
+                                .background(isSelected ? CandyColors.yellow.opacity(0.65) : (isUnlocked ? CandyColors.cream.opacity(0.6) : Color(white: 0.94)))
                                 .cornerRadius(16)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 16)
-                                        .stroke(isSelected ? CandyColors.pink : Color.gray.opacity(0.25), lineWidth: isSelected ? 2.5 : 1)
+                                        .stroke(isSelected ? CandyColors.pink : CandyColors.purple.opacity(0.2), lineWidth: isSelected ? 2.5 : 1)
                                 )
                             }
                         }
                     }
-                    .padding(.horizontal, 4)
+                    .padding(.vertical, 6)
+                    .padding(.horizontal, 2)
                 }
+                .frame(maxHeight: 460)
 
+                // Bottom Done Button
                 NavButton(
-                    iconName: "xmark",
-                    label: L10n.string("btn_close", language: language),
+                    iconName: "checkmark",
+                    label: L10n.string("btn_done", language: language),
                     backgroundColor: CandyColors.pink,
                     fullWidth: true,
                     action: onDismiss
                 )
             }
-            .padding(20)
+            .padding(18)
             .background(Color.white)
             .cornerRadius(24)
-            .padding(.horizontal, 20)
-            .frame(maxWidth: 440)
-            .shadow(radius: 12)
+            .padding(.horizontal, 16)
+            .frame(maxWidth: 480)
+            .shadow(color: Color.black.opacity(0.25), radius: 16, x: 0, y: 4)
         }
     }
 }

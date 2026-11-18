@@ -130,6 +130,7 @@
 "btn_change_layers" = "Sửa Tầng Bánh";
 "btn_delete_topping" = "Xóa";
 "btn_clear_all_toppings" = "Xóa Hết";
+"btn_grid_modal" = "Bảng Chọn";
 "title_select_topping" = "Chọn Topping Cho Bánh";
 "title_select_flavor" = "Chọn Hương Vị Kem Phủ";
 "title_select_layers" = "Chọn Số Tầng Bánh";
