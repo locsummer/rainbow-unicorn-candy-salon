@@ -448,33 +448,173 @@ public struct ItemThumbnailView: View {
                     Circle().fill(
                         AngularGradient(colors: [.pink, .orange, .yellow, .mint, .blue, .purple, .pink], center: .center)
                     )
+                    .overlay(Circle().stroke(Color.white, lineWidth: 2))
                 } else {
                     Circle().fill(Color(SpritePalette.hairUIColor(item.id)))
+                        .overlay(Circle().stroke(Color.white, lineWidth: 2))
                 }
+                Image(systemName: "sparkles")
+                    .font(.system(size: 14))
+                    .foregroundColor(.white.opacity(0.85))
+
             case "hair_styles":
                 Circle().fill(CandyColors.purple.opacity(0.85))
-                Image(systemName: "sparkles")
+                Image(systemName: "comb.fill")
+                    .font(.system(size: 18))
                     .foregroundColor(.white)
+
             case "outfits":
-                Image(systemName: "tshirt.fill")
-                    .font(.system(size: 26))
-                    .foregroundColor(Color(SpritePalette.outfitUIColor(item.id)))
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color(SpritePalette.outfitUIColor(item.id)).opacity(0.2))
+                    Image(systemName: "tshirt.fill")
+                        .font(.system(size: 26))
+                        .foregroundColor(Color(SpritePalette.outfitUIColor(item.id)))
+                    Image(systemName: "heart.fill")
+                        .font(.system(size: 10))
+                        .foregroundColor(.white)
+                        .offset(y: 2)
+                }
+
             case "wings":
-                Image(systemName: "wind")
-                    .font(.system(size: 24))
-                    .foregroundColor(CandyColors.purple)
-            case "horns", "tiaras":
-                Image(systemName: "crown.fill")
-                    .font(.system(size: 24))
-                    .foregroundColor(CandyColors.yellow)
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(CandyColors.pastelPink.opacity(0.3))
+                    Image(systemName: "wind")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundColor(CandyColors.purple)
+                    Image(systemName: "sparkle")
+                        .font(.system(size: 10))
+                        .foregroundColor(CandyColors.yellow)
+                        .offset(x: 10, y: -10)
+                }
+
+            case "horns":
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(CandyColors.yellow.opacity(0.25))
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 22, weight: .bold))
+                        .foregroundColor(CandyColors.yellow)
+                }
+
+            case "tiaras":
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(CandyColors.yellow.opacity(0.25))
+                    Image(systemName: "crown.fill")
+                        .font(.system(size: 24))
+                        .foregroundColor(CandyColors.yellow)
+                    Circle()
+                        .fill(CandyColors.pink)
+                        .frame(width: 6, height: 6)
+                        .offset(y: -4)
+                }
+
+            case "jewelry":
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(CandyColors.pastelPink.opacity(0.25))
+                    if item.id.contains("earring") {
+                        HStack(spacing: 12) {
+                            VStack(spacing: 2) {
+                                Circle().fill(CandyColors.yellow).frame(width: 4, height: 4)
+                                Image(systemName: "star.fill").font(.system(size: 10)).foregroundColor(CandyColors.yellow)
+                            }
+                            VStack(spacing: 2) {
+                                Circle().fill(CandyColors.yellow).frame(width: 4, height: 4)
+                                Image(systemName: "star.fill").font(.system(size: 10)).foregroundColor(CandyColors.yellow)
+                            }
+                        }
+                    } else if item.id.contains("choker") {
+                        VStack(spacing: 1) {
+                            Capsule().fill(CandyColors.pink).frame(width: 32, height: 6)
+                            Image(systemName: "heart.fill").font(.system(size: 10)).foregroundColor(CandyColors.yellow)
+                        }
+                    } else {
+                        // Pearl or Diamond necklace
+                        VStack(spacing: 2) {
+                            Image(systemName: "circle.grid.cross.fill")
+                                .font(.system(size: 14))
+                                .foregroundColor(Color(red: 0.5, green: 0.88, blue: 0.95))
+                            Image(systemName: "suit.diamond.fill")
+                                .font(.system(size: 12))
+                                .foregroundColor(CandyColors.pink)
+                        }
+                    }
+                }
+
+            case "stickers":
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(CandyColors.cream)
+                    if item.id.contains("lollipop") {
+                        Image(systemName: "circle.circle.fill")
+                            .font(.system(size: 22))
+                            .foregroundColor(CandyColors.pink)
+                    } else if item.id.contains("donut") {
+                        Image(systemName: "circle.dotted")
+                            .font(.system(size: 22, weight: .bold))
+                            .foregroundColor(Color(red: 0.6, green: 0.35, blue: 0.2))
+                    } else if item.id.contains("wand") {
+                        Image(systemName: "wand.and.stars")
+                            .font(.system(size: 20))
+                            .foregroundColor(CandyColors.yellow)
+                    } else {
+                        Image(systemName: "star.fill")
+                            .font(.system(size: 22))
+                            .foregroundColor(CandyColors.yellow)
+                    }
+                }
+
+            case "cake_toppings":
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(CandyColors.cream)
+                    if item.id.contains("cherry") {
+                        Image(systemName: "heart.circle.fill")
+                            .font(.system(size: 22))
+                            .foregroundColor(Color(red: 0.9, green: 0.1, blue: 0.2))
+                    } else if item.id.contains("wafer") {
+                        Capsule()
+                            .fill(CandyColors.yellow)
+                            .frame(width: 8, height: 28)
+                            .rotationEffect(.degrees(25))
+                    } else if item.id.contains("macaron") {
+                        Capsule()
+                            .fill(CandyColors.pink)
+                            .frame(width: 26, height: 16)
+                    } else {
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 22))
+                            .foregroundColor(CandyColors.pink)
+                    }
+                }
+
+            case "cake_frostings":
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(swatch)
+                    Image(systemName: "drop.fill")
+                        .font(.system(size: 16))
+                        .foregroundColor(.white.opacity(0.8))
+                }
+
             case "lipsticks", "eyeshadows", "blushes":
                 Circle().fill(swatch)
                     .overlay(Circle().stroke(Color.white, lineWidth: 2))
+                    .shadow(color: swatch.opacity(0.5), radius: 3)
+
             default:
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: 12)
                     .fill(swatch)
+                    .overlay(
+                        Image(systemName: "sparkle")
+                            .font(.system(size: 14))
+                            .foregroundColor(.white.opacity(0.8))
+                    )
             }
         }
-        .frame(width: 44, height: 44)
+        .frame(width: 52, height: 52)
     }
 }

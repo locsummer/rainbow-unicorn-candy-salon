@@ -145,6 +145,7 @@
     <string name="btn_change_layers">Sửa Tầng Bánh</string>
     <string name="btn_delete_topping">Xoá Topping</string>
     <string name="btn_clear_all_toppings">Xoá Hết</string>
+    <string name="btn_grid_modal">Mở Bảng Chọn</string>
     <string name="title_select_topping">Chọn Topping Rắc Bánh</string>
     <string name="title_select_flavor">Chọn Vị Kem Phủ</string>
     <string name="title_select_layers">Chọn Số Tầng Bánh (1–4)</string>

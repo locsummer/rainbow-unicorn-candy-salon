@@ -31,6 +31,7 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -74,7 +75,7 @@ fun CakeStationView(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             androidx.compose.material3.Button(
@@ -89,8 +90,8 @@ fun CakeStationView(
                     .heightIn(min = 48.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.btn_add_topping),
-                    fontSize = 12.sp,
+                    text = "🍬 " + stringResource(R.string.btn_add_topping),
+                    fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1
                 )
@@ -108,8 +109,8 @@ fun CakeStationView(
                     .heightIn(min = 48.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.btn_change_flavor),
-                    fontSize = 12.sp,
+                    text = "🍰 " + stringResource(R.string.btn_change_flavor),
+                    fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1
                 )
@@ -310,34 +311,65 @@ fun CakeStationView(
 
             // Draw individual toppings distributed cleanly across cake tiers
             toppings.take(8).forEachIndexed { idx, toppingId ->
-                val spreadX = if (toppings.size == 1) cx - topWidth * 0.2f else {
-                    cx - topWidth * 0.36f + (idx.toFloat() / (toppings.size - 1).coerceAtLeast(1)) * (topWidth * 0.72f)
+                // Distribute across tiers: alternating between top tier rim and lower tier ledges
+                val tierIdx = (idx % safeLayers)
+                val targetTierY = baseY - (safeLayers - tierIdx) * layerHeight
+                val targetTierWidth = baseWidth * (1f - (safeLayers - tierIdx - 1) * 0.16f)
+                val spreadX = if (toppings.size == 1) {
+                    cx
+                } else {
+                    cx - targetTierWidth * 0.32f + ((idx % 3).toFloat() / 2f.coerceAtLeast(1f)) * (targetTierWidth * 0.64f)
                 }
-                val ty = topY - 6f
+                val ty = targetTierY - 6f
                 when {
                     toppingId.contains("cherries") -> {
-                        drawCircle(Color(0xFFE53935), radius = 12f, center = Offset(spreadX, ty))
-                        drawCircle(Color.White.copy(alpha = 0.7f), radius = 4f, center = Offset(spreadX - 3f, ty - 3f))
+                        // Glossy pair of red cherries with green stem
+                        drawCircle(Color(0xFFD32F2F), radius = 15f, center = Offset(spreadX - 8f, ty))
+                        drawCircle(Color.White.copy(alpha = 0.75f), radius = 5f, center = Offset(spreadX - 11f, ty - 4f))
+                        drawCircle(Color(0xFFD32F2F), radius = 15f, center = Offset(spreadX + 8f, ty))
+                        drawCircle(Color.White.copy(alpha = 0.75f), radius = 5f, center = Offset(spreadX + 5f, ty - 4f))
+                        drawLine(Color(0xFF388E3C), Offset(spreadX - 8f, ty - 12f), Offset(spreadX, ty - 26f), strokeWidth = 3f)
+                        drawLine(Color(0xFF388E3C), Offset(spreadX + 8f, ty - 12f), Offset(spreadX, ty - 26f), strokeWidth = 3f)
                     }
                     toppingId.contains("stars") || toppingId.contains("glitter") -> {
-                        with(CharacterVectorRenderer) {
-                            drawStarShape(Offset(spreadX, ty - 4f), 13f, CandyYellow)
+                        CharacterVectorRenderer.run {
+                            drawStarShape(Offset(spreadX, ty - 4f), 18f, CandyYellow)
                         }
+                        drawCircle(Color.White, radius = 4f, center = Offset(spreadX - 3f, ty - 7f))
                     }
                     toppingId.contains("chocolate") -> {
-                        drawCircle(Color(0xFF4E342E), radius = 10f, center = Offset(spreadX, ty))
+                        drawCircle(Color(0xFF3E2723), radius = 14f, center = Offset(spreadX, ty))
+                        drawCircle(Color(0xFF5D4037), radius = 9f, center = Offset(spreadX - 2f, ty - 2f))
+                        drawCircle(Color.White.copy(alpha = 0.5f), radius = 4f, center = Offset(spreadX - 4f, ty - 4f))
                     }
                     toppingId.contains("macaron") -> {
-                        drawRoundRect(CandyPurple, topLeft = Offset(spreadX - 13f, ty - 8f), size = Size(26f, 16f), cornerRadius = CornerRadius(8f, 8f))
+                        drawRoundRect(CandyPurple, topLeft = Offset(spreadX - 16f, ty - 10f), size = Size(32f, 20f), cornerRadius = CornerRadius(10f, 10f))
+                        drawRoundRect(Color.White, topLeft = Offset(spreadX - 14f, ty - 2f), size = Size(28f, 4f), cornerRadius = CornerRadius(2f, 2f))
+                    }
+                    toppingId.contains("wafer") -> {
+                        // Striped candy wafer stick
+                        val wafer = Path().apply {
+                            moveTo(spreadX - 6f, ty + 10f)
+                            lineTo(spreadX + 2f, ty - 24f)
+                            lineTo(spreadX + 8f, ty - 22f)
+                            lineTo(spreadX, ty + 12f)
+                            close()
+                        }
+                        drawPath(wafer, Color(0xFFFFB74D))
+                        drawLine(Color(0xFFD32F2F), Offset(spreadX - 3f, ty + 2f), Offset(spreadX + 3f, ty - 14f), strokeWidth = 2.5f)
                     }
                     toppingId.contains("crystal") -> {
-                        with(CharacterVectorRenderer) {
-                            drawDiamondShape(Offset(spreadX, ty - 2f), 12f, CandyMint)
+                        CharacterVectorRenderer.run {
+                            drawDiamondShape(Offset(spreadX, ty - 4f), 16f, Color(0xFF00E5FF))
                         }
+                        drawCircle(Color.White, radius = 4f, center = Offset(spreadX - 2f, ty - 6f))
                     }
                     else -> {
-                        val sprinkleCol = CandyPalette.RainbowColors[idx % CandyPalette.RainbowColors.size]
-                        drawCircle(sprinkleCol, radius = 9f, center = Offset(spreadX, ty))
+                        // Multi-color rainbow sprinkles scattered nicely
+                        for (s in -2..2) {
+                            val sprinkleCol = CandyPalette.RainbowColors[(idx + s + 2) % CandyPalette.RainbowColors.size]
+                            drawCircle(sprinkleCol, radius = 5.5f, center = Offset(spreadX + s * 8f, ty + (s % 2) * 6f))
+                        }
                     }
                 }
             }

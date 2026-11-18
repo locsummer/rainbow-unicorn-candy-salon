@@ -17,6 +17,10 @@
 | **BUG-006** | Stickers rendered floating in arbitrary coordinates | Minor | Open (Photo 2) | **RESOLVED** | Anchored stickers to 10 predefined body, cheek, and dress attachment slots. |
 | **BUG-007** | Hair dye color bleeding into pony skin, eyes, or accessories | Minor | Open | **RESOLVED** | Isolated hair rendering layers and clip masks, ensuring dyes apply exclusively to hair locks and braids. |
 | **BUG-008** | Touch targets $< 48$dp on Undo, Redo, Reset and station pills | Minor | Open | **RESOLVED** | Standardized all interactive action buttons to $\ge 48$dp touch targets with high-contrast pastel colors. |
+| **BUG-009** | Princess facial art flaws (cyan unibrow band, peppermint top bun, cyan lip highlight stripe) | Major | Open (Photos 1, 3) | **RESOLVED** | Overhauled to high-fidelity anime princess face: soft tapered chin, blush, double eyelid crease, flutter lashes, sapphire-cyan eyes, glossy pink smile, and soft sweeping bangs. |
+| **BUG-010** | Item selection modal was a narrow single row with placeholder circles | Major | Open | **RESOLVED** | Replaced with full-height 3-column `LazyVerticalGrid` / `LazyVGrid`, 58–64dp thumbnails, checkmarks, lock price badges, and dedicated "✨ Mở Bảng Chọn" button in tray. |
+| **BUG-011** | Top HUD buttons unresponsive when disabled / cut off by punch hole selfie cameras | Major | Open | **RESOLVED** | Added safe-area top insets (`statusBars` + 8dp) to clear punch holes; guaranteed tactile and auditory click feedback on all buttons. |
+| **BUG-012** | Cake station toppings only rendered as flat pink dots on top tier | Major | Open | **RESOLVED** | Distributed toppings across top tier and lower tier ledges with illustrated cherries, chocolate kisses, wafer sticks, macarons, and stars. |
 
 ---
 

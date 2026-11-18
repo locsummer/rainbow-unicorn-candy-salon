@@ -45,8 +45,14 @@ This report documents the complete visual reconstruction of the character models
 * **Catchlights:** Dual shining specular dots (primary 8dp circle + secondary 4dp circle) plus a miniature 4-point star sparkle.
 * **Eyelashes & Eyebrows:** Curved winged upper eyeliner with 3 distinct tapered flutter lashes and expressive arched brows.
 
-### 3.3. 3D Studio Princess Dynamic Reactivity (`CandySalonStudioRenderer.kt` & `CandySalonStudioView.swift`)
-The Princess renderer was completely refactored to consume `characterState` in real-time:
+### 3.3. 3D Studio Princess Dynamic Reactivity & Facial Overhaul (`CandySalonStudioRenderer.kt` & `CandySalonStudioView.swift`)
+The Princess renderer was completely overhauled based on direct player feedback and reference artwork (`media_1794751388095_df85262d.jpg`):
+* **Facial Architecture & Features:**
+  - **Soft Tapered Chin:** Delicate oval silhouette with natural jawline contour and soft rosy blush (`Color(0xFFFF80AB)`).
+  - **Glamour Eyes:** Double eyelid crease, multi-stop sapphire-cyan gradient iris, deep midnight pupil, star sparkle catches, and winged flutter lashes with upper flick details.
+  - **Subtle Eyeshadow:** Replaced previous solid turquoise blocks with translucent pastel gradient shading (alpha 0.45f) that blends gracefully into the skin.
+  - **Sweet Smiling Lips:** Rich pink/coral gloss smile with white specular shine highlight. Removed the jarring cyan highlight stripe that previously gave a moustache effect.
+  - **Forehead & Bangs:** Eliminated the rigid rainbow unibrow forehead band, replacing it with sweeping parted bangs framing the face and cascading side locks.
 * **Hairstyles:**
   - `buns_twin`: Renders two massive, voluminous side buns tied with candy pink ribbons and flowing locks behind.
   - `ponytail`: High bouncy ponytail sweeping dramatically over the right shoulder.
@@ -55,9 +61,13 @@ The Princess renderer was completely refactored to consume `characterState` in r
   - `braid`: Segmented French braid with ribbon ties.
   - `default`: High braided emerald/pastel bun with flowing gradient locks.
 * **Hair Colors:** Evaluated via `CandyPalette.hairBrush` supporting Rainbow Gradient, Pastel Pink, Mint Green, Galaxy Purple, Lavender, Neon Lime, Plum, and Magenta.
-* **Outfits:** Renders custom bodice cuts and flared skater skirts with color schemes for Cotton Candy, Mermaid, Ball Gown, Carnival, Crystal, Peppermint, Cyberpunk, and Coronation.
+* **Outfits:** Renders custom sweetheart bodice with magenta candy heart emblem, golden star, cyan ribbons, and flared skater skirts with color schemes for Cotton Candy, Mermaid, Ball Gown, Carnival, Crystal, Peppermint, Cyberpunk, and Coronation.
 * **Makeup:** Reactive turquoise/berry eyeshadow pan, rosy blush pads, and glossy lipstick.
-* **Accessories:** Renders translucent fairy wings behind the torso, golden pearl necklace on the collarbone, spiraling horn, and crystal tiara.
+* **Accessories & High-Fidelity Thumbnails:**
+  - Earrings: Dangling star charms and crystal droplets.
+  - Chokers: Deep velvet ribbon band with golden candy heart pendant.
+  - Necklaces: Curved strand of distinct glowing sugar pearls.
+  - Wings, horns, and tiaras render with full depth and specular catchlights.
 
 ---
 

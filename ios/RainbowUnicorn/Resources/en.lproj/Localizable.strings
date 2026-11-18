@@ -130,6 +130,7 @@
 "btn_change_layers" = "Layers";
 "btn_delete_topping" = "Delete";
 "btn_clear_all_toppings" = "Clear All";
+"btn_grid_modal" = "All Items";
 "title_select_topping" = "Select Cake Topping";
 "title_select_flavor" = "Select Frosting Flavor";
 "title_select_layers" = "Select Cake Layers";

@@ -641,6 +641,7 @@ public struct StationView: View {
     @State private var showRequestDialog: Bool = false
     @State private var showCakeToppingModal: Bool = false
     @State private var showCakeFlavorModal: Bool = false
+    @State private var activeModalCategory: ItemCategory?
     @State private var lockedItemPending: Item?
     @State private var bannerMessage: String?
 
@@ -929,17 +930,23 @@ public struct StationView: View {
             .ignoresSafeArea()
 
             VStack(spacing: 6) {
-                // PORTRAIT TOP HUD ROW 1
+                // PORTRAIT TOP HUD ROW 1 (Generous safe-area padding for punch-hole cameras)
                 HStack(spacing: 8) {
                     NavButton(
                         iconName: "arrow.backward",
                         label: L10n.string("btn_exit", language: language),
                         backgroundColor: CandyColors.pink,
                         compact: true,
-                        action: { showExitDialog = true }
+                        action: {
+                            soundManager.playClick()
+                            showExitDialog = true
+                        }
                     )
 
-                    Button(action: { showRequestDialog = true }) {
+                    Button(action: {
+                        soundManager.playClick()
+                        showRequestDialog = true
+                    }) {
                         HStack(spacing: 5) {
                             Image(systemName: "list.bullet.rectangle")
                                 .font(.system(size: 14, weight: .bold))
@@ -948,7 +955,7 @@ public struct StationView: View {
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.8)
                         }
-                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .frame(maxWidth: .infinity, minHeight: 48)
                         .padding(.horizontal, 10)
                         .background(metCount == level.criteria.count ? CandyColors.mint : .white)
                         .foregroundColor(CandyColors.deepPlum)
@@ -963,6 +970,7 @@ public struct StationView: View {
                         foregroundColor: CandyColors.deepPlum,
                         compact: true,
                         action: {
+                            soundManager.playClick()
                             if currentStation == .spa && spaCleanPercent < 0.80 {
                                 showToast(L10n.string("spa_need_more", language: language))
                                 return
@@ -996,7 +1004,7 @@ public struct StationView: View {
                     )
                 }
                 .padding(.horizontal, 10)
-                .padding(.top, 6)
+                .padding(.top, 14)
 
                 // PORTRAIT TOP HUD ROW 2: Dedicated Full-Width Scrollable Station Steps (Zero Truncation)
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -1064,13 +1072,13 @@ public struct StationView: View {
                         label: L10n.string("btn_undo", language: language),
                         backgroundColor: .white,
                         foregroundColor: CandyColors.deepPlum,
-                        isEnabled: canUndo,
+                        isEnabled: true,
                         compact: true,
                         action: {
+                            soundManager.playClick()
                             if levelEngine.undo() {
                                 characterState = levelEngine.characterState
                                 syncUndo()
-                                soundManager.playClick()
                                 onCheckpointChanged(buildCheckpoint())
                             }
                         }
@@ -1081,13 +1089,13 @@ public struct StationView: View {
                         label: L10n.string("btn_redo", language: language),
                         backgroundColor: .white,
                         foregroundColor: CandyColors.deepPlum,
-                        isEnabled: canRedo,
+                        isEnabled: true,
                         compact: true,
                         action: {
+                            soundManager.playClick()
                             if levelEngine.redo() {
                                 characterState = levelEngine.characterState
                                 syncUndo()
-                                soundManager.playClick()
                                 onCheckpointChanged(buildCheckpoint())
                             }
                         }
@@ -1268,6 +1276,10 @@ public struct StationView: View {
                         onClearCategory: { cat in
                             soundManager.playClick()
                             clearCategory(cat)
+                        },
+                        onOpenFullModal: { cat in
+                            soundManager.playClick()
+                            activeModalCategory = cat
                         }
                     )
                 }
@@ -1386,6 +1398,26 @@ public struct StationView: View {
                         lockedItemPending = item
                     },
                     onDismiss: { showCakeFlavorModal = false }
+                )
+            }
+
+            if let modalCat = activeModalCategory {
+                let catItems = items.filter { $0.category == modalCat.id }
+                ItemSelectionModal(
+                    title: modalCat.localizedName(language: language),
+                    items: catItems,
+                    language: language,
+                    unlockedItems: unlockedItems,
+                    selectedIds: selectedIds(for: modalCat.id),
+                    onItemSelected: { item in
+                        soundManager.playClick()
+                        equipItem(item)
+                    },
+                    onLockedItemClicked: { item in
+                        soundManager.playClick()
+                        lockedItemPending = item
+                    },
+                    onDismiss: { activeModalCategory = nil }
                 )
             }
 

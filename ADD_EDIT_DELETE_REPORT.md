@@ -30,15 +30,15 @@ This report documents the implementation and verification of interactive Add, Ed
 The Cake Bakery station serves as the primary benchmark for interactive CRUD operations:
 
 ### 3.1. Add Topping (`Create / Add`)
-* **Trigger:** Primary pink button `[+ Add Topping]` (`btn_add_topping`).
-* **Interaction:** Opens `ItemSelectionModal` showcasing all 8 cake toppings:
+* **Trigger:** Primary pink button `[+ Add Topping]` (`btn_add_topping`) in the cake station, or the new **"✨ Mở Bảng Chọn"** button in the tray.
+* **Interaction:** Opens the 3-column `ItemSelectionModal` displaying all cake toppings with full-scale 56–64dp previews, checkmarks for equipped items, and locked pricing tags:
   - Sugar Star (`cake_top_sugar_star`)
   - Chocolate Swirl (`cake_top_choco_curl`)
   - Cherries on Stem (`cake_top_cherry`)
   - Macaron (`cake_top_macaron`)
   - Rainbow Sprinkles (`cake_top_rainbow_sprinkles`)
   - Crystal Diamond Candy (`cake_top_crystal_gem`)
-* **Feedback:** Tapping any topping appends it to `cakeToppings` (up to 8 items), plays sparkle audio, updates the live cake canvas instantly, and persists to the checkpoint.
+* **Feedback & Live Stage Rendering:** Tapping any topping appends it to `cakeToppings` (up to 8 items), plays sparkle audio, updates the live cake canvas instantly across all tiers (top tier and lower tier ledges with illustrated cherries, chocolate kisses, wafer sticks, and macarons), and persists to the checkpoint.
 
 ### 3.2. Edit Frosting & Layers (`Update / Edit`)
 * **Frosting Flavor:** Purple button `[Frosting / Đổi Kem Phủ]` (`btn_change_flavor`) opens the flavor selection modal to swap between Vanilla Rainbow, Strawberry Cream, Blue Cotton Candy, or Rich Chocolate. The cake icing drip on canvas changes color in real-time.

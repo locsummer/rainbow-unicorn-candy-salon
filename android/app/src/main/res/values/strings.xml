@@ -145,6 +145,7 @@
     <string name="btn_change_layers">Edit Tiers</string>
     <string name="btn_delete_topping">Remove Topping</string>
     <string name="btn_clear_all_toppings">Clear All</string>
+    <string name="btn_grid_modal">All Items</string>
     <string name="title_select_topping">Choose Cake Topping</string>
     <string name="title_select_flavor">Choose Frosting Flavor</string>
     <string name="title_select_layers">Select Cake Tiers (1–4)</string>

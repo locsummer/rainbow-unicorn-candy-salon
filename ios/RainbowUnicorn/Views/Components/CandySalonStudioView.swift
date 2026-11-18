@@ -470,41 +470,102 @@ public struct CandySalonStudioView: View {
             context.stroke(Path(ellipseIn: CGRect(x: px - 8, y: py - 8, width: 16, height: 16)), with: .color(Color(red: 0.91, green: 0.12, blue: 0.39)), lineWidth: 2)
         }
 
-        // 4. Head & Face
-        context.fill(Path(ellipseIn: CGRect(x: cx - headR * 0.85, y: headY - headR * 0.6, width: headR * 1.7, height: headR * 1.6)), with: .color(skinCol))
+        // 4. Head & Face (Tapered anime princess face)
+        var facePath = Path()
+        facePath.move(to: CGPoint(x: cx - headR * 0.82, y: headY - headR * 0.4))
+        facePath.addQuadCurve(to: CGPoint(x: cx, y: headY + headR * 0.88), control: CGPoint(x: cx - headR * 0.85, y: headY + headR * 0.55))
+        facePath.addQuadCurve(to: CGPoint(x: cx + headR * 0.82, y: headY - headR * 0.4), control: CGPoint(x: cx + headR * 0.85, y: headY + headR * 0.55))
+        facePath.addQuadCurve(to: CGPoint(x: cx - headR * 0.82, y: headY - headR * 0.4), control: CGPoint(x: cx, y: headY - headR * 0.95))
+        context.fill(facePath, with: .color(skinCol))
 
-        // Blush (if equipped)
-        if characterState.makeup.blush != nil {
-            for side in [-1.0, 1.0] {
-                let bx = cx + CGFloat(side) * headR * 0.52
-                let by = headY + headR * 0.25
-                context.fill(Path(ellipseIn: CGRect(x: bx - 14, y: by - 8, width: 28, height: 16)), with: .color(Color(red: 1.0, green: 0.60, blue: 0.75).opacity(0.65)))
-            }
+        // Natural Rosy Cheeks (Blush)
+        for side in [-1.0, 1.0] {
+            let bx = cx + CGFloat(side) * headR * 0.50
+            let by = headY + headR * 0.22
+            let blushAlpha = (characterState.makeup.blush != nil) ? 0.65 : 0.28
+            context.fill(Path(ellipseIn: CGRect(x: bx - 14, y: by - 8, width: 28, height: 16)), with: .color(Color(red: 1.0, green: 0.50, blue: 0.67).opacity(blushAlpha)))
         }
 
-        // Eyeshadow & Big Almond Eyes
+        // Eyebrows (Softly arched natural brows)
+        for side in [-1.0, 1.0] {
+            let browX = cx + CGFloat(side) * headR * 0.42
+            let browY = headY - headR * 0.20
+            var brow = Path()
+            brow.move(to: CGPoint(x: browX - CGFloat(side) * 14, y: browY + 2))
+            brow.addQuadCurve(to: CGPoint(x: browX + CGFloat(side) * 14, y: browY - 1), control: CGPoint(x: browX, y: browY - 6))
+            context.stroke(brow, with: .color(Color(red: 0.35, green: 0.22, blue: 0.15)), lineWidth: 2.2)
+        }
+
+        // Eyeshadow & Big Glamour Almond Eyes
         for side in [-1.0, 1.0] {
             let eyeX = cx + CGFloat(side) * headR * 0.42
-            let eyeY = headY + headR * 0.04
-            // Eyeshadow
-            context.fill(Path(ellipseIn: CGRect(x: eyeX - 16, y: eyeY - 14, width: 32, height: 18)), with: .color(shadowColor))
+            let eyeY = headY + headR * 0.02
+
+            // Translucent Pastel Eyeshadow
+            context.fill(Path(ellipseIn: CGRect(x: eyeX - 16, y: eyeY - 14, width: 32, height: 16)), with: .color(shadowColor.opacity(0.45)))
+
+            // Double eyelid crease
+            var crease = Path()
+            crease.move(to: CGPoint(x: eyeX - 13, y: eyeY - 9))
+            crease.addQuadCurve(to: CGPoint(x: eyeX + 13, y: eyeY - 9), control: CGPoint(x: eyeX, y: eyeY - 14))
+            context.stroke(crease, with: .color(Color(red: 0.5, green: 0.3, blue: 0.25).opacity(0.5)), lineWidth: 1.2)
+
             // Almond Sclera
             context.fill(Path(ellipseIn: CGRect(x: eyeX - 14, y: eyeY - 8, width: 28, height: 16)), with: .color(.white))
-            // Blue/Violet Iris
-            context.fill(Path(ellipseIn: CGRect(x: eyeX - 8, y: eyeY - 7, width: 16, height: 15)), with: .color(Color(red: 0.16, green: 0.47, blue: 1.0)))
-            // Catchlights
+
+            // Sapphire-to-Cyan Gradient Iris
+            context.fill(Path(ellipseIn: CGRect(x: eyeX - 8, y: eyeY - 7, width: 16, height: 15)), with: .color(Color(red: 0.10, green: 0.50, blue: 0.95)))
+            // Midnight Pupil
+            context.fill(Path(ellipseIn: CGRect(x: eyeX - 4.5, y: eyeY - 4.5, width: 9, height: 9)), with: .color(Color(red: 0.10, green: 0.08, blue: 0.20)))
+
+            // Sparkle Catchlights
             context.fill(Path(ellipseIn: CGRect(x: eyeX - 5, y: eyeY - 5, width: 5, height: 5)), with: .color(.white))
             context.fill(Path(ellipseIn: CGRect(x: eyeX + 2, y: eyeY + 1, width: 3, height: 3)), with: .color(.white))
-            // Winged Eyeliner
+
+            // Flutter Lashes & Eyeliner
             var liner = Path()
-            liner.move(to: CGPoint(x: eyeX - 14, y: eyeY))
-            liner.addLine(to: CGPoint(x: eyeX + 16, y: eyeY - 4))
-            context.stroke(liner, with: .color(.black), lineWidth: 3)
+            liner.move(to: CGPoint(x: eyeX - 14, y: eyeY - 2))
+            liner.addQuadCurve(to: CGPoint(x: eyeX + CGFloat(side) * 16, y: eyeY - 6), control: CGPoint(x: eyeX, y: eyeY - 9))
+            context.stroke(liner, with: .color(Color(red: 0.12, green: 0.08, blue: 0.15)), lineWidth: 2.6)
+
+            // Upper Flutter Lash flicks
+            var lash = Path()
+            lash.move(to: CGPoint(x: eyeX + CGFloat(side) * 12, y: eyeY - 6))
+            lash.addLine(to: CGPoint(x: eyeX + CGFloat(side) * 17, y: eyeY - 11))
+            context.stroke(lash, with: .color(Color(red: 0.12, green: 0.08, blue: 0.15)), lineWidth: 1.8)
         }
 
-        // Lips (reactive lipstick color)
-        let mouthY = headY + headR * 0.55
-        context.fill(Path(ellipseIn: CGRect(x: cx - 14, y: mouthY - 4, width: 28, height: 12)), with: .color(lipColor))
+        // Dainty Nose
+        var nose = Path()
+        nose.move(to: CGPoint(x: cx - 2, y: headY + headR * 0.26))
+        nose.addQuadCurve(to: CGPoint(x: cx + 3, y: headY + headR * 0.29), control: CGPoint(x: cx, y: headY + headR * 0.31))
+        context.stroke(nose, with: .color(Color(red: 0.85, green: 0.65, blue: 0.55)), lineWidth: 1.5)
+
+        // Sweet Smiling Lips with Glossy Specular Highlight (No cyan stripe!)
+        let mouthY = headY + headR * 0.50
+        var upperLip = Path()
+        upperLip.move(to: CGPoint(x: cx - 13, y: mouthY))
+        upperLip.addQuadCurve(to: CGPoint(x: cx, y: mouthY - 3), control: CGPoint(x: cx - 6, y: mouthY - 5))
+        upperLip.addQuadCurve(to: CGPoint(x: cx + 13, y: mouthY), control: CGPoint(x: cx + 6, y: mouthY - 5))
+        upperLip.addQuadCurve(to: CGPoint(x: cx - 13, y: mouthY), control: CGPoint(x: cx, y: mouthY + 1))
+        context.fill(upperLip, with: .color(lipColor))
+
+        var lowerLip = Path()
+        lowerLip.move(to: CGPoint(x: cx - 12, y: mouthY + 1))
+        lowerLip.addQuadCurve(to: CGPoint(x: cx + 12, y: mouthY + 1), control: CGPoint(x: cx, y: mouthY + 8))
+        lowerLip.closeSubpath()
+        context.fill(lowerLip, with: .color(lipColor))
+
+        // Gloss highlight on lower lip
+        context.fill(Path(ellipseIn: CGRect(x: cx - 5, y: mouthY + 3, width: 10, height: 2.5)), with: .color(.white.opacity(0.7)))
+
+        // Front Hair Bangs framing the face
+        var bangs = Path()
+        bangs.move(to: CGPoint(x: cx - headR * 0.80, y: headY - headR * 0.35))
+        bangs.addQuadCurve(to: CGPoint(x: cx, y: headY - headR * 0.05), control: CGPoint(x: cx - headR * 0.35, y: headY - headR * 0.50))
+        bangs.addQuadCurve(to: CGPoint(x: cx + headR * 0.80, y: headY - headR * 0.35), control: CGPoint(x: cx + headR * 0.35, y: headY - headR * 0.50))
+        bangs.addQuadCurve(to: CGPoint(x: cx - headR * 0.80, y: headY - headR * 0.35), control: CGPoint(x: cx, y: headY - headR * 0.85))
+        context.fill(bangs, with: .color(hairColor))
 
         // Horn (if equipped)
         if characterState.hornId != nil {

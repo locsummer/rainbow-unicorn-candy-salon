@@ -13,9 +13,9 @@ This report documents the end-to-end user interface and user experience redesign
 
 ## 2. Root Cause Analysis of Previous UI Defects
 
-### A. Top HUD Overcrowding & Label Truncation (Observed in Photo 3)
-* **Defect:** In earlier builds, Row 2 packed both the station progress pills (`LazyRow` / `ScrollView`) and the three utility buttons (`Undo`, `Redo`, `Reset`) into a single horizontal row with `weight(1f)` / `Spacer()`.
-* **Impact:** On portrait phone screens (e.g. 1080×2400 aspect ratio), station titles were severely squeezed, truncating text (e.g., `2. Make...` instead of `2. Makeup Salon`). Action buttons suffered from undersized touch targets (< 36dp), violating accessibility standards.
+### A. Top HUD Overcrowding, Camera Cutouts & Button Responsiveness
+* **Punch-Hole Cutout Insets:** Added safe-area padding (`WindowInsets.statusBars` + 8dp top padding on Android, `.padding(.top, 14)` on iOS) so the top HUD controls never collide with modern phone punch-hole selfie cameras or notches.
+* **Touch Targets & Click Auditory Feedback:** All top buttons (Exit, Goals, Done, Undo, Redo, Reset) strictly satisfy $\ge 48$dp touch dimensions with generous padding. In addition, Undo and Redo always handle taps with instant auditory/haptic feedback (`SoundManager.playClick`) so users never experience a "frozen" or unresponsive button.
 * **Resolution:** Re-architected the Top HUD into a clean **3-Tier Hierarchy**:
   1. **Tier 1 (Navigation & Objectives):**
      - Left: `Exit` (`NavButton` with back chevron, compact, 48dp min touch height).

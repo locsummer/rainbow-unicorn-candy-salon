@@ -144,6 +144,37 @@ public struct CakeStationView: View {
         self.onOpenFlavorModal = onOpenFlavorModal
     }
 
+    @ViewBuilder
+    private func toppingView(for topId: String) -> some View {
+        if topId.contains("cherry") {
+            ZStack {
+                Circle().fill(Color(red: 0.88, green: 0.08, blue: 0.18)).frame(width: 20, height: 20)
+                Circle().fill(Color.white.opacity(0.7)).frame(width: 5, height: 5).offset(x: -3, y: -3)
+            }
+        } else if topId.contains("macaron") {
+            VStack(spacing: 1) {
+                Capsule().fill(CandyColors.pink).frame(width: 24, height: 7)
+                Capsule().fill(Color.white).frame(width: 22, height: 3)
+                Capsule().fill(CandyColors.pink).frame(width: 24, height: 7)
+            }
+        } else if topId.contains("wafer") {
+            Capsule().fill(CandyColors.yellow).frame(width: 7, height: 28).rotationEffect(.degrees(22))
+        } else if topId.contains("kiss") || topId.contains("chocolate") {
+            ZStack {
+                Circle().fill(Color(red: 0.32, green: 0.18, blue: 0.12)).frame(width: 18, height: 18)
+                Circle().fill(Color.white.opacity(0.4)).frame(width: 4, height: 4).offset(x: -2, y: -2)
+            }
+        } else if topId.contains("crystal") {
+            Image(systemName: "suit.diamond.fill")
+                .font(.system(size: 18))
+                .foregroundColor(Color(red: 0.0, green: 0.90, blue: 1.0))
+        } else {
+            Image(systemName: "star.fill")
+                .font(.system(size: 18))
+                .foregroundColor(CandyColors.yellow)
+        }
+    }
+
     public var body: some View {
         let clampedLayers = min(max(layers, 1), 4)
         let icingColor: Color = {
@@ -250,28 +281,40 @@ public struct CakeStationView: View {
 
             VStack(spacing: -4) {
                 ForEach((0..<clampedLayers).reversed(), id: \.self) { i in
-                    let w = CGFloat(200 - i * 32)
+                    let w = CGFloat(210 - i * 34)
+                    let isTopTier = (i == clampedLayers - 1)
+                    let tierToppings: [String] = {
+                        if isTopTier {
+                            return Array(toppings.prefix(4))
+                        } else {
+                            let skipped = 4 + (clampedLayers - 2 - i) * 2
+                            if skipped < toppings.count {
+                                return Array(toppings.dropFirst(skipped).prefix(2))
+                            }
+                            return []
+                        }
+                    }()
+
                     ZStack(alignment: .top) {
                         RoundedRectangle(cornerRadius: 14)
                             .fill(icingColor)
-                            .frame(width: w, height: 42)
+                            .frame(width: w, height: 46)
                             .overlay(RoundedRectangle(cornerRadius: 14).stroke(CandyColors.deepPlum.opacity(0.2), lineWidth: 1.5))
 
-                        if i == clampedLayers - 1 && !toppings.isEmpty {
-                            HStack(spacing: 6) {
-                                ForEach(Array(toppings.prefix(6).enumerated()), id: \.offset) { _, _ in
-                                    Circle()
-                                        .fill(CandyColors.pink)
-                                        .frame(width: 14, height: 14)
+                        // Tier Toppings Display
+                        if !tierToppings.isEmpty {
+                            HStack(spacing: 12) {
+                                ForEach(Array(tierToppings.enumerated()), id: \.offset) { _, topId in
+                                    toppingView(for: topId)
                                 }
                             }
-                            .offset(y: -6)
+                            .offset(y: -14)
                         }
                     }
                 }
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(CandyColors.deepPlum.opacity(0.18))
-                    .frame(width: 240, height: 14)
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(CandyColors.deepPlum.opacity(0.22))
+                    .frame(width: 250, height: 16)
             }
 
             Spacer()

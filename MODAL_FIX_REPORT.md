@@ -25,18 +25,16 @@ This report details the architectural audit and redesign of all modal windows an
   - Prominent full-width `Close` button at bottom ($\ge 48$dp touch target).
 
 ### 2.2. Item Selection Modal (`ItemSelectionModal`)
-* **Trigger:** Tapped from station action buttons (e.g., `[+ Add Topping]`, `[Frosting / Đổi Kem Phủ]`).
+* **Trigger:** Accessible anytime via station action buttons (e.g., `[+ Thêm Topping]`, `[Đổi Kem Phủ]`), or via the dedicated **"✨ Mở Bảng Chọn" (`btn_grid_modal`)** button in the Bottom Item Tray for any category.
 * **Design & Features:**
-  - Replaces nested sub-menus with an accessible, high-fidelity item grid modal.
-  - Horizontally scrollable item carousel with smooth snapping.
-  - Each item displays:
-    - Illustrated WYSIWYG vector thumbnail (`48×48`dp).
-    - Equipped highlight border (3dp CandyPink with warm cream background).
-    - Locked status overlay with price badge (`30🍬`).
-    - Two-line non-truncated localized title with ellipsis handling.
-  - Tapping an unlocked item equips/toggles it and provides instant audio feedback (`SoundManager.playClick`).
-  - Tapping a locked item smoothly transitions to the Unlock Item Dialog.
-  - Full-width dismiss button at the base of the modal.
+  - **Full-Modal 3-Column Grid:** Replaces the previous narrow horizontal scroll strip with a rich 3-column vertical grid (`LazyVerticalGrid(columns = GridCells.Fixed(3))` on Android, `LazyVGrid(columns = 3)` on iOS) spanning 95% modal width and up to 520dp height.
+  - **Generous Item Cards:** Each card features a 64dp thumbnail container, 56dp illustrated canvas preview, and balanced proportions with no awkward voids.
+  - **Selected & Locked Indicators:**
+    - Selected items display an active magenta border (`CandyColors.pink`) and a checkmark badge in the top-right corner.
+    - Locked items display a semi-transparent dark overlay with a distinct lock icon and candy price badge (`30🍬`).
+  - **Illustrated Thumbnails:** Renders full-fidelity graphics for jewelry (dangling star earrings, pearl necklaces, heart chokers), hairstyles, outfits, horns, tiaras, wings, stickers, and cake toppings.
+  - **Audio & Haptics:** Tapping any unlocked item equips/toggles it with instant audio feedback (`SoundManager.playClick`). Tapping locked items smoothly prompts the Unlock Dialog.
+  - **Full-Width Done Button:** Prominent button at the base of the modal ensuring simple, accessible closure.
 
 ### 2.3. Unlock Item Dialog (`UnlockItemDialog`)
 * **Trigger:** Tapped when selecting any locked item from the Bottom Tray or Item Selection Modal.
