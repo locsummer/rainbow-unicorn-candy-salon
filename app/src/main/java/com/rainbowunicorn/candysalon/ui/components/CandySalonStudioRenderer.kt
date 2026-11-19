@@ -1051,15 +1051,15 @@ object CandySalonStudioRenderer {
             hairColorId = characterState.hairColorId
         )
 
-        // 9. Horn & Tiara
+        // 9. Horn & Tiara (Anchored snugly to forehead hairline)
         characterState.hornId?.let { hornId ->
             CharacterVectorRenderer.run {
-                drawHornLayer(hornId, cx, headY - headR * 0.95f, headR * 1.15f)
+                drawHornLayer(hornId, cx, headY - headR * 0.50f, headR * 1.15f)
             }
         }
         characterState.tiaraId?.let { tiaraId ->
             CharacterVectorRenderer.run {
-                drawTiaraLayer(tiaraId, cx, headY - headR * 0.85f, headR * 1.25f)
+                drawTiaraLayer(tiaraId, cx, headY - headR * 0.58f, headR * 1.25f)
             }
         }
 
@@ -1321,33 +1321,85 @@ object CandySalonStudioRenderer {
         headR: Float,
         outfitId: String? = null
     ) {
-        val bodiceTopY = neckY + headR * 0.25f
+        val shoulderW = headR * 1.28f
+        val bodiceTopY = neckY + headR * 0.16f
         val (topColor, skirtColor) = if (outfitId != null) {
             CandyPalette.outfitColors(outfitId)
         } else {
             WhitePure to MagentaHeart
         }
 
-        // Sparkly Bodice
+        // Bodice that covers bust AND shoulders with cap sleeves
         val bodice = Path().apply {
-            moveTo(cx - headR * 0.68f, bodiceTopY)
-            cubicTo(cx - headR * 0.2f, bodiceTopY - 6f, cx + headR * 0.2f, bodiceTopY - 6f, cx + headR * 0.68f, bodiceTopY)
-            lineTo(cx + headR * 0.55f, waistY)
+            moveTo(cx - shoulderW * 0.85f, neckY + headR * 0.20f)
+            // Left cap sleeve / shoulder arch
+            cubicTo(
+                cx - shoulderW * 0.70f, neckY + headR * 0.06f,
+                cx - headR * 0.40f, neckY + headR * 0.08f,
+                cx - headR * 0.22f, neckY + headR * 0.16f
+            )
+            // Sweetheart neckline dip in center
+            quadraticBezierTo(cx, neckY + headR * 0.26f, cx + headR * 0.22f, neckY + headR * 0.16f)
+            // Right shoulder arch
+            cubicTo(
+                cx + headR * 0.40f, neckY + headR * 0.08f,
+                cx + shoulderW * 0.70f, neckY + headR * 0.06f,
+                cx + shoulderW * 0.85f, neckY + headR * 0.20f
+            )
+            // Down right side along ribcage to waist
+            cubicTo(
+                cx + shoulderW * 0.72f, neckY + headR * 0.55f,
+                cx + headR * 0.58f, waistY - headR * 0.12f,
+                cx + headR * 0.55f, waistY
+            )
             lineTo(cx - headR * 0.55f, waistY)
+            // Up left side along ribcage to shoulder
+            cubicTo(
+                cx - headR * 0.58f, waistY - headR * 0.12f,
+                cx - shoulderW * 0.72f, neckY + headR * 0.55f,
+                cx - shoulderW * 0.85f, neckY + headR * 0.20f
+            )
             close()
         }
         drawPath(bodice, topColor)
         drawPath(bodice, Color(0xFFCFD8DC).copy(alpha = 0.45f), style = Stroke(width = 2.5f))
 
-        // Asymmetrical Strap across left shoulder
+        // Delicate sweetheart lace piping along neckline
+        val lacePiping = Path().apply {
+            moveTo(cx - shoulderW * 0.85f, neckY + headR * 0.20f)
+            cubicTo(
+                cx - shoulderW * 0.70f, neckY + headR * 0.06f,
+                cx - headR * 0.40f, neckY + headR * 0.08f,
+                cx - headR * 0.22f, neckY + headR * 0.16f
+            )
+            quadraticBezierTo(cx, neckY + headR * 0.26f, cx + headR * 0.22f, neckY + headR * 0.16f)
+            cubicTo(
+                cx + headR * 0.40f, neckY + headR * 0.08f,
+                cx + shoulderW * 0.70f, neckY + headR * 0.06f,
+                cx + shoulderW * 0.85f, neckY + headR * 0.20f
+            )
+        }
+        drawPath(lacePiping, color = Color.White.copy(alpha = 0.85f), style = Stroke(width = 2.5f, cap = StrokeCap.Round))
+
+        // Asymmetrical Ribbon Strap across left shoulder
         val strap = Path().apply {
-            moveTo(cx - headR * 0.82f, neckY + headR * 0.05f)
-            lineTo(cx - headR * 0.50f, neckY + headR * 0.05f)
-            lineTo(cx + headR * 0.62f, bodiceTopY + headR * 0.32f)
-            lineTo(cx + headR * 0.62f, bodiceTopY + headR * 0.65f)
+            moveTo(cx - shoulderW * 0.80f, neckY + headR * 0.06f)
+            lineTo(cx - headR * 0.45f, neckY + headR * 0.06f)
+            lineTo(cx + headR * 0.62f, bodiceTopY + headR * 0.38f)
+            lineTo(cx + headR * 0.62f, bodiceTopY + headR * 0.70f)
             close()
         }
         drawPath(strap, skirtColor)
+
+        // Cinched Ribbon Sash at waist
+        drawRoundRect(
+            brush = Brush.horizontalGradient(listOf(skirtColor, Color(0xFFFF80AB), skirtColor)),
+            topLeft = Offset(cx - headR * 0.58f, waistY - headR * 0.05f),
+            size = Size(headR * 1.16f, headR * 0.10f),
+            cornerRadius = CornerRadius(6f, 6f)
+        )
+        drawCircle(GoldStar, radius = headR * 0.08f, center = Offset(cx, waistY))
+        drawCircle(WhitePure, radius = headR * 0.03f, center = Offset(cx, waistY))
 
         // 3D Candy Heart Graphic on Center of Chest
         val heartCenterY = (bodiceTopY + waistY) * 0.48f
