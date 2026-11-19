@@ -234,7 +234,7 @@ public struct CakeStationView: View {
                     HStack(spacing: 6) {
                         ForEach(Array(toppings.enumerated()), id: \.offset) { _, topId in
                             HStack(spacing: 4) {
-                                Text(topId.replacingOccurrences(of: "cake_top_", with: "").replacingOccurrences(of: "_", with: " ").capitalized)
+                                Text(topId.replacingOccurrences(of: "topping_", with: "").replacingOccurrences(of: "cake_top_", with: "").replacingOccurrences(of: "_", with: " ").capitalized)
                                     .font(.system(size: 11, weight: .medium, design: .rounded))
                                     .foregroundColor(CandyColors.deepPlum)
 
