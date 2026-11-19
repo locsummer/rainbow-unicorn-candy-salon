@@ -413,70 +413,266 @@ public struct CharacterSpriteView: View {
         mouth.zPosition = CGFloat(RenderLayer.eyesLashes.rawValue)
         scene.addChild(mouth)
 
-        // LAYER 7: Outfit
+        // LAYER 7: Outfit (Bodice & Skirt that snugly hugs shoulders, bust, waist & hips)
         if let outId = characterState.outfitId {
-            let dressPath = CGMutablePath()
-            dressPath.move(to: CGPoint(x: cx - headR * 0.45, y: neckY))
-            dressPath.addLine(to: CGPoint(x: cx + headR * 0.45, y: neckY))
-            dressPath.addLine(to: CGPoint(x: cx + headR * 1.15, y: bodyBottomY))
-            dressPath.addLine(to: CGPoint(x: cx - headR * 1.15, y: bodyBottomY))
-            dressPath.closeSubpath()
-            let outfit = SKShapeNode(path: dressPath)
-            outfit.fillColor = SpritePalette.outfitUIColor(outId)
-            outfit.strokeColor = outline
-            outfit.lineWidth = 2
-            outfit.zPosition = CGFloat(RenderLayer.outfit.rawValue)
-            scene.addChild(outfit)
+            let outColor = SpritePalette.outfitUIColor(outId)
+            let waistY = neckY - headR * 0.58
+            let waistW = headR * 0.48
+            let shoulderW = headR * 0.88
+            let skirtW: CGFloat = outId.contains("ball_gown") || outId.contains("coronation") ? headR * 1.55 : headR * 1.35
+
+            // 1. Bodice wrapping shoulders, bust, and torso
+            let bodicePath = CGMutablePath()
+            bodicePath.move(to: CGPoint(x: cx - shoulderW, y: neckY - headR * 0.18))
+            bodicePath.addQuadCurve(to: CGPoint(x: cx, y: neckY - headR * 0.26), control: CGPoint(x: cx - headR * 0.35, y: neckY - headR * 0.08))
+            bodicePath.addQuadCurve(to: CGPoint(x: cx + shoulderW, y: neckY - headR * 0.18), control: CGPoint(x: cx + headR * 0.35, y: neckY - headR * 0.08))
+            bodicePath.addQuadCurve(to: CGPoint(x: cx + waistW, y: waistY), control: CGPoint(x: cx + shoulderW * 0.85, y: neckY - headR * 0.40))
+            bodicePath.addLine(to: CGPoint(x: cx - waistW, y: waistY))
+            bodicePath.addQuadCurve(to: CGPoint(x: cx - shoulderW, y: neckY - headR * 0.18), control: CGPoint(x: cx - shoulderW * 0.85, y: neckY - headR * 0.40))
+            bodicePath.closeSubpath()
+
+            let bodice = SKShapeNode(path: bodicePath)
+            bodice.fillColor = outColor
+            bodice.strokeColor = outline
+            bodice.lineWidth = 2
+            bodice.zPosition = CGFloat(RenderLayer.outfit.rawValue)
+            scene.addChild(bodice)
+
+            // Cap sleeve ruffles on both shoulders
+            for side in [-1.0, 1.0] {
+                let sleeve = SKShapeNode(ellipseOf: CGSize(width: headR * 0.42, height: headR * 0.28))
+                sleeve.fillColor = UIColor.white.withAlphaComponent(0.65)
+                sleeve.strokeColor = UIColor.white
+                sleeve.lineWidth = 1.5
+                sleeve.position = CGPoint(x: cx + side * shoulderW * 0.95, y: neckY - headR * 0.14)
+                sleeve.zRotation = side * 0.35
+                sleeve.zPosition = CGFloat(RenderLayer.outfit.rawValue) + 0.05
+                scene.addChild(sleeve)
+            }
+
+            // Candy brooch on bust
+            let brooch = SKShapeNode(circleOfRadius: headR * 0.10)
+            brooch.fillColor = UIColor(red: 1.0, green: 0.25, blue: 0.50, alpha: 1.0)
+            brooch.strokeColor = .white
+            brooch.lineWidth = 1.5
+            brooch.position = CGPoint(x: cx, y: neckY - headR * 0.32)
+            brooch.zPosition = CGFloat(RenderLayer.outfit.rawValue) + 0.1
+            scene.addChild(brooch)
+
+            // 2. Skirt flaring out from waist
+            let skirtPath = CGMutablePath()
+            skirtPath.move(to: CGPoint(x: cx - waistW, y: waistY))
+            skirtPath.addLine(to: CGPoint(x: cx + waistW, y: waistY))
+            skirtPath.addQuadCurve(to: CGPoint(x: cx + skirtW, y: bodyBottomY), control: CGPoint(x: cx + skirtW * 0.85, y: waistY - headR * 0.45))
+            skirtPath.addQuadCurve(to: CGPoint(x: cx - skirtW, y: bodyBottomY), control: CGPoint(x: cx, y: bodyBottomY - headR * 0.18))
+            skirtPath.addQuadCurve(to: CGPoint(x: cx - waistW, y: waistY), control: CGPoint(x: cx - skirtW * 0.85, y: waistY - headR * 0.45))
+            skirtPath.closeSubpath()
+
+            let skirt = SKShapeNode(path: skirtPath)
+            skirt.fillColor = outColor
+            skirt.strokeColor = outline
+            skirt.lineWidth = 2
+            skirt.zPosition = CGFloat(RenderLayer.outfit.rawValue)
+            scene.addChild(skirt)
+
+            // Cyan scalloped lace hem peeking underneath
+            let hem = SKShapeNode(ellipseOf: CGSize(width: skirtW * 2.05, height: headR * 0.22))
+            hem.fillColor = UIColor(red: 0.0, green: 0.90, blue: 1.0, alpha: 0.9)
+            hem.strokeColor = .white
+            hem.lineWidth = 1.5
+            hem.position = CGPoint(x: cx, y: bodyBottomY)
+            hem.zPosition = CGFloat(RenderLayer.outfit.rawValue) - 0.02
+            scene.addChild(hem)
+
+            // 3. Waist sash
+            let sash = SKShapeNode(rectOf: CGSize(width: waistW * 2.1, height: headR * 0.12), cornerRadius: 4)
+            sash.fillColor = UIColor(red: 1.0, green: 0.25, blue: 0.50, alpha: 1.0)
+            sash.strokeColor = .white
+            sash.lineWidth = 1.2
+            sash.position = CGPoint(x: cx, y: waistY)
+            sash.zPosition = CGFloat(RenderLayer.outfit.rawValue) + 0.12
+            scene.addChild(sash)
+
+            let buckle = SKShapeNode(circleOfRadius: headR * 0.08)
+            buckle.fillColor = UIColor(red: 1.0, green: 0.84, blue: 0.0, alpha: 1.0)
+            buckle.strokeColor = .white
+            buckle.lineWidth = 1.2
+            buckle.position = CGPoint(x: cx, y: waistY)
+            buckle.zPosition = CGFloat(RenderLayer.outfit.rawValue) + 0.15
+            scene.addChild(buckle)
         }
 
-        // LAYER 8: Front Hair / Bangs
-        let bangs = SKShapeNode(ellipseOf: CGSize(width: headR * 1.95, height: headR * 0.78))
+        // LAYER 8: Front Hair / Bangs (Face-framing side tendrils hugging cheeks + soft layered bangs)
+        for side in [-1.0, 1.0] {
+            let cheekLockPath = CGMutablePath()
+            cheekLockPath.move(to: CGPoint(x: cx + side * headR * 0.65, y: headY + headR * 0.35))
+            cheekLockPath.addQuadCurve(to: CGPoint(x: cx + side * headR * 0.85, y: headY - headR * 0.25), control: CGPoint(x: cx + side * headR * 1.05, y: headY + headR * 0.05))
+            cheekLockPath.addQuadCurve(to: CGPoint(x: cx + side * headR * 0.55, y: headY + headR * 0.10), control: CGPoint(x: cx + side * headR * 0.75, y: headY - headR * 0.10))
+            cheekLockPath.closeSubpath()
+
+            let cheekLock = SKShapeNode(path: cheekLockPath)
+            cheekLock.fillColor = hairCol
+            cheekLock.strokeColor = .clear
+            cheekLock.zPosition = CGFloat(RenderLayer.frontHair.rawValue)
+            scene.addChild(cheekLock)
+        }
+
+        let bangsPath = CGMutablePath()
+        bangsPath.move(to: CGPoint(x: cx - headR * 0.95, y: headY + headR * 0.30))
+        bangsPath.addQuadCurve(to: CGPoint(x: cx + headR * 0.95, y: headY + headR * 0.30), control: CGPoint(x: cx, y: headY + headR * 0.90))
+        bangsPath.addQuadCurve(to: CGPoint(x: cx, y: headY + headR * 0.35), control: CGPoint(x: cx + headR * 0.45, y: headY + headR * 0.22))
+        bangsPath.addQuadCurve(to: CGPoint(x: cx - headR * 0.95, y: headY + headR * 0.30), control: CGPoint(x: cx - headR * 0.45, y: headY + headR * 0.22))
+        bangsPath.closeSubpath()
+
+        let bangs = SKShapeNode(path: bangsPath)
         bangs.fillColor = hairCol
         bangs.strokeColor = .clear
-        bangs.position = CGPoint(x: cx, y: headY + headR * 0.74)
         bangs.zPosition = CGFloat(RenderLayer.frontHair.rawValue)
         scene.addChild(bangs)
 
         // LAYER 9: Accessories (Horn & Jewelry)
         if characterState.hornId != nil {
+            let hornForeheadY = headY + headR * 0.52
+            let hornTipY = headY + headR * 1.35
+            let hornHalfW = headR * 0.16
+
+            // Horn base circlet hugging forehead
+            let baseBand = SKShapeNode(rectOf: CGSize(width: hornHalfW * 2.8, height: headR * 0.10), cornerRadius: 4)
+            baseBand.fillColor = UIColor(red: 1.0, green: 0.84, blue: 0.0, alpha: 1.0)
+            baseBand.strokeColor = .white
+            baseBand.lineWidth = 1.2
+            baseBand.position = CGPoint(x: cx, y: hornForeheadY)
+            baseBand.zPosition = CGFloat(RenderLayer.accessories.rawValue) + 0.05
+            scene.addChild(baseBand)
+
             let hornPath = CGMutablePath()
-            hornPath.move(to: CGPoint(x: cx, y: headY + headR * 1.6))
-            hornPath.addLine(to: CGPoint(x: cx + headR * 0.16, y: headY + headR * 0.85))
-            hornPath.addLine(to: CGPoint(x: cx - headR * 0.16, y: headY + headR * 0.85))
+            hornPath.move(to: CGPoint(x: cx, y: hornTipY))
+            hornPath.addLine(to: CGPoint(x: cx + hornHalfW, y: hornForeheadY))
+            hornPath.addLine(to: CGPoint(x: cx - hornHalfW, y: hornForeheadY))
             hornPath.closeSubpath()
+
             let horn = SKShapeNode(path: hornPath)
             horn.fillColor = UIColor(red: 1.0, green: 0.86, blue: 0.25, alpha: 1.0)
             horn.strokeColor = outline
             horn.lineWidth = 1.5
             horn.zPosition = CGFloat(RenderLayer.accessories.rawValue)
             scene.addChild(horn)
+
+            // Star crest at horn tip
+            let starTip = SKShapeNode(circleOfRadius: headR * 0.08)
+            starTip.fillColor = .white
+            starTip.strokeColor = UIColor(red: 1.0, green: 0.84, blue: 0.0, alpha: 1.0)
+            starTip.lineWidth = 2
+            starTip.position = CGPoint(x: cx, y: hornTipY)
+            starTip.zPosition = CGFloat(RenderLayer.accessories.rawValue) + 0.1
+            scene.addChild(starTip)
         }
 
-        if characterState.jewelryId != nil {
-            let jewel = SKShapeNode(circleOfRadius: headR * 0.12)
-            jewel.fillColor = UIColor(red: 0.0, green: 0.90, blue: 1.0, alpha: 1.0)
-            jewel.strokeColor = .white
-            jewel.lineWidth = 2
-            jewel.position = CGPoint(x: cx, y: neckY - headR * 0.15)
-            jewel.zPosition = CGFloat(RenderLayer.accessories.rawValue)
-            scene.addChild(jewel)
+        if let jewId = characterState.jewelryId {
+            if jewId.contains("earrings") {
+                // Anchored to earlobes / cheek roots
+                for side in [-1.0, 1.0] {
+                    let ex = cx + side * headR * 0.74
+                    let ey = headY - headR * 0.10
+
+                    let stud = SKShapeNode(circleOfRadius: headR * 0.065)
+                    stud.fillColor = UIColor(red: 1.0, green: 0.84, blue: 0.0, alpha: 1.0)
+                    stud.strokeColor = .white
+                    stud.lineWidth = 1.2
+                    stud.position = CGPoint(x: ex, y: ey)
+                    stud.zPosition = CGFloat(RenderLayer.accessories.rawValue) + 0.1
+                    scene.addChild(stud)
+
+                    let drop = SKShapeNode(circleOfRadius: headR * 0.08)
+                    drop.fillColor = UIColor(red: 1.0, green: 0.25, blue: 0.50, alpha: 1.0)
+                    drop.strokeColor = .white
+                    drop.lineWidth = 1.5
+                    drop.position = CGPoint(x: ex, y: ey - headR * 0.18)
+                    drop.zPosition = CGFloat(RenderLayer.accessories.rawValue) + 0.1
+                    scene.addChild(drop)
+                }
+            } else if jewId.contains("choker") {
+                // Curved choker hugging the neck band
+                let chokerPath = CGMutablePath()
+                chokerPath.move(to: CGPoint(x: cx - headR * 0.28, y: neckY - headR * 0.05))
+                chokerPath.addQuadCurve(to: CGPoint(x: cx + headR * 0.28, y: neckY - headR * 0.05), control: CGPoint(x: cx, y: neckY - headR * 0.14))
+                let choker = SKShapeNode(path: chokerPath)
+                choker.strokeColor = UIColor(red: 0.91, green: 0.12, blue: 0.39, alpha: 1.0)
+                choker.lineWidth = 6
+                choker.lineCap = .round
+                choker.zPosition = CGFloat(RenderLayer.accessories.rawValue)
+                scene.addChild(choker)
+
+                let locket = SKShapeNode(circleOfRadius: headR * 0.08)
+                locket.fillColor = UIColor(red: 1.0, green: 0.84, blue: 0.0, alpha: 1.0)
+                locket.strokeColor = .white
+                locket.lineWidth = 1.5
+                locket.position = CGPoint(x: cx, y: neckY - headR * 0.12)
+                locket.zPosition = CGFloat(RenderLayer.accessories.rawValue) + 0.05
+                scene.addChild(locket)
+            } else {
+                // Pearl necklace draped along clavicle
+                let pearlPath = CGMutablePath()
+                pearlPath.move(to: CGPoint(x: cx - headR * 0.34, y: neckY - headR * 0.08))
+                pearlPath.addQuadCurve(to: CGPoint(x: cx + headR * 0.34, y: neckY - headR * 0.08), control: CGPoint(x: cx, y: neckY - headR * 0.28))
+                let necklace = SKShapeNode(path: pearlPath)
+                necklace.strokeColor = UIColor(red: 1.0, green: 0.98, blue: 0.88, alpha: 1.0)
+                necklace.lineWidth = 5
+                necklace.lineCap = .round
+                necklace.zPosition = CGFloat(RenderLayer.accessories.rawValue)
+                scene.addChild(necklace)
+
+                let jewel = SKShapeNode(circleOfRadius: headR * 0.09)
+                jewel.fillColor = UIColor(red: 0.0, green: 0.90, blue: 1.0, alpha: 1.0)
+                jewel.strokeColor = .white
+                jewel.lineWidth = 1.5
+                jewel.position = CGPoint(x: cx, y: neckY - headR * 0.24)
+                jewel.zPosition = CGFloat(RenderLayer.accessories.rawValue) + 0.05
+                scene.addChild(jewel)
+            }
         }
 
-        // LAYER 10: Tiara
+        // LAYER 10: Tiara (Anchored to forehead hairline with 5 jeweled peaks & golden circlet)
         if characterState.tiaraId != nil {
+            let tiaraBaseY = headY + headR * 0.50
+            let tiaraW = headR * 0.60
+
             let tiaraPath = CGMutablePath()
-            tiaraPath.move(to: CGPoint(x: cx - headR * 0.48, y: headY + headR * 0.86))
-            tiaraPath.addLine(to: CGPoint(x: cx - headR * 0.25, y: headY + headR * 1.22))
-            tiaraPath.addLine(to: CGPoint(x: cx, y: headY + headR * 1.34))
-            tiaraPath.addLine(to: CGPoint(x: cx + headR * 0.25, y: headY + headR * 1.22))
-            tiaraPath.addLine(to: CGPoint(x: cx + headR * 0.48, y: headY + headR * 0.86))
+            tiaraPath.move(to: CGPoint(x: cx - tiaraW, y: tiaraBaseY))
+            tiaraPath.addLine(to: CGPoint(x: cx - headR * 0.44, y: tiaraBaseY + headR * 0.26))
+            tiaraPath.addLine(to: CGPoint(x: cx - headR * 0.26, y: tiaraBaseY + headR * 0.08))
+            tiaraPath.addLine(to: CGPoint(x: cx, y: tiaraBaseY + headR * 0.40))
+            tiaraPath.addLine(to: CGPoint(x: cx + headR * 0.26, y: tiaraBaseY + headR * 0.08))
+            tiaraPath.addLine(to: CGPoint(x: cx + headR * 0.44, y: tiaraBaseY + headR * 0.26))
+            tiaraPath.addLine(to: CGPoint(x: cx + tiaraW, y: tiaraBaseY))
+            tiaraPath.addQuadCurve(to: CGPoint(x: cx - tiaraW, y: tiaraBaseY), control: CGPoint(x: cx, y: tiaraBaseY + headR * 0.06))
             tiaraPath.closeSubpath()
+
             let tiara = SKShapeNode(path: tiaraPath)
             tiara.fillColor = UIColor(red: 1.0, green: 0.84, blue: 0.0, alpha: 1.0)
             tiara.strokeColor = outline
             tiara.lineWidth = 2
             tiara.zPosition = CGFloat(RenderLayer.tiara.rawValue)
             scene.addChild(tiara)
+
+            // Golden circlet band with end clips
+            let bandPath = CGMutablePath()
+            bandPath.move(to: CGPoint(x: cx - tiaraW * 1.05, y: tiaraBaseY))
+            bandPath.addQuadCurve(to: CGPoint(x: cx + tiaraW * 1.05, y: tiaraBaseY), control: CGPoint(x: cx, y: tiaraBaseY + headR * 0.06))
+            let circlet = SKShapeNode(path: bandPath)
+            circlet.strokeColor = UIColor(red: 1.0, green: 0.75, blue: 0.0, alpha: 1.0)
+            circlet.lineWidth = 4
+            circlet.zPosition = CGFloat(RenderLayer.tiara.rawValue) + 0.05
+            scene.addChild(circlet)
+
+            // Central ruby gem
+            let gem = SKShapeNode(circleOfRadius: headR * 0.09)
+            gem.fillColor = UIColor(red: 1.0, green: 0.20, blue: 0.45, alpha: 1.0)
+            gem.strokeColor = .white
+            gem.lineWidth = 1.5
+            gem.position = CGPoint(x: cx, y: tiaraBaseY + headR * 0.25)
+            gem.zPosition = CGFloat(RenderLayer.tiara.rawValue) + 0.1
+            scene.addChild(gem)
         }
 
         // LAYER 11: Face Paints & Stickers

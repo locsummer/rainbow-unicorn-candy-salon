@@ -23,6 +23,7 @@
 | **BUG-012** | Cake station toppings only rendered as flat pink dots on top tier | Major | Open | **RESOLVED** | Distributed toppings across top tier and lower tier ledges with illustrated cherries, chocolate kisses, wafer sticks, macarons, and stars. |
 | **BUG-013** | Unicorn character rendered as stiff geometric mannequin in levels 1, 2, 4, 6, etc. | Critical | Open (User Screenshot) | **RESOLVED** | Replaced with luxury 3D Fantasy Unicorn doll: marshmallow gradient coat, anime glass eyes with double crease & catchlights, flutter lashes, 3D snout with nostrils and smile, gold hoof cuffs. |
 | **BUG-014** | Level select cards only showed text and emojis without visual artwork | Major | Open | **RESOLVED** | Implemented `LevelThematicThumbnail` with custom vector illustrations for all 20 levels (cotton candy, rainbow, galaxy, strawberry palace, tiered cake, etc.), 134dp cards, 1-3 stars, and `+50🍬` reward badges. |
+| **BUG-015** | Outfits, hair bangs, tiaras, horns, and jewelry floating or detached without hugging body ("chưa ôm trọn nhân vật") | Major | Open (User Feedback) | **RESOLVED** | Redesigned bodice to encase shoulders with sweetheart neckline and cap sleeves; cinched waist sash; flared skirt with scalloped lace hem; face-framing side hair locks; skull-wrapping tiara with curved forehead circlet; anchored horn base garland; cheek-root earrings and catenary draped pearl necklace. |
 
 ---
 

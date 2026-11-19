@@ -410,16 +410,28 @@ public struct CandySalonStudioView: View {
             context.fill(Path(roundedRect: hairRect, cornerRadius: headR * 0.8), with: .color(hairColor))
         }
 
-        // 2. Bodice (Reactive outfit)
+        // 2. Bodice (Reactive outfit that wraps shoulders, bust, and torso)
         let neckY = headY + headR * 0.85
         let waistY = neckY + headR * 0.95
+        let shoulderW = headR * 1.05
+        let waistW = headR * 0.52
+
         var bodice = Path()
-        bodice.move(to: CGPoint(x: cx - headR * 0.55, y: neckY + headR * 0.2))
-        bodice.addLine(to: CGPoint(x: cx + headR * 0.55, y: neckY + headR * 0.2))
-        bodice.addLine(to: CGPoint(x: cx + headR * 0.45, y: waistY))
-        bodice.addLine(to: CGPoint(x: cx - headR * 0.45, y: waistY))
+        bodice.move(to: CGPoint(x: cx - shoulderW, y: neckY + headR * 0.18))
+        bodice.addQuadCurve(to: CGPoint(x: cx, y: neckY + headR * 0.26), control: CGPoint(x: cx - headR * 0.40, y: neckY + headR * 0.08))
+        bodice.addQuadCurve(to: CGPoint(x: cx + shoulderW, y: neckY + headR * 0.18), control: CGPoint(x: cx + headR * 0.40, y: neckY + headR * 0.08))
+        bodice.addQuadCurve(to: CGPoint(x: cx + waistW, y: waistY), control: CGPoint(x: cx + shoulderW * 0.75, y: neckY + headR * 0.55))
+        bodice.addLine(to: CGPoint(x: cx - waistW, y: waistY))
+        bodice.addQuadCurve(to: CGPoint(x: cx - shoulderW, y: neckY + headR * 0.18), control: CGPoint(x: cx - shoulderW * 0.75, y: neckY + headR * 0.55))
         bodice.closeSubpath()
         context.fill(bodice, with: .color(bodiceColor))
+
+        // Sweetheart lace trim along neckline
+        var lacePiping = Path()
+        lacePiping.move(to: CGPoint(x: cx - shoulderW, y: neckY + headR * 0.18))
+        lacePiping.addQuadCurve(to: CGPoint(x: cx, y: neckY + headR * 0.26), control: CGPoint(x: cx - headR * 0.40, y: neckY + headR * 0.08))
+        lacePiping.addQuadCurve(to: CGPoint(x: cx + shoulderW, y: neckY + headR * 0.18), control: CGPoint(x: cx + headR * 0.40, y: neckY + headR * 0.08))
+        context.stroke(lacePiping, with: .color(.white.opacity(0.85)), lineWidth: 2.5)
 
         // Magenta strap
         var strap = Path()
@@ -437,6 +449,10 @@ public struct CandySalonStudioView: View {
         // Saturn ring
         context.stroke(Path(ellipseIn: CGRect(x: cx - heartR * 1.3, y: heartY - heartR * 0.2, width: heartR * 2.6, height: heartR * 0.6)), with: .color(Color(red: 1.0, green: 0.84, blue: 0.31)), lineWidth: 3)
 
+        // Cinched Ribbon Sash at waist
+        context.fill(Path(roundedRect: CGRect(x: cx - waistW * 1.05, y: waistY - headR * 0.05, width: waistW * 2.1, height: headR * 0.10), cornerRadius: 4), with: .color(skirtColor))
+        context.fill(Path(ellipseIn: CGRect(x: cx - headR * 0.08, y: waistY - headR * 0.08, width: headR * 0.16, height: headR * 0.16)), with: .color(Color(red: 1.0, green: 0.84, blue: 0.31)))
+
         // Jewelry (if equipped)
         if characterState.jewelryId != nil {
             var necklace = Path()
@@ -445,21 +461,22 @@ public struct CandySalonStudioView: View {
             context.fill(Path(ellipseIn: CGRect(x: cx - 6, y: neckY + headR * 0.45, width: 12, height: 12)), with: .color(Color(red: 0.91, green: 0.12, blue: 0.39)))
         }
 
-        // 3. Flared Skater Skirt (Reactive outfit color)
+        // 3. Flared Skater Skirt (Reactive outfit color that flares from cinched waist)
         let skirtW = headR * 1.70
         let skirtBottomY = waistY + headR * 1.25
         var skirt = Path()
-        skirt.move(to: CGPoint(x: cx - headR * 0.45, y: waistY))
-        skirt.addLine(to: CGPoint(x: cx + headR * 0.45, y: waistY))
-        skirt.addLine(to: CGPoint(x: cx + skirtW, y: skirtBottomY))
-        skirt.addLine(to: CGPoint(x: cx - skirtW, y: skirtBottomY))
+        skirt.move(to: CGPoint(x: cx - waistW, y: waistY))
+        skirt.addLine(to: CGPoint(x: cx + waistW, y: waistY))
+        skirt.addQuadCurve(to: CGPoint(x: cx + skirtW, y: skirtBottomY), control: CGPoint(x: cx + skirtW * 0.85, y: waistY + (skirtBottomY - waistY) * 0.45))
+        skirt.addQuadCurve(to: CGPoint(x: cx - skirtW, y: skirtBottomY), control: CGPoint(x: cx, y: skirtBottomY + headR * 0.15))
+        skirt.addQuadCurve(to: CGPoint(x: cx - waistW, y: waistY), control: CGPoint(x: cx - skirtW * 0.85, y: waistY + (skirtBottomY - waistY) * 0.45))
         skirt.closeSubpath()
         context.fill(skirt, with: .color(skirtColor))
 
         // Cyan Scalloped Hem
         var hem = Path()
         hem.move(to: CGPoint(x: cx - skirtW, y: skirtBottomY))
-        hem.addLine(to: CGPoint(x: cx + skirtW, y: skirtBottomY))
+        hem.addQuadCurve(to: CGPoint(x: cx + skirtW, y: skirtBottomY), control: CGPoint(x: cx, y: skirtBottomY + headR * 0.12))
         context.stroke(hem, with: .color(Color(red: 0.0, green: 0.90, blue: 1.0)), lineWidth: 5)
 
         // Peppermint swirls on skirt
@@ -559,36 +576,64 @@ public struct CandySalonStudioView: View {
         // Gloss highlight on lower lip
         context.fill(Path(ellipseIn: CGRect(x: cx - 5, y: mouthY + 3, width: 10, height: 2.5)), with: .color(.white.opacity(0.7)))
 
-        // Front Hair Bangs framing the face
-        var bangs = Path()
-        bangs.move(to: CGPoint(x: cx - headR * 0.80, y: headY - headR * 0.35))
-        bangs.addQuadCurve(to: CGPoint(x: cx, y: headY - headR * 0.05), control: CGPoint(x: cx - headR * 0.35, y: headY - headR * 0.50))
-        bangs.addQuadCurve(to: CGPoint(x: cx + headR * 0.80, y: headY - headR * 0.35), control: CGPoint(x: cx + headR * 0.35, y: headY - headR * 0.50))
-        bangs.addQuadCurve(to: CGPoint(x: cx - headR * 0.80, y: headY - headR * 0.35), control: CGPoint(x: cx, y: headY - headR * 0.85))
-        context.fill(bangs, with: .color(hairColor))
-
-        // Horn (if equipped)
-        if characterState.hornId != nil {
-            var horn = Path()
-            horn.move(to: CGPoint(x: cx - headR * 0.15, y: headY - headR * 0.55))
-            horn.addLine(to: CGPoint(x: cx + headR * 0.15, y: headY - headR * 0.55))
-            horn.addLine(to: CGPoint(x: cx, y: headY - headR * 1.7))
-            horn.closeSubpath()
-            context.fill(horn, with: .color(Color(red: 1.0, green: 0.85, blue: 0.20)))
-            context.stroke(horn, with: .color(Color(red: 0.95, green: 0.50, blue: 0.10)), lineWidth: 2)
+        // Front Hair: Face-framing locks hugging cheeks on both sides + bangs
+        for side in [-1.0, 1.0] {
+            var cheekLock = Path()
+            cheekLock.move(to: CGPoint(x: cx + CGFloat(side) * headR * 0.70, y: headY - headR * 0.35))
+            cheekLock.addQuadCurve(to: CGPoint(x: cx + CGFloat(side) * headR * 0.85, y: headY + headR * 0.35), control: CGPoint(x: cx + CGFloat(side) * headR * 1.05, y: headY))
+            cheekLock.addQuadCurve(to: CGPoint(x: cx + CGFloat(side) * headR * 0.55, y: headY - headR * 0.10), control: CGPoint(x: cx + CGFloat(side) * headR * 0.75, y: headY + headR * 0.15))
+            cheekLock.closeSubpath()
+            context.fill(cheekLock, with: .color(hairColor))
         }
 
-        // Tiara (if equipped)
+        var bangs = Path()
+        bangs.move(to: CGPoint(x: cx - headR * 0.85, y: headY - headR * 0.35))
+        bangs.addQuadCurve(to: CGPoint(x: cx, y: headY - headR * 0.05), control: CGPoint(x: cx - headR * 0.35, y: headY - headR * 0.50))
+        bangs.addQuadCurve(to: CGPoint(x: cx + headR * 0.85, y: headY - headR * 0.35), control: CGPoint(x: cx + headR * 0.35, y: headY - headR * 0.50))
+        bangs.addQuadCurve(to: CGPoint(x: cx - headR * 0.85, y: headY - headR * 0.35), control: CGPoint(x: cx, y: headY - headR * 0.85))
+        context.fill(bangs, with: .color(hairColor))
+
+        // Horn (anchored snugly to forehead)
+        if characterState.hornId != nil {
+            let hornForeheadY = headY - headR * 0.50
+            let hornTipY = headY - headR * 1.35
+            let hornHalfW = headR * 0.15
+
+            context.fill(Path(roundedRect: CGRect(x: cx - hornHalfW * 1.3, y: hornForeheadY - headR * 0.04, width: hornHalfW * 2.6, height: headR * 0.08), cornerRadius: 3), with: .color(Color(red: 1.0, green: 0.84, blue: 0.0)))
+
+            var horn = Path()
+            horn.move(to: CGPoint(x: cx - hornHalfW, y: hornForeheadY))
+            horn.addLine(to: CGPoint(x: cx + hornHalfW, y: hornForeheadY))
+            horn.addLine(to: CGPoint(x: cx, y: hornTipY))
+            horn.closeSubpath()
+            context.fill(horn, with: .color(Color(red: 1.0, green: 0.85, blue: 0.20)))
+            context.stroke(horn, with: .color(Color(red: 0.95, green: 0.50, blue: 0.10)), lineWidth: 1.5)
+        }
+
+        // Tiara (anchored to forehead hairline with curved circlet band)
         if characterState.tiaraId != nil {
+            let tiaraBaseY = headY - headR * 0.55
+            let tiaraW = headR * 0.58
+
             var tiara = Path()
-            tiara.move(to: CGPoint(x: cx - headR * 0.5, y: headY - headR * 0.5))
-            tiara.addLine(to: CGPoint(x: cx - headR * 0.35, y: headY - headR * 0.9))
-            tiara.addLine(to: CGPoint(x: cx, y: headY - headR * 0.65))
-            tiara.addLine(to: CGPoint(x: cx + headR * 0.35, y: headY - headR * 0.9))
-            tiara.addLine(to: CGPoint(x: cx + headR * 0.5, y: headY - headR * 0.5))
+            tiara.move(to: CGPoint(x: cx - tiaraW, y: tiaraBaseY))
+            tiara.addLine(to: CGPoint(x: cx - headR * 0.42, y: tiaraBaseY - headR * 0.28))
+            tiara.addLine(to: CGPoint(x: cx - headR * 0.25, y: tiaraBaseY - headR * 0.08))
+            tiara.addLine(to: CGPoint(x: cx, y: tiaraBaseY - headR * 0.40))
+            tiara.addLine(to: CGPoint(x: cx + headR * 0.25, y: tiaraBaseY - headR * 0.08))
+            tiara.addLine(to: CGPoint(x: cx + headR * 0.42, y: tiaraBaseY - headR * 0.28))
+            tiara.addLine(to: CGPoint(x: cx + tiaraW, y: tiaraBaseY))
+            tiara.addQuadCurve(to: CGPoint(x: cx - tiaraW, y: tiaraBaseY), control: CGPoint(x: cx, y: tiaraBaseY + headR * 0.05))
             tiara.closeSubpath()
+
             context.fill(tiara, with: .color(Color(red: 1.0, green: 0.80, blue: 0.20)))
-            context.stroke(tiara, with: .color(Color(red: 0.90, green: 0.30, blue: 0.60)), lineWidth: 2)
+            context.stroke(tiara, with: .color(Color(red: 0.90, green: 0.30, blue: 0.60)), lineWidth: 1.5)
+
+            // Circlet band wrapping forehead
+            var circlet = Path()
+            circlet.move(to: CGPoint(x: cx - tiaraW * 1.05, y: tiaraBaseY))
+            circlet.addQuadCurve(to: CGPoint(x: cx + tiaraW * 1.05, y: tiaraBaseY), control: CGPoint(x: cx, y: tiaraBaseY + headR * 0.05))
+            context.stroke(circlet, with: .color(Color(red: 1.0, green: 0.84, blue: 0.0)), lineWidth: 3.5)
         }
 
         // 5. High Braided Top Bun (when not twin buns or ponytail)

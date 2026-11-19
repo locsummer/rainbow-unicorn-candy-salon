@@ -91,3 +91,33 @@ The Princess renderer was completely overhauled based on direct player feedback 
 * **Blush Compacts:** Round rose-gold metallic compacts, circular powder pans with embossed heart textures, and soft angled powder brushes with rose gold ferrules and dipped pink bristles.
 * **Lipsticks:** High-end gold and black lacquer tubes with gold collar bands and angled, faceted shiny lipstick bullets with highlight drop reflections.
 * **Cake Bakery:** Multi-tier sponge cakes with frosting drips, wafer rolls with chocolate spiral stripes, macarons with ruffled feet and cream filling, and glossy cherries with curved green stems.
+
+---
+
+## 6. Anatomy-Hugging Outfits & Snug Accessory Architecture ("Ôm trọn nhân vật")
+
+In response to physical testing observations where outfits, hair, and jewelry appeared disjointed or floating in space:
+
+### 6.1. Shoulder-Wrapping Bodice & Sweetheart Neckline
+* **Shoulder & Torso Wrap:** The bodice geometry was expanded from a narrow central bib (`cx ± 0.45 headR`) to fully encase the character's shoulders (`cx ± 1.15 shoulderHalfW`).
+* **Sweetheart Contour:** Modeled with a graceful curved sweetheart scoop dipping gently at the center and rising over the clavicles, with delicate white lace piping along the neckline.
+* **Cap Sleeves & Shoulder Ruffles:** Added ruffled cap sleeves on both shoulders that drape naturally over the arm joints, blending into the chest.
+* **Cinched Waist Sash:** A tailored horizontal satin ribbon sash at the natural waistline (`waistY = neckY + 0.60 headR`), cinching the bodice and anchoring it with a golden star buckle.
+
+### 6.2. Voluminous Flared Skirt with Scalloped Lace Hem
+* **Natural Hip Flare:** The skirt begins at the exact width of the cinched waist (`waistHalfW = 0.48 headR`) and flares dramatically outwards to `1.45–1.65 headR` with 3D shaded pleat folds.
+* **Two-Tier Scalloped Hem:** Features a vibrant cyan and white scalloped ruffled lace trim peeking beneath the hemline, echoing haute-couture doll fashion.
+* **Thematic Appliqués:** Seamlessly integrates peppermint stripes, pastry chef aprons, royal golden filigree, and cyberpunk cyber-lines directly onto the curved fabric.
+
+### 6.3. Face-Framing Hair & Cheeks Contour
+* **Cheek Tendrils:** Every hairstyle now includes dual organic side locks cascading from the temple down along the chubby cheeks (`cx ± 0.90 headR` down to `headY + 0.42 headR`), curving inwards to gently hug the jawline.
+* **Silky Layered Bangs:** Replaced flat single-arc hair cutouts with layered curved fringes featuring scalloped brow cutouts and soft specular luster glints.
+
+### 6.4. Skull-Wrapping Tiaras & Forehead-Anchored Horns
+* **Curved Circlet Band:** Tiaras feature a curved golden headband that wraps around the forehead along the skull curvature (`browY + 0.08 headR` to `browY - 0.02 headR`), terminating in polished side clips.
+* **Anchored Horn Garland:** Unicorn horns now emerge seamlessly from a curved golden base circlet with 3 candy floral buds nestled directly on the forehead between the eyes.
+
+### 6.5. Anatomical Jewelry Draping
+* **Cheek-Root Earrings:** Anchored directly at the earlobe / cheek contour (`cx ± 0.74 headR`, `headY + 0.14 headR`) with a golden stud, link chain, and sparkling star/gem drop resting against the face.
+* **Curved Velvet Choker:** Follows the 3D cylinder curve of the neck band with a dangling golden heart locket.
+* **Catenary Pearl Necklace:** 11 graduated lustrous pearls draped in a natural gravitational curve along the clavicle above the sweetheart neckline.
