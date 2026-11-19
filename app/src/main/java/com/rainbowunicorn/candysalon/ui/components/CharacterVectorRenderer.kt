@@ -566,86 +566,105 @@ object CharacterVectorRenderer {
         shoulderHalfW: Float,
         pose: CharacterPose
     ) {
-        // Torso with soft natural curvature
+        // 3D Soft Shaded Coat / Skin Gradients
+        val ponyCoatBrush = Brush.radialGradient(
+            colors = listOf(
+                Color(0xFFFFFFFF),       // Pure soft white highlight
+                Color(0xFFFFF5F9),       // Gentle marshmallow cream
+                Color(0xFFFFE0EB)        // Delicate candy pink shading
+            ),
+            center = Offset(cx - headR * 0.25f, headY - headR * 0.15f),
+            radius = headR * 1.8f
+        )
+
+        val torsoBrush = Brush.linearGradient(
+            colors = listOf(Color.White, Color(0xFFFFF0F6), Color(0xFFFFDBE8)),
+            start = Offset(cx, neckY),
+            end = Offset(cx, bodyBottomY)
+        )
+
+        // 3D Torso with organic pony curvature (plump belly and soft contours)
         val torso = Path().apply {
-            moveTo(cx - headR * 0.22f, neckY - headR * 0.05f)
-            lineTo(cx + headR * 0.22f, neckY - headR * 0.05f)
+            moveTo(cx - headR * 0.24f, neckY - headR * 0.05f)
+            lineTo(cx + headR * 0.24f, neckY - headR * 0.05f)
             cubicTo(
-                cx + shoulderHalfW * 1.15f, neckY + headR * 0.25f,
-                cx + headR * 0.85f, bodyBottomY - headR * 0.25f,
-                cx + headR * 0.72f, bodyBottomY
+                cx + shoulderHalfW * 1.20f, neckY + headR * 0.28f,
+                cx + headR * 0.88f, bodyBottomY - headR * 0.20f,
+                cx + headR * 0.75f, bodyBottomY
             )
-            lineTo(cx - headR * 0.72f, bodyBottomY)
+            lineTo(cx - headR * 0.75f, bodyBottomY)
             cubicTo(
-                cx - headR * 0.85f, bodyBottomY - headR * 0.25f,
-                cx - shoulderHalfW * 1.15f, neckY + headR * 0.25f,
-                cx - headR * 0.22f, neckY - headR * 0.05f
+                cx - headR * 0.88f, bodyBottomY - headR * 0.20f,
+                cx - shoulderHalfW * 1.20f, neckY + headR * 0.28f,
+                cx - headR * 0.24f, neckY - headR * 0.05f
             )
             close()
         }
-        drawPath(torso, skinColor)
-        drawPath(torso, outlineColor, style = Stroke(width = 3f))
+        drawPath(torso, brush = if (characterType == CharacterType.UNICORN) torsoBrush else Brush.linearGradient(listOf(skinColor, skinColor)))
+        drawPath(torso, outlineColor.copy(alpha = 0.25f), style = Stroke(width = 2.5f))
 
-        // Cute cartoon forelegs / arms with soft rounded hooves
-        val armW = headR * 0.20f
+        // Cute 3D Forelegs with polished golden hoof cuffs
+        val armW = headR * 0.22f
         val leftArmStart = Offset(cx - shoulderHalfW * 0.95f, neckY + headR * 0.25f)
         val rightArmStart = Offset(cx + shoulderHalfW * 0.95f, neckY + headR * 0.25f)
 
         val leftArmEnd = when (pose) {
-            CharacterPose.STAR -> Offset(cx - headR * 1.12f, headY + headR * 0.05f)
-            CharacterPose.HAPPY -> Offset(cx - headR * 0.82f, headY + headR * 0.48f)
-            else -> Offset(cx - headR * 0.75f, neckY + headR * 0.75f)
+            CharacterPose.STAR -> Offset(cx - headR * 1.15f, headY + headR * 0.02f)
+            CharacterPose.HAPPY -> Offset(cx - headR * 0.85f, headY + headR * 0.45f)
+            else -> Offset(cx - headR * 0.72f, neckY + headR * 0.75f)
         }
         val rightArmEnd = when (pose) {
-            CharacterPose.WAVE, CharacterPose.STAR -> Offset(cx + headR * 1.15f, headY + headR * 0.05f)
-            CharacterPose.HAPPY -> Offset(cx + headR * 0.82f, headY + headR * 0.48f)
-            else -> Offset(cx + headR * 0.75f, neckY + headR * 0.75f)
+            CharacterPose.WAVE, CharacterPose.STAR -> Offset(cx + headR * 1.15f, headY + headR * 0.02f)
+            CharacterPose.HAPPY -> Offset(cx + headR * 0.85f, headY + headR * 0.45f)
+            else -> Offset(cx + headR * 0.72f, neckY + headR * 0.75f)
         }
 
-        // Left curved arm
+        // Left curved foreleg with depth shading
         val leftArmPath = Path().apply {
             moveTo(leftArmStart.x, leftArmStart.y)
             quadraticBezierTo(
-                (leftArmStart.x + leftArmEnd.x) * 0.5f - 12f,
+                (leftArmStart.x + leftArmEnd.x) * 0.5f - 14f,
                 (leftArmStart.y + leftArmEnd.y) * 0.5f,
                 leftArmEnd.x,
                 leftArmEnd.y
             )
         }
-        drawPath(leftArmPath, color = outlineColor, style = Stroke(width = armW + 5f, cap = StrokeCap.Round))
-        drawPath(leftArmPath, color = skinColor, style = Stroke(width = armW, cap = StrokeCap.Round))
-        // Left cute hoof cap
-        drawCircle(CandyPastelPink, radius = armW * 0.72f, center = leftArmEnd)
-        drawCircle(CandyYellow, radius = armW * 0.42f, center = leftArmEnd)
+        drawPath(leftArmPath, color = outlineColor.copy(alpha = 0.25f), style = Stroke(width = armW + 4f, cap = StrokeCap.Round))
+        drawPath(leftArmPath, color = if (characterType == CharacterType.UNICORN) Color(0xFFFFF5FA) else skinColor, style = Stroke(width = armW, cap = StrokeCap.Round))
+        // Left cute 3D hoof with golden ring
+        drawCircle(Brush.radialGradient(listOf(Color(0xFFFF80AB), Color(0xFFF06292)), center = leftArmEnd, radius = armW * 0.85f), radius = armW * 0.80f, center = leftArmEnd)
+        drawCircle(Color(0xFFFFD54F), radius = armW * 0.45f, center = leftArmEnd)
+        drawCircle(Color.White, radius = armW * 0.16f, center = Offset(leftArmEnd.x - 2f, leftArmEnd.y - 2f))
 
-        // Right curved arm
+        // Right curved foreleg with depth shading
         val rightArmPath = Path().apply {
             moveTo(rightArmStart.x, rightArmStart.y)
             quadraticBezierTo(
-                (rightArmStart.x + rightArmEnd.x) * 0.5f + 12f,
+                (rightArmStart.x + rightArmEnd.x) * 0.5f + 14f,
                 (rightArmStart.y + rightArmEnd.y) * 0.5f,
                 rightArmEnd.x,
                 rightArmEnd.y
             )
         }
-        drawPath(rightArmPath, color = outlineColor, style = Stroke(width = armW + 5f, cap = StrokeCap.Round))
-        drawPath(rightArmPath, color = skinColor, style = Stroke(width = armW, cap = StrokeCap.Round))
-        // Right cute hoof cap
-        drawCircle(CandyPastelPink, radius = armW * 0.72f, center = rightArmEnd)
-        drawCircle(CandyYellow, radius = armW * 0.42f, center = rightArmEnd)
+        drawPath(rightArmPath, color = outlineColor.copy(alpha = 0.25f), style = Stroke(width = armW + 4f, cap = StrokeCap.Round))
+        drawPath(rightArmPath, color = if (characterType == CharacterType.UNICORN) Color(0xFFFFF5FA) else skinColor, style = Stroke(width = armW, cap = StrokeCap.Round))
+        // Right cute 3D hoof with golden ring
+        drawCircle(Brush.radialGradient(listOf(Color(0xFFFF80AB), Color(0xFFF06292)), center = rightArmEnd, radius = armW * 0.85f), radius = armW * 0.80f, center = rightArmEnd)
+        drawCircle(Color(0xFFFFD54F), radius = armW * 0.45f, center = rightArmEnd)
+        drawCircle(Color.White, radius = armW * 0.16f, center = Offset(rightArmEnd.x - 2f, rightArmEnd.y - 2f))
 
-        // Cute Fluffy Pony Ears
+        // Cute Fluffy 3D Pony Ears
         if (characterType == CharacterType.UNICORN) {
             for (side in listOf(-1f, 1f)) {
                 val earOuter = Path().apply {
                     moveTo(cx + side * headR * 0.35f, headY - headR * 0.65f)
                     cubicTo(
-                        cx + side * headR * 0.65f, headY - headR * 0.95f,
-                        cx + side * headR * 1.05f, headY - headR * 1.45f,
-                        cx + side * headR * 0.78f, headY - headR * 1.55f
+                        cx + side * headR * 0.68f, headY - headR * 0.98f,
+                        cx + side * headR * 1.08f, headY - headR * 1.48f,
+                        cx + side * headR * 0.80f, headY - headR * 1.58f
                     )
                     cubicTo(
-                        cx + side * headR * 0.55f, headY - headR * 1.50f,
+                        cx + side * headR * 0.55f, headY - headR * 1.52f,
                         cx + side * headR * 0.28f, headY - headR * 1.15f,
                         cx + side * headR * 0.12f, headY - headR * 0.85f
                     )
@@ -654,75 +673,89 @@ object CharacterVectorRenderer {
                 val earInner = Path().apply {
                     moveTo(cx + side * headR * 0.40f, headY - headR * 0.75f)
                     cubicTo(
-                        cx + side * headR * 0.65f, headY - headR * 1.00f,
-                        cx + side * headR * 0.92f, headY - headR * 1.38f,
-                        cx + side * headR * 0.72f, headY - headR * 1.42f
+                        cx + side * headR * 0.68f, headY - headR * 1.02f,
+                        cx + side * headR * 0.95f, headY - headR * 1.40f,
+                        cx + side * headR * 0.74f, headY - headR * 1.44f
                     )
                     cubicTo(
-                        cx + side * headR * 0.55f, headY - headR * 1.38f,
+                        cx + side * headR * 0.55f, headY - headR * 1.40f,
                         cx + side * headR * 0.35f, headY - headR * 1.12f,
                         cx + side * headR * 0.22f, headY - headR * 0.90f
                     )
                     close()
                 }
-                drawPath(earOuter, skinColor)
-                drawPath(earOuter, outlineColor, style = Stroke(width = 3.2f, join = StrokeJoin.Round))
-                drawPath(earInner, Brush.verticalGradient(listOf(Color(0xFFFF80AB), Color(0xFFFFCDD2))))
-                // Fluffy fur tuft at ear base
-                drawCircle(Color.White, radius = headR * 0.10f, center = Offset(cx + side * headR * 0.28f, headY - headR * 0.75f))
+                drawPath(earOuter, if (characterType == CharacterType.UNICORN) ponyCoatBrush else Brush.linearGradient(listOf(skinColor, skinColor)))
+                drawPath(earOuter, outlineColor.copy(alpha = 0.30f), style = Stroke(width = 2.8f, join = StrokeJoin.Round))
+                drawPath(earInner, Brush.verticalGradient(listOf(Color(0xFFFF4081), Color(0xFFFF80AB), Color(0xFFFFCDD2))))
+                // Soft fluffy white fur tufts at ear base
+                drawCircle(Color.White, radius = headR * 0.12f, center = Offset(cx + side * headR * 0.28f, headY - headR * 0.76f))
+                drawCircle(Color.White, radius = headR * 0.09f, center = Offset(cx + side * headR * 0.38f, headY - headR * 0.80f))
             }
         } else {
             drawCircle(skinColor, radius = headR * 0.16f, center = Offset(cx - headR * 0.96f, headY + headR * 0.06f))
             drawCircle(skinColor, radius = headR * 0.16f, center = Offset(cx + headR * 0.96f, headY + headR * 0.06f))
         }
 
-        // Head Contour with Organic Bézier Curves
+        // Head Contour with Organic Chubby Cheeks (NO flat circle!)
         val headPath = Path().apply {
-            moveTo(cx, headY - headR * 0.92f)
+            moveTo(cx, headY - headR * 0.95f)
             cubicTo(
-                cx + headR * 0.68f, headY - headR * 0.92f,
-                cx + headR * 0.94f, headY - headR * 0.35f,
-                cx + headR * 0.98f, headY + headR * 0.12f
+                cx + headR * 0.65f, headY - headR * 0.95f,
+                cx + headR * 0.92f, headY - headR * 0.40f,
+                cx + headR * 0.96f, headY + headR * 0.08f
             )
+            // Chubby cheek curve
             cubicTo(
-                cx + headR * 1.00f, headY + headR * 0.50f,
-                cx + headR * 0.65f, headY + headR * 0.92f,
+                cx + headR * 1.02f, headY + headR * 0.45f,
+                cx + headR * 0.68f, headY + headR * 0.92f,
                 cx, headY + headR * 0.94f
             )
             cubicTo(
-                cx - headR * 0.65f, headY + headR * 0.94f,
-                cx - headR * 1.00f, headY + headR * 0.50f,
-                cx - headR * 0.98f, headY + headR * 0.12f
+                cx - headR * 0.68f, headY + headR * 0.94f,
+                cx - headR * 1.02f, headY + headR * 0.45f,
+                cx - headR * 0.96f, headY + headR * 0.08f
             )
             cubicTo(
-                cx - headR * 0.94f, headY - headR * 0.35f,
-                cx - headR * 0.68f, headY - headR * 0.92f,
-                cx, headY - headR * 0.92f
+                cx - headR * 0.92f, headY - headR * 0.40f,
+                cx - headR * 0.65f, headY - headR * 0.95f,
+                cx, headY - headR * 0.95f
             )
             close()
         }
-        drawPath(headPath, skinColor)
-        drawPath(headPath, outlineColor, style = Stroke(width = 3.5f))
+        drawPath(headPath, if (characterType == CharacterType.UNICORN) ponyCoatBrush else Brush.linearGradient(listOf(skinColor, skinColor)))
+        drawPath(headPath, outlineColor.copy(alpha = 0.30f), style = Stroke(width = 3f))
 
-        // Cute Snout / Muzzle Patch for Unicorn
+        // Cute Snout / Muzzle with 3D gradient and smiling mouth
         if (characterType == CharacterType.UNICORN) {
-            val muzzleY = headY + headR * 0.44f
-            val muzzleW = headR * 0.72f
-            val muzzleH = headR * 0.45f
+            val muzzleY = headY + headR * 0.42f
+            val muzzleW = headR * 0.74f
+            val muzzleH = headR * 0.48f
             drawOval(
-                brush = Brush.verticalGradient(listOf(Color(0xFFFFF0F5), Color(0xFFFFDEE9))),
+                brush = Brush.verticalGradient(
+                    listOf(Color(0xFFFFF0F5), Color(0xFFFFD6E4), Color(0xFFFFB8D0)),
+                    startY = muzzleY,
+                    endY = muzzleY + muzzleH
+                ),
                 topLeft = Offset(cx - muzzleW / 2f, muzzleY),
                 size = Size(muzzleW, muzzleH)
             )
             drawOval(
-                color = CandyDeepPlum.copy(alpha = 0.20f),
+                color = CandyDeepPlum.copy(alpha = 0.18f),
                 topLeft = Offset(cx - muzzleW / 2f, muzzleY),
                 size = Size(muzzleW, muzzleH),
-                style = Stroke(width = 1.8f)
+                style = Stroke(width = 1.6f)
             )
-            // Two cute tiny nostrils
-            drawCircle(Color(0xFFFF8FAB), radius = 3.5f, center = Offset(cx - headR * 0.11f, muzzleY + muzzleH * 0.32f))
-            drawCircle(Color(0xFFFF8FAB), radius = 3.5f, center = Offset(cx + headR * 0.11f, muzzleY + muzzleH * 0.32f))
+            // Two cute tiny heart/oval nostrils
+            drawCircle(Color(0xFFFF6492), radius = 3.5f, center = Offset(cx - headR * 0.12f, muzzleY + muzzleH * 0.34f))
+            drawCircle(Color(0xFFFF6492), radius = 3.5f, center = Offset(cx + headR * 0.12f, muzzleY + muzzleH * 0.34f))
+
+            // Sweet pony smile with pink tongue peek
+            val ponySmile = Path().apply {
+                moveTo(cx - headR * 0.12f, muzzleY + muzzleH * 0.65f)
+                quadraticBezierTo(cx, muzzleY + muzzleH * 0.82f, cx + headR * 0.12f, muzzleY + muzzleH * 0.65f)
+            }
+            drawPath(ponySmile, color = Color(0xFF880E4F), style = Stroke(width = 2.2f, cap = StrokeCap.Round))
+            drawCircle(Color(0xFFFF4081), radius = 3f, center = Offset(cx, muzzleY + muzzleH * 0.72f))
         }
     }
 
@@ -754,7 +787,7 @@ object CharacterVectorRenderer {
     }
 
     private fun DrawScope.drawKawaiiEyes(leftEye: Offset, rightEye: Offset, eyeR: Float, isBlinking: Boolean) {
-        val lashColor = Color(0xFF2C1035)
+        val lashColor = Color(0xFF1E0A28)
         for (center in listOf(leftEye, rightEye)) {
             val isLeft = center.x < rightEye.x
             val sideSign = if (isLeft) -1f else 1f
@@ -769,38 +802,55 @@ object CharacterVectorRenderer {
                     style = Stroke(width = 5f, cap = StrokeCap.Round)
                 )
             } else {
-                // White sclera
+                // Double eyelid crease
+                val crease = Path().apply {
+                    moveTo(center.x - sideSign * eyeR * 0.95f, center.y - eyeR * 1.30f)
+                    quadraticBezierTo(center.x, center.y - eyeR * 1.55f, center.x + sideSign * eyeR * 0.95f, center.y - eyeR * 1.25f)
+                }
+                drawPath(crease, color = Color(0xFF880E4F).copy(alpha = 0.45f), style = Stroke(width = 1.8f, cap = StrokeCap.Round))
+
+                // Almond glass sclera with subtle upper shadow
                 drawOval(
                     color = Color.White,
                     topLeft = Offset(center.x - eyeR * 1.05f, center.y - eyeR * 1.15f),
                     size = Size(eyeR * 2.1f, eyeR * 2.3f)
                 )
-                drawOval(
-                    color = lashColor.copy(alpha = 0.4f),
+                // Upper eyelid ambient shadow
+                drawArc(
+                    color = Color(0xFFE1BEE7).copy(alpha = 0.45f),
+                    startAngle = 180f,
+                    sweepAngle = 180f,
+                    useCenter = true,
                     topLeft = Offset(center.x - eyeR * 1.05f, center.y - eyeR * 1.15f),
-                    size = Size(eyeR * 2.1f, eyeR * 2.3f),
-                    style = Stroke(width = 2f)
+                    size = Size(eyeR * 2.1f, eyeR * 1.2f)
                 )
-                // Glossy gradient iris
-                val irisR = eyeR * 0.82f
+
+                // Glossy gradient iris (Royal Violet -> Orchid Magenta -> Sparkling Cyan)
+                val irisR = eyeR * 0.84f
                 val irisCenter = Offset(center.x, center.y + eyeR * 0.08f)
                 drawCircle(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(Color(0xFF5E2B97), Color(0xFFAB47BC), Color(0xFF00E5FF)),
-                        startY = irisCenter.y - irisR,
-                        endY = irisCenter.y + irisR
+                    brush = Brush.radialGradient(
+                        colors = listOf(
+                            Color(0xFF00E5FF), // Inner aquamarine shimmer
+                            Color(0xFFAB47BC), // Middle orchid magenta
+                            Color(0xFF4A148C)  // Dark outer ring
+                        ),
+                        center = irisCenter,
+                        radius = irisR
                     ),
                     radius = irisR,
                     center = irisCenter
                 )
-                // Dark pupil
-                drawCircle(Color(0xFF1E0533), radius = irisR * 0.52f, center = irisCenter)
-                // Multi-tier sparkling catchlights
+                // Dark midnight pupil with soft edge
+                drawCircle(Color(0xFF160226), radius = irisR * 0.52f, center = irisCenter)
+
+                // Multi-tier sparkling catchlights (Disney/Barbie shine)
                 drawCircle(Color.White, radius = irisR * 0.38f, center = Offset(irisCenter.x - irisR * 0.30f, irisCenter.y - irisR * 0.30f))
                 drawCircle(Color.White, radius = irisR * 0.18f, center = Offset(irisCenter.x + irisR * 0.32f, irisCenter.y + irisR * 0.32f))
-                drawStarShape(Offset(irisCenter.x + irisR * 0.12f, irisCenter.y - irisR * 0.15f), irisR * 0.16f, Color.White)
+                drawCircle(Color.White.copy(alpha = 0.8f), radius = irisR * 0.12f, center = Offset(irisCenter.x - irisR * 0.20f, irisCenter.y + irisR * 0.35f))
+                drawStarShape(Offset(irisCenter.x + irisR * 0.12f, irisCenter.y - irisR * 0.18f), irisR * 0.18f, Color.White)
 
-                // Upper curved lush eyelashes
+                // Lush winged eyeliner
                 val lashPath = Path().apply {
                     moveTo(center.x - sideSign * eyeR * 1.15f, center.y - eyeR * 0.25f)
                     cubicTo(
@@ -808,12 +858,26 @@ object CharacterVectorRenderer {
                         center.x + sideSign * eyeR * 0.6f, center.y - eyeR * 1.35f,
                         center.x + sideSign * eyeR * 1.25f, center.y - eyeR * 0.55f
                     )
-                    lineTo(center.x + sideSign * eyeR * 1.45f, center.y - eyeR * 0.85f)
+                    lineTo(center.x + sideSign * eyeR * 1.55f, center.y - eyeR * 0.95f)
                 }
-                drawPath(lashPath, color = lashColor, style = Stroke(width = 5f, cap = StrokeCap.Round))
+                drawPath(lashPath, color = lashColor, style = Stroke(width = 4.8f, cap = StrokeCap.Round))
+
+                // 2 extra flutter lashes on outer corner
+                val flutter1 = Path().apply {
+                    moveTo(center.x + sideSign * eyeR * 1.15f, center.y - eyeR * 0.70f)
+                    lineTo(center.x + sideSign * eyeR * 1.62f, center.y - eyeR * 1.15f)
+                }
+                drawPath(flutter1, color = lashColor, style = Stroke(width = 2.4f, cap = StrokeCap.Round))
+
+                val flutter2 = Path().apply {
+                    moveTo(center.x + sideSign * eyeR * 0.85f, center.y - eyeR * 1.05f)
+                    lineTo(center.x + sideSign * eyeR * 1.25f, center.y - eyeR * 1.45f)
+                }
+                drawPath(flutter2, color = lashColor, style = Stroke(width = 2.0f, cap = StrokeCap.Round))
+
                 // Soft delicate lower lash
                 drawArc(
-                    color = lashColor.copy(alpha = 0.5f),
+                    color = lashColor.copy(alpha = 0.45f),
                     startAngle = 20f,
                     sweepAngle = 140f,
                     useCenter = false,
@@ -821,15 +885,16 @@ object CharacterVectorRenderer {
                     size = Size(eyeR * 1.5f, eyeR * 0.5f),
                     style = Stroke(width = 2f, cap = StrokeCap.Round)
                 )
-                // Cute curved eyebrow
+
+                // Soft arched eyebrow
                 val browPath = Path().apply {
-                    moveTo(center.x - sideSign * eyeR * 0.95f, center.y - eyeR * 1.45f)
+                    moveTo(center.x - sideSign * eyeR * 0.95f, center.y - eyeR * 1.55f)
                     quadraticBezierTo(
-                        center.x, center.y - eyeR * 1.85f,
-                        center.x + sideSign * eyeR * 0.95f, center.y - eyeR * 1.40f
+                        center.x, center.y - eyeR * 1.95f,
+                        center.x + sideSign * eyeR * 0.95f, center.y - eyeR * 1.48f
                     )
                 }
-                drawPath(browPath, color = Color(0xFF6A1B9A), style = Stroke(width = 3.5f, cap = StrokeCap.Round))
+                drawPath(browPath, color = Color(0xFF4A148C), style = Stroke(width = 3.2f, cap = StrokeCap.Round))
             }
         }
     }
@@ -1143,6 +1208,34 @@ object CharacterVectorRenderer {
         drawPath(path, Color.White.copy(alpha = 0.7f), style = Stroke(width = 2f))
     }
 
+    internal fun DrawScope.drawHeartShape(center: Offset, r: Float, color: Color) {
+        val path = Path().apply {
+            moveTo(center.x, center.y + r * 0.75f)
+            cubicTo(
+                center.x - r * 0.95f, center.y + r * 0.15f,
+                center.x - r * 0.95f, center.y - r * 0.65f,
+                center.x - r * 0.45f, center.y - r * 0.65f
+            )
+            cubicTo(
+                center.x - r * 0.15f, center.y - r * 0.65f,
+                center.x, center.y - r * 0.35f,
+                center.x, center.y - r * 0.25f
+            )
+            cubicTo(
+                center.x, center.y - r * 0.35f,
+                center.x + r * 0.15f, center.y - r * 0.65f,
+                center.x + r * 0.45f, center.y - r * 0.65f
+            )
+            cubicTo(
+                center.x + r * 0.95f, center.y - r * 0.65f,
+                center.x + r * 0.95f, center.y + r * 0.15f,
+                center.x, center.y + r * 0.75f
+            )
+            close()
+        }
+        drawPath(path, color)
+    }
+
     /**
      * Exact WYSIWYG Item Thumbnail drawing shared with character renderer (RULE-072).
      */
@@ -1235,22 +1328,188 @@ object CharacterVectorRenderer {
                 drawCircle(brush, radius = r, center = Offset(cx, cy))
                 drawCircle(Color.White.copy(alpha = 0.4f), radius = r * 0.3f, center = Offset(cx - r * 0.3f, cy - r * 0.3f))
             }
-            "eyeshadows", "blushes" -> {
-                drawCircle(color, radius = r * 0.9f, center = Offset(cx, cy))
-                drawCircle(Color.White.copy(alpha = 0.5f), radius = r * 0.3f, center = Offset(cx - r * 0.3f, cy - r * 0.3f))
+            "eyeshadows" -> {
+                // Open luxury makeup eyeshadow palette compact with mirror and dual-ended applicator
+                val paletteW = r * 1.95f
+                val paletteH = r * 1.75f
+                val px = cx - paletteW * 0.5f
+                val py = cy - paletteH * 0.5f
+
+                // Outer gold case base
+                drawRoundRect(
+                    brush = Brush.verticalGradient(listOf(Color(0xFFFFD54F), Color(0xFFFFB300))),
+                    topLeft = Offset(px, py),
+                    size = Size(paletteW, paletteH),
+                    cornerRadius = CornerRadius(10f, 10f)
+                )
+                // Black inner tray
+                drawRoundRect(
+                    color = Color(0xFF212121),
+                    topLeft = Offset(px + 4f, py + 4f),
+                    size = Size(paletteW - 8f, paletteH - 8f),
+                    cornerRadius = CornerRadius(8f, 8f)
+                )
+                // Upper mirror panel
+                drawRoundRect(
+                    brush = Brush.verticalGradient(listOf(Color(0xFFECEFF1), Color(0xFFCFD8DC))),
+                    topLeft = Offset(px + 8f, py + 8f),
+                    size = Size(paletteW - 16f, paletteH * 0.28f),
+                    cornerRadius = CornerRadius(4f, 4f)
+                )
+                // Mirror reflection diagonal
+                drawLine(
+                    color = Color.White.copy(alpha = 0.6f),
+                    start = Offset(px + 12f, py + paletteH * 0.32f),
+                    end = Offset(px + paletteW * 0.6f, py + 10f),
+                    strokeWidth = 2.5f
+                )
+
+                // Color pans
+                val panY = py + paletteH * 0.38f
+                val panH = paletteH * 0.38f
+                val panW = (paletteW - 24f) * 0.5f
+
+                // Left pan (Main eyeshadow color)
+                drawRoundRect(
+                    brush = Brush.radialGradient(
+                        colors = listOf(color, color.copy(alpha = 0.8f)),
+                        center = Offset(px + 8f + panW * 0.5f, panY + panH * 0.5f),
+                        radius = panW
+                    ),
+                    topLeft = Offset(px + 8f, panY),
+                    size = Size(panW, panH),
+                    cornerRadius = CornerRadius(5f, 5f)
+                )
+                // Sparkle on main color pan
+                drawStarShape(Offset(px + 8f + panW * 0.5f, panY + panH * 0.5f), panW * 0.32f, Color.White.copy(alpha = 0.85f))
+
+                // Right pan (Complementary shimmer highlight pan)
+                val shimmerColor = if (item.id.contains("turquoise") || item.id.contains("blue")) Color(0xFF80DEEA) else Color(0xFFFFE082)
+                drawRoundRect(
+                    brush = Brush.radialGradient(
+                        colors = listOf(Color.White, shimmerColor),
+                        center = Offset(px + 16f + panW * 1.5f, panY + panH * 0.5f),
+                        radius = panW
+                    ),
+                    topLeft = Offset(px + 16f + panW, panY),
+                    size = Size(panW, panH),
+                    cornerRadius = CornerRadius(5f, 5f)
+                )
+                drawCircle(Color.White.copy(alpha = 0.7f), radius = 3.5f, center = Offset(px + 16f + panW + 6f, panY + 6f))
+
+                // Dual-ended mini applicator resting in bottom groove
+                val appY = py + paletteH * 0.84f
+                val appW = paletteW - 20f
+                drawLine(Color(0xFF424242), Offset(px + 10f, appY), Offset(px + 10f + appW, appY), strokeWidth = 3f, cap = StrokeCap.Round)
+                // Foam tips
+                drawOval(Color(0xFFECEFF1), topLeft = Offset(px + 8f, appY - 3f), size = Size(8f, 6f))
+                drawOval(color, topLeft = Offset(px + 10f + appW - 8f, appY - 3f), size = Size(8f, 6f))
+            }
+            "blushes" -> {
+                // Round luxury rose gold blush compact with powder brush
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        colors = listOf(Color(0xFFFFD180), Color(0xFFFFAB40), Color(0xFFFF6D00)),
+                        center = Offset(cx - r * 0.3f, cy - r * 0.3f),
+                        radius = r * 1.2f
+                    ),
+                    radius = r * 0.92f,
+                    center = Offset(cx, cy)
+                )
+                drawCircle(Color(0xFFFFF8E1), radius = r * 0.82f, center = Offset(cx, cy))
+
+                // Inner powder pan with blush gradient
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        colors = listOf(color, color.copy(alpha = 0.85f)),
+                        center = Offset(cx - r * 0.2f, cy - r * 0.2f),
+                        radius = r * 0.8f
+                    ),
+                    radius = r * 0.75f,
+                    center = Offset(cx, cy)
+                )
+                // Embossed heart texture on powder
+                drawHeartShape(Offset(cx, cy), r * 0.32f, Color.White.copy(alpha = 0.45f))
+
+                // Fluffy powder brush leaning across
+                val handleStart = Offset(cx + r * 0.85f, cy + r * 0.95f)
+                val handleEnd = Offset(cx + r * 0.15f, cy + r * 0.25f)
+                drawLine(
+                    brush = Brush.linearGradient(listOf(Color(0xFF212121), Color(0xFF424242))),
+                    start = handleStart,
+                    end = handleEnd,
+                    strokeWidth = 7f,
+                    cap = StrokeCap.Round
+                )
+                // Rose gold ferrule
+                val ferruleEnd = Offset(cx - r * 0.05f, cy + r * 0.05f)
+                drawLine(
+                    Color(0xFFFFD54F),
+                    start = handleEnd,
+                    end = ferruleEnd,
+                    strokeWidth = 8f,
+                    cap = StrokeCap.Round
+                )
+                // Fluffy pink bristles
+                drawCircle(
+                    brush = Brush.radialGradient(listOf(Color.White, color), center = Offset(cx - r * 0.25f, cy - r * 0.15f), radius = r * 0.3f),
+                    radius = r * 0.28f,
+                    center = Offset(cx - r * 0.25f, cy - r * 0.15f)
+                )
             }
             "lipsticks" -> {
+                // High-end luxury gold & glossy black lipstick with angled faceted bullet
+                val tubeW = r * 0.76f
+                val tubeH = r * 0.95f
+                val tx = cx - tubeW * 0.5f
+                val ty = cy - r * 0.05f
+
+                // Black lacquer body
                 drawRoundRect(
-                    color = Color.LightGray,
-                    topLeft = Offset(cx - r * 0.35f, cy),
-                    size = Size(r * 0.7f, r * 0.9f),
+                    brush = Brush.horizontalGradient(listOf(Color(0xFF212121), Color(0xFF424242), Color(0xFF1B1B1B))),
+                    topLeft = Offset(tx, ty),
+                    size = Size(tubeW, tubeH),
                     cornerRadius = CornerRadius(6f, 6f)
                 )
-                drawOval(
-                    color = color,
-                    topLeft = Offset(cx - r * 0.25f, cy - r * 0.8f),
-                    size = Size(r * 0.5f, r * 0.9f)
+                // Gold collar band
+                drawRoundRect(
+                    brush = Brush.horizontalGradient(listOf(Color(0xFFFFD54F), Color(0xFFFFF9C4), Color(0xFFFFA000))),
+                    topLeft = Offset(tx + 2f, ty - r * 0.32f),
+                    size = Size(tubeW - 4f, r * 0.34f),
+                    cornerRadius = CornerRadius(4f, 4f)
                 )
+                // Lipstick bullet: angled pointed shape
+                val bulletW = tubeW - 8f
+                val bulletX = tx + 4f
+                val bulletBottom = ty - r * 0.30f
+                val bulletTop = ty - r * 0.95f
+
+                val bulletPath = Path().apply {
+                    moveTo(bulletX, bulletBottom)
+                    lineTo(bulletX + bulletW, bulletBottom)
+                    lineTo(bulletX + bulletW, bulletTop + r * 0.35f)
+                    cubicTo(
+                        bulletX + bulletW * 0.8f, bulletTop + r * 0.05f,
+                        bulletX + bulletW * 0.3f, bulletTop,
+                        bulletX + bulletW * 0.15f, bulletTop
+                    )
+                    lineTo(bulletX, bulletTop + r * 0.45f)
+                    close()
+                }
+                drawPath(
+                    bulletPath,
+                    brush = Brush.horizontalGradient(listOf(color.copy(alpha = 0.9f), color, color.copy(alpha = 0.85f)))
+                )
+                // Facet bevel highlight
+                val bevelPath = Path().apply {
+                    moveTo(bulletX + bulletW * 0.15f, bulletTop)
+                    lineTo(bulletX + bulletW * 0.65f, bulletTop + r * 0.28f)
+                    lineTo(bulletX + bulletW * 0.15f, bulletTop + r * 0.45f)
+                    close()
+                }
+                drawPath(bevelPath, Color.White.copy(alpha = 0.45f))
+                // Drop reflection
+                drawLine(Color.White.copy(alpha = 0.7f), Offset(bulletX + 4f, bulletBottom - 4f), Offset(bulletX + 4f, bulletTop + r * 0.48f), strokeWidth = 2f)
             }
             "face_paints" -> {
                 when {
@@ -1426,6 +1685,21 @@ object CharacterVectorRenderer {
                     item.id.contains("macaron") -> {
                         drawRoundRect(CandyPurple, topLeft = Offset(cx - r * 0.85f, cy - r * 0.5f), size = Size(r * 1.7f, r * 1.0f), cornerRadius = CornerRadius(14f, 14f))
                         drawRoundRect(Color.White, topLeft = Offset(cx - r * 0.8f, cy - r * 0.08f), size = Size(r * 1.6f, r * 0.22f), cornerRadius = CornerRadius(4f, 4f))
+                    }
+                    item.id.contains("wafer") -> {
+                        // Crisp wafer roll with spiral chocolate stripe
+                        drawLine(
+                            brush = Brush.linearGradient(listOf(Color(0xFFFFE082), Color(0xFFFFB74D))),
+                            start = Offset(cx - r * 0.45f, cy + r * 0.75f),
+                            end = Offset(cx + r * 0.45f, cy - r * 0.75f),
+                            strokeWidth = 14f,
+                            cap = StrokeCap.Round
+                        )
+                        for (s in -2..2) {
+                            val sx = cx + s * (r * 0.22f)
+                            val sy = cy - s * (r * 0.22f)
+                            drawLine(Color(0xFF5D4037), Offset(sx - 5f, sy - 5f), Offset(sx + 5f, sy + 5f), strokeWidth = 3.5f)
+                        }
                     }
                     item.id.contains("crystal") -> {
                         drawDiamondShape(Offset(cx, cy), r * 0.9f, Color(0xFF00E5FF))
