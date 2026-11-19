@@ -292,8 +292,31 @@ public struct CharacterSpriteView: View {
             }
         }
 
-        // LAYER 6: Eyes + Upper Eyelashes (STRICTLY ABOVE Eyeshadow RULE-051) + Lipstick
-        for ep in eyePositions {
+        // LAYER 6: Eyes + Upper Eyelashes (STRICTLY ABOVE Eyeshadow RULE-051) + Snout + Lipstick
+        if characterState.characterType == .unicorn {
+            // Cute 3D Pink Snout with Nostrils and Smile
+            let snoutY = headY - headR * 0.44
+            let snout = SKShapeNode(ellipseOf: CGSize(width: headR * 0.65, height: headR * 0.40))
+            snout.fillColor = UIColor(red: 1.0, green: 0.90, blue: 0.94, alpha: 1.0)
+            snout.strokeColor = UIColor(red: 1.0, green: 0.70, blue: 0.82, alpha: 0.5)
+            snout.lineWidth = 1.5
+            snout.position = CGPoint(x: cx, y: snoutY)
+            snout.zPosition = CGFloat(RenderLayer.eyesLashes.rawValue) - 0.05
+            scene.addChild(snout)
+
+            // Nostrils
+            for side in [-1.0, 1.0] {
+                let nostril = SKShapeNode(ellipseOf: CGSize(width: headR * 0.06, height: headR * 0.04))
+                nostril.fillColor = UIColor(red: 0.95, green: 0.50, blue: 0.65, alpha: 0.8)
+                nostril.strokeColor = .clear
+                nostril.position = CGPoint(x: cx + side * headR * 0.12, y: snoutY + headR * 0.04)
+                nostril.zPosition = CGFloat(RenderLayer.eyesLashes.rawValue)
+                scene.addChild(nostril)
+            }
+        }
+
+        for (i, ep) in eyePositions.enumerated() {
+            let sideSign = (i == 0) ? -1.0 : 1.0
             let sclera = SKShapeNode(circleOfRadius: eyeR)
             sclera.fillColor = .white
             sclera.strokeColor = UIColor(red: 0.17, green: 0.06, blue: 0.21, alpha: 1.0)
@@ -302,19 +325,68 @@ public struct CharacterSpriteView: View {
             sclera.zPosition = CGFloat(RenderLayer.eyesLashes.rawValue)
             scene.addChild(sclera)
 
-            let iris = SKShapeNode(circleOfRadius: eyeR * 0.66)
-            iris.fillColor = UIColor(red: 0.37, green: 0.17, blue: 0.59, alpha: 1.0)
+            // Outer Iris (Deep royal violet)
+            let iris = SKShapeNode(circleOfRadius: eyeR * 0.72)
+            iris.fillColor = UIColor(red: 0.29, green: 0.08, blue: 0.55, alpha: 1.0)
             iris.strokeColor = .clear
             iris.position = ep
             iris.zPosition = CGFloat(RenderLayer.eyesLashes.rawValue) + 0.1
             scene.addChild(iris)
 
-            let lash = SKShapeNode(rectOf: CGSize(width: eyeR * 1.9, height: 4), cornerRadius: 2)
-            lash.fillColor = UIColor(red: 0.17, green: 0.06, blue: 0.21, alpha: 1.0)
-            lash.strokeColor = .clear
-            lash.position = CGPoint(x: ep.x, y: ep.y + eyeR * 0.92)
-            lash.zPosition = CGFloat(RenderLayer.eyesLashes.rawValue) + 0.2
+            // Inner Iris Highlight (Aquamarine / Orchid shimmer)
+            let irisShimmer = SKShapeNode(circleOfRadius: eyeR * 0.52)
+            irisShimmer.fillColor = UIColor(red: 0.0, green: 0.88, blue: 0.95, alpha: 0.9)
+            irisShimmer.strokeColor = .clear
+            irisShimmer.position = CGPoint(x: ep.x, y: ep.y - eyeR * 0.10)
+            irisShimmer.zPosition = CGFloat(RenderLayer.eyesLashes.rawValue) + 0.12
+            scene.addChild(irisShimmer)
+
+            // Dark Midnight Pupil
+            let pupil = SKShapeNode(circleOfRadius: eyeR * 0.40)
+            pupil.fillColor = UIColor(red: 0.09, green: 0.01, blue: 0.15, alpha: 1.0)
+            pupil.strokeColor = .clear
+            pupil.position = ep
+            pupil.zPosition = CGFloat(RenderLayer.eyesLashes.rawValue) + 0.15
+            scene.addChild(pupil)
+
+            // Sparkle catchlights (Large highlight + bottom crescent + glint)
+            let catch1 = SKShapeNode(circleOfRadius: eyeR * 0.26)
+            catch1.fillColor = .white
+            catch1.strokeColor = .clear
+            catch1.position = CGPoint(x: ep.x - eyeR * 0.22, y: ep.y + eyeR * 0.22)
+            catch1.zPosition = CGFloat(RenderLayer.eyesLashes.rawValue) + 0.18
+            scene.addChild(catch1)
+
+            let catch2 = SKShapeNode(circleOfRadius: eyeR * 0.12)
+            catch2.fillColor = .white
+            catch2.strokeColor = .clear
+            catch2.position = CGPoint(x: ep.x + eyeR * 0.24, y: ep.y - eyeR * 0.20)
+            catch2.zPosition = CGFloat(RenderLayer.eyesLashes.rawValue) + 0.18
+            scene.addChild(catch2)
+
+            // Winged upper lash with flutter flicks
+            let lashPath = CGMutablePath()
+            lashPath.move(to: CGPoint(x: ep.x - sideSign * eyeR * 1.1, y: ep.y + eyeR * 0.2))
+            lashPath.addQuadCurve(to: CGPoint(x: ep.x + sideSign * eyeR * 1.25, y: ep.y + eyeR * 0.6), control: CGPoint(x: ep.x, y: ep.y + eyeR * 1.15))
+            lashPath.addLine(to: CGPoint(x: ep.x + sideSign * eyeR * 1.5, y: ep.y + eyeR * 0.9))
+
+            let lash = SKShapeNode(path: lashPath)
+            lash.strokeColor = UIColor(red: 0.17, green: 0.06, blue: 0.21, alpha: 1.0)
+            lash.lineWidth = 3.5
+            lash.lineCap = .round
+            lash.zPosition = CGFloat(RenderLayer.eyesLashes.rawValue) + 0.22
             scene.addChild(lash)
+
+            // Double eyelid crease
+            let creasePath = CGMutablePath()
+            creasePath.move(to: CGPoint(x: ep.x - sideSign * eyeR * 0.85, y: ep.y + eyeR * 1.25))
+            creasePath.addQuadCurve(to: CGPoint(x: ep.x + sideSign * eyeR * 0.85, y: ep.y + eyeR * 1.35), control: CGPoint(x: ep.x, y: ep.y + eyeR * 1.55))
+            let crease = SKShapeNode(path: creasePath)
+            crease.strokeColor = UIColor(red: 0.55, green: 0.25, blue: 0.45, alpha: 0.4)
+            crease.lineWidth = 1.5
+            crease.lineCap = .round
+            crease.zPosition = CGFloat(RenderLayer.eyesLashes.rawValue) + 0.2
+            scene.addChild(crease)
 
             if !reduceMotion {
                 let blink = SKAction.sequence([
@@ -324,6 +396,10 @@ public struct CharacterSpriteView: View {
                 ])
                 sclera.run(SKAction.repeatForever(blink))
                 iris.run(SKAction.repeatForever(blink))
+                irisShimmer.run(SKAction.repeatForever(blink))
+                pupil.run(SKAction.repeatForever(blink))
+                catch1.run(SKAction.repeatForever(blink))
+                catch2.run(SKAction.repeatForever(blink))
             }
         }
 
@@ -458,10 +534,94 @@ public struct ItemThumbnailView: View {
                     .foregroundColor(.white.opacity(0.85))
 
             case "hair_styles":
-                Circle().fill(CandyColors.purple.opacity(0.85))
-                Image(systemName: "comb.fill")
-                    .font(.system(size: 18))
-                    .foregroundColor(.white)
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(CandyColors.pastelPink.opacity(0.35))
+                    if item.id.contains("buns") {
+                        HStack(spacing: 14) {
+                            Circle().fill(CandyColors.purple).frame(width: 16, height: 16)
+                            Circle().fill(CandyColors.purple).frame(width: 16, height: 16)
+                        }
+                    } else if item.id.contains("ponytail") {
+                        VStack(spacing: 2) {
+                            Circle().fill(CandyColors.purple).frame(width: 18, height: 18)
+                            Capsule().fill(CandyColors.purple).frame(width: 8, height: 20).rotationEffect(.degrees(25))
+                        }
+                    } else if item.id.contains("waves") {
+                        Image(systemName: "wind")
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundColor(CandyColors.purple)
+                    } else {
+                        Image(systemName: "comb.fill")
+                            .font(.system(size: 22))
+                            .foregroundColor(CandyColors.purple)
+                    }
+                }
+
+            case "eyeshadows":
+                ZStack {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(LinearGradient(colors: [CandyColors.yellow, Color(red: 1.0, green: 0.7, blue: 0.0)], startPoint: .top, endPoint: .bottom))
+                        .frame(width: 48, height: 44)
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(Color(white: 0.15))
+                        .frame(width: 44, height: 40)
+                    VStack(spacing: 3) {
+                        RoundedRectangle(cornerRadius: 3)
+                            .fill(LinearGradient(colors: [Color(white: 0.95), Color(white: 0.8)], startPoint: .top, endPoint: .bottom))
+                            .frame(width: 38, height: 10)
+                        HStack(spacing: 4) {
+                            RoundedRectangle(cornerRadius: 3)
+                                .fill(swatch)
+                                .frame(width: 17, height: 16)
+                                .overlay(Image(systemName: "sparkle").font(.system(size: 8)).foregroundColor(.white.opacity(0.8)))
+                            RoundedRectangle(cornerRadius: 3)
+                                .fill(item.id.contains("blue") || item.id.contains("turquoise") ? Color(red: 0.5, green: 0.88, blue: 0.95) : CandyColors.yellow.opacity(0.85))
+                                .frame(width: 17, height: 16)
+                        }
+                        Capsule()
+                            .fill(Color(white: 0.35))
+                            .frame(width: 36, height: 3)
+                    }
+                }
+
+            case "blushes":
+                ZStack {
+                    Circle()
+                        .fill(LinearGradient(colors: [Color(red: 1.0, green: 0.85, blue: 0.7), Color(red: 0.9, green: 0.6, blue: 0.4)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                        .frame(width: 46, height: 46)
+                    Circle()
+                        .fill(swatch)
+                        .frame(width: 38, height: 38)
+                    Image(systemName: "heart.fill")
+                        .font(.system(size: 14))
+                        .foregroundColor(.white.opacity(0.45))
+                    HStack(spacing: 1) {
+                        Capsule().fill(Color(white: 0.15)).frame(width: 14, height: 4)
+                        Capsule().fill(CandyColors.yellow).frame(width: 5, height: 5)
+                        Circle().fill(CandyColors.pink).frame(width: 9, height: 9)
+                    }
+                    .rotationEffect(.degrees(-35))
+                    .offset(x: 10, y: 10)
+                }
+
+            case "lipsticks":
+                VStack(spacing: 0) {
+                    Capsule()
+                        .fill(swatch)
+                        .frame(width: 14, height: 20)
+                        .overlay(
+                            Capsule()
+                                .stroke(Color.white.opacity(0.6), lineWidth: 1)
+                                .offset(x: -2)
+                        )
+                    Rectangle()
+                        .fill(LinearGradient(colors: [CandyColors.yellow, Color(red: 1.0, green: 0.75, blue: 0.0)], startPoint: .leading, endPoint: .trailing))
+                        .frame(width: 16, height: 7)
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(LinearGradient(colors: [Color(white: 0.25), Color(white: 0.1)], startPoint: .leading, endPoint: .trailing))
+                        .frame(width: 20, height: 20)
+                }
 
             case "outfits":
                 ZStack {
@@ -599,11 +759,6 @@ public struct ItemThumbnailView: View {
                         .font(.system(size: 16))
                         .foregroundColor(.white.opacity(0.8))
                 }
-
-            case "lipsticks", "eyeshadows", "blushes":
-                Circle().fill(swatch)
-                    .overlay(Circle().stroke(Color.white, lineWidth: 2))
-                    .shadow(color: swatch.opacity(0.5), radius: 3)
 
             default:
                 RoundedRectangle(cornerRadius: 12)

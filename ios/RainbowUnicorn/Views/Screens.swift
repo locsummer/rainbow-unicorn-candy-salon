@@ -245,6 +245,77 @@ public struct HomeView: View {
 
 // MARK: - 3. Portrait Level Select Screen
 
+public struct LevelThematicThumbnailView: View {
+    public let theme: String
+
+    public init(theme: String) {
+        self.theme = theme
+    }
+
+    public var body: some View {
+        ZStack {
+            switch theme {
+            case "cotton_candy":
+                ZStack {
+                    Capsule().fill(CandyColors.yellow).frame(width: 3, height: 28).rotationEffect(.degrees(25)).offset(x: -3, y: 3)
+                    Circle().fill(CandyColors.pastelPink).frame(width: 18, height: 18).offset(x: -6, y: -4)
+                    Circle().fill(Color(red: 0.5, green: 0.88, blue: 0.95)).frame(width: 16, height: 16).offset(x: 6, y: -6)
+                    Circle().fill(CandyColors.purple.opacity(0.6)).frame(width: 16, height: 16).offset(x: 0, y: 4)
+                }
+            case "rainbow":
+                Image(systemName: "rainbow")
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(CandyColors.pink)
+            case "strawberry":
+                Image(systemName: "suit.heart.fill")
+                    .font(.system(size: 24))
+                    .foregroundColor(Color(red: 0.9, green: 0.15, blue: 0.2))
+                    .overlay(Circle().fill(Color.green).frame(width: 6, height: 6).offset(y: -10))
+            case "galaxy":
+                Image(systemName: "circle.circle.fill")
+                    .font(.system(size: 24))
+                    .foregroundColor(CandyColors.purple)
+            case "bakery":
+                Image(systemName: "birthday.cake.fill")
+                    .font(.system(size: 22))
+                    .foregroundColor(CandyColors.pink)
+            case "bubblegum":
+                Circle().fill(CandyColors.pink).frame(width: 24, height: 24)
+                    .overlay(Circle().fill(Color.white.opacity(0.6)).frame(width: 6, height: 6).offset(x: -5, y: -5))
+            case "lagoon":
+                Image(systemName: "water.waves")
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundColor(Color(red: 0.2, green: 0.8, blue: 0.9))
+            case "carousel", "carnival":
+                Image(systemName: "tent.fill")
+                    .font(.system(size: 22))
+                    .foregroundColor(CandyColors.purple)
+            case "royal_ball", "coronation":
+                Image(systemName: "crown.fill")
+                    .font(.system(size: 22))
+                    .foregroundColor(CandyColors.yellow)
+            case "crystal_sugar":
+                Image(systemName: "suit.diamond.fill")
+                    .font(.system(size: 24))
+                    .foregroundColor(Color(red: 0.0, green: 0.9, blue: 1.0))
+            case "peppermint":
+                Image(systemName: "circle.slash.fill")
+                    .font(.system(size: 22))
+                    .foregroundColor(Color(red: 0.9, green: 0.1, blue: 0.2))
+            case "starlight_safari":
+                Image(systemName: "moon.stars.fill")
+                    .font(.system(size: 22))
+                    .foregroundColor(CandyColors.yellow)
+            default:
+                Image(systemName: "sparkles")
+                    .font(.system(size: 22))
+                    .foregroundColor(CandyColors.pink)
+            }
+        }
+        .frame(width: 36, height: 36)
+    }
+}
+
 public struct LevelSelectView: View {
     public let levels: [Level]
     public let language: String
@@ -356,31 +427,31 @@ public struct LevelSelectView: View {
                                     localToast = L10n.string("level_locked_hint", language: language)
                                 }
                             }) {
-                                VStack(spacing: 6) {
-                                    HStack(spacing: 4) {
+                                VStack(spacing: 4) {
+                                    HStack(spacing: 3) {
                                         Text(L10n.format("level_short_format", language: language, lvl.id))
-                                            .font(.system(size: 11, weight: .heavy, design: .rounded))
+                                            .font(.system(size: 10, weight: .heavy, design: .rounded))
                                             .foregroundColor(CandyColors.pink)
                                         Text(lvl.characterType == .unicorn ? "🦄" : "👸")
-                                            .font(.system(size: 12))
+                                            .font(.system(size: 11))
                                     }
 
+                                    LevelThematicThumbnailView(theme: lvl.theme)
+
                                     Text(lvl.localizedName(language: language))
-                                        .font(.system(size: 11, weight: .semibold, design: .rounded))
+                                        .font(.system(size: 10, weight: .bold, design: .rounded))
                                         .foregroundColor(CandyColors.deepPlum)
                                         .multilineTextAlignment(.center)
-                                        .lineLimit(2)
+                                        .lineLimit(1)
                                         .minimumScaleFactor(0.85)
-
-                                    Spacer(minLength: 0)
 
                                     if isPremiumLocked {
                                         HStack(spacing: 3) {
                                             Image(systemName: "lock.fill")
-                                                .font(.system(size: 11))
+                                                .font(.system(size: 10))
                                                 .foregroundColor(CandyColors.purple)
                                             Text("VIP")
-                                                .font(.system(size: 11, weight: .bold, design: .rounded))
+                                                .font(.system(size: 10, weight: .bold, design: .rounded))
                                                 .foregroundColor(CandyColors.purple)
                                         }
                                     } else if !isUnlocked {
@@ -391,14 +462,17 @@ public struct LevelSelectView: View {
                                         HStack(spacing: 2) {
                                             ForEach(1...3, id: \.self) { s in
                                                 Image(systemName: "star.fill")
-                                                    .font(.system(size: 11))
+                                                    .font(.system(size: 10))
                                                     .foregroundColor(s <= stars ? CandyColors.yellow : Color.gray.opacity(0.35))
                                             }
+                                            Text("+50🍬")
+                                                .font(.system(size: 8, weight: .bold, design: .rounded))
+                                                .foregroundColor(CandyColors.pink)
                                         }
                                     }
                                 }
-                                .padding(8)
-                                .frame(maxWidth: .infinity, minHeight: 110, maxHeight: 110)
+                                .padding(6)
+                                .frame(maxWidth: .infinity, minHeight: 132, maxHeight: 132)
                                 .background(
                                     isPremiumLocked ? Color(red: 0.95, green: 0.90, blue: 0.96)
                                     : (isUnlocked ? Color.white : Color(white: 0.94))

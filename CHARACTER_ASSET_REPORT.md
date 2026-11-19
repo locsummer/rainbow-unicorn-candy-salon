@@ -75,3 +75,19 @@ The Princess renderer was completely overhauled based on direct player feedback 
 
 * **100% Vector Math:** All character elements are rendered programmatically using Canvas paths and Bézier vectors. Zero pixelated bitmap dependencies, zero runtime asset loading stalls, and infinite resolution scaling on any device density (MDPI through XXXHDPI).
 * **Frame Rate:** Maintains a constant 60 FPS on Android and iOS devices with lightweight draw calls and zero allocation in render loops.
+
+---
+
+## 5. Luxury 3D Fantasy Unicorn Model & Cosmetic Tool Asset Rebuild
+
+### 5.1. 3D Fantasy Unicorn Model Overhaul (`CharacterVectorRenderer.kt` & `CharacterSpriteView.swift`)
+* **3D Shaded Coat:** Radial marshmallow cream gradients (`Color.White`, `0xFFFFF5F9`, `0xFFFFE0EB`) eliminating flat circles and trapezoids.
+* **Porcelain Doll Anatomy:** Organic Bézier pony contours, chubby cheeks, curved forelegs with golden metallic hoof cuffs.
+* **Facial Features:** 3D pink gradient snout with nostrils and sweet smile, almond glass eyes with double eyelid creases, radial gradient iris (midnight purple to aquamarine), 4-tier catchlights (star sparkle, main catch, glint, bottom crescent), and dual flutter eyelashes.
+* **Golden Spiral Horn & Fluffy Ears:** 4-tier golden spiral horn with specular glints and tufted pink inner ears.
+
+### 5.2. Bespoke 3D Cosmetic & Salon Tool Assets
+* **Eyeshadow Palettes:** Opened luxury compact cases in gold and deep lacquer with top mirror panels, dual powder pans (rich color + shimmering highlight), and miniature double-ended applicator sponge wands.
+* **Blush Compacts:** Round rose-gold metallic compacts, circular powder pans with embossed heart textures, and soft angled powder brushes with rose gold ferrules and dipped pink bristles.
+* **Lipsticks:** High-end gold and black lacquer tubes with gold collar bands and angled, faceted shiny lipstick bullets with highlight drop reflections.
+* **Cake Bakery:** Multi-tier sponge cakes with frosting drips, wafer rolls with chocolate spiral stripes, macarons with ruffled feet and cream filling, and glossy cherries with curved green stems.

@@ -21,6 +21,8 @@
 | **BUG-010** | Item selection modal was a narrow single row with placeholder circles | Major | Open | **RESOLVED** | Replaced with full-height 3-column `LazyVerticalGrid` / `LazyVGrid`, 58–64dp thumbnails, checkmarks, lock price badges, and dedicated "✨ Mở Bảng Chọn" button in tray. |
 | **BUG-011** | Top HUD buttons unresponsive when disabled / cut off by punch hole selfie cameras | Major | Open | **RESOLVED** | Added safe-area top insets (`statusBars` + 8dp) to clear punch holes; guaranteed tactile and auditory click feedback on all buttons. |
 | **BUG-012** | Cake station toppings only rendered as flat pink dots on top tier | Major | Open | **RESOLVED** | Distributed toppings across top tier and lower tier ledges with illustrated cherries, chocolate kisses, wafer sticks, macarons, and stars. |
+| **BUG-013** | Unicorn character rendered as stiff geometric mannequin in levels 1, 2, 4, 6, etc. | Critical | Open (User Screenshot) | **RESOLVED** | Replaced with luxury 3D Fantasy Unicorn doll: marshmallow gradient coat, anime glass eyes with double crease & catchlights, flutter lashes, 3D snout with nostrils and smile, gold hoof cuffs. |
+| **BUG-014** | Level select cards only showed text and emojis without visual artwork | Major | Open | **RESOLVED** | Implemented `LevelThematicThumbnail` with custom vector illustrations for all 20 levels (cotton candy, rainbow, galaxy, strawberry palace, tiered cake, etc.), 134dp cards, 1-3 stars, and `+50🍬` reward badges. |
 
 ---
 
