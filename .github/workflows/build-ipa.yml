@@ -14,7 +14,7 @@ permissions:
 jobs:
   build-ipa:
     name: Build Rainbow Unicorn IPA
-    runs-on: macos-13
+    runs-on: macos-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
