@@ -228,7 +228,7 @@ public struct CharacterSpriteView: View {
             case .forest:
                 grad = Gradient(colors: [Color(red: 0.88, green: 0.98, blue: 0.90), Color(red: 0.78, green: 0.94, blue: 0.85)])
             }
-            context.fill(Path(bgRect), with: .linearGradient(grad, startPoint: .top, endPoint: .bottom))
+            context.fill(Path(bgRect), with: .linearGradient(grad, startPoint: CGPoint(x: cx, y: 0), endPoint: CGPoint(x: cx, y: h)))
         }
 
         // Soft floor pedestal shadow
@@ -910,7 +910,7 @@ public struct ItemThumbnailView: View {
                         p.addLine(to: CGPoint(x: 34, y: 36))
                         p.closeSubpath()
                     }
-                    .fill(LinearGradient(hornGrad, startPoint: .bottom, endPoint: .top))
+                    .fill(LinearGradient(gradient: hornGrad, startPoint: .bottom, endPoint: .top))
                     .frame(width: 44, height: 40)
                 }
 
