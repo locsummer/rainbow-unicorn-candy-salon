@@ -223,9 +223,6 @@ public struct BottomItemTray: View {
         }
     }
 }
-        }
-    }
-}
 
 public struct UnlockItemDialog: View {
     public let item: Item

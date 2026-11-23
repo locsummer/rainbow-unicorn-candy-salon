@@ -274,7 +274,6 @@ public struct CandySalonStudioView: View {
         context.fill(Path(ellipseIn: CGRect(x: wandX - 10, y: wandY - 35, width: 20, height: 20)), with: .color(Color(red: 0.85, green: 0.45, blue: 1.0).opacity(0.6)))
         context.fill(Path(ellipseIn: CGRect(x: wandX - 6, y: wandY - 45, width: 8, height: 8)), with: .color(Color(red: 0.0, green: 0.90, blue: 1.0)))
     }
-    }
 
     private func drawClosetTower(context: inout GraphicsContext, leftX: CGFloat, topY: CGFloat, towerW: CGFloat, towerH: CGFloat) {
         // Tower Frame

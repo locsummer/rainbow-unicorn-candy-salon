@@ -1886,27 +1886,6 @@ public struct PartyModeView: View {
 
             if let toast = toastMessage {
                 VStack {
-                    Spacer()
-                    Text(toast)
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
-                        .background(Color.black.opacity(0.75))
-                        .cornerRadius(20)
-                        .padding(.bottom, 65)
-                }
-                .transition(.move(edge: .bottom).combined(with: .opacity))
-            }
-        }
-                        }
-                        commit(cleared)
-                    }
-                )
-            }
-
-            if let toast = toastMessage {
-                VStack {
                     Text(toast)
                         .font(.system(size: 13, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
