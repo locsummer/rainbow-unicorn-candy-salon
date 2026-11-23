@@ -1,0 +1,87 @@
+name: Build iOS IPA
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - ios-deploy
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-ipa:
+    name: Build Rainbow Unicorn IPA
+    runs-on: macos-14
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer || sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Install xcodegen
+        run: |
+          brew install xcodegen
+
+      - name: Generate Xcode Project
+        run: |
+          cd ios
+          xcodegen generate --spec project.yml
+
+      - name: Build and Archive
+        run: |
+          cd ios
+          xcodebuild archive \
+            -project RainbowUnicorn.xcodeproj \
+            -scheme RainbowUnicorn \
+            -configuration Release \
+            -destination "generic/platform=iOS" \
+            -archivePath build/RainbowUnicorn.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            AD_HOC_CODE_SIGNING_ALLOWED=YES
+
+      - name: Package IPA
+        run: |
+          cd ios
+          mkdir -p Payload
+          if [ -d "build/RainbowUnicorn.xcarchive/Products/Applications/RainbowUnicorn.app" ]; then
+            cp -R "build/RainbowUnicorn.xcarchive/Products/Applications/RainbowUnicorn.app" Payload/
+          else
+            echo "Searching for RainbowUnicorn.app..."
+            APP_DIR=$(find . -name "RainbowUnicorn.app" -type d | head -n 1)
+            cp -R "$APP_DIR" Payload/
+          fi
+          
+          if [ ! -f "Payload/RainbowUnicorn.app/Info.plist" ]; then
+            cp RainbowUnicorn/Resources/Info.plist Payload/RainbowUnicorn.app/Info.plist
+          fi
+          echo -n "APPL????" > Payload/RainbowUnicorn.app/PkgInfo
+          cp -f RainbowUnicorn/Resources/*.json Payload/RainbowUnicorn.app/ 2>/dev/null || true
+          cp -Rf RainbowUnicorn/Resources/*.lproj Payload/RainbowUnicorn.app/ 2>/dev/null || true
+          
+          zip -qr ../RainbowUnicorn.ipa Payload
+          cd ..
+          ls -lh RainbowUnicorn.ipa
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: RainbowUnicorn-IPA
+          path: RainbowUnicorn.ipa
+          if-no-files-found: error
+
+      - name: Create or Update GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create v1.0.0-ios RainbowUnicorn.ipa \
+            --title "Rainbow Unicorn Candy Salon iOS v1.0.0" \
+            --notes "Pre-built IPA file for Sideloadly / iTunes / AltStore / TrollStore." \
+            --clobber || true

@@ -3,19 +3,19 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleDevelopmentRegion</key>
-    <string>$(DEVELOPMENT_LANGUAGE)</string>
+    <string>en</string>
     <key>CFBundleDisplayName</key>
-    <string>Rainbow Unicorn Candy Salon</string>
+    <string>Rainbow Unicorn</string>
     <key>CFBundleExecutable</key>
-    <string>$(EXECUTABLE_NAME)</string>
+    <string>RainbowUnicorn</string>
     <key>CFBundleIdentifier</key>
     <string>com.rainbowunicorn.candysalon</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
-    <string>$(PRODUCT_NAME)</string>
+    <string>RainbowUnicorn</string>
     <key>CFBundlePackageType</key>
-    <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
+    <string>APPL</string>
     <key>CFBundleShortVersionString</key>
     <string>1.0.0</string>
     <key>CFBundleVersion</key>
@@ -24,7 +24,7 @@
     <true/>
     <key>UIRequiredDeviceCapabilities</key>
     <array>
-        <string>armv7</string>
+        <string>arm64</string>
     </array>
     <key>UIRequiresFullScreen</key>
     <true/>
@@ -37,7 +37,6 @@
         <string>UIInterfaceOrientationPortrait</string>
         <string>UIInterfaceOrientationPortraitUpsideDown</string>
     </array>
-    <!-- Add-only photo library access per requirements (RULE-094) -->
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>Rainbow Unicorn Candy Salon needs permission to save your sweet makeover photos to your Photos library.</string>
 </dict>

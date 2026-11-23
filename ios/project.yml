@@ -1,0 +1,57 @@
+name: RainbowUnicorn
+options:
+  bundleIdPrefix: com.rainbowunicorn
+  deploymentTarget:
+    iOS: "15.0"
+  xcodeVersion: "15.0"
+
+targets:
+  GameCore:
+    type: framework.static
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - path: GameCore/Sources/GameCore
+    settings:
+      base:
+        PRODUCT_NAME: GameCore
+        PRODUCT_BUNDLE_IDENTIFIER: com.rainbowunicorn.GameCore
+        CODE_SIGNING_ALLOWED: NO
+        CODE_SIGNING_REQUIRED: NO
+        CODE_SIGN_IDENTITY: ""
+        DEFINES_MODULE: YES
+        SWIFT_VERSION: "5.0"
+        GENERATE_INFOPLIST_FILE: YES
+
+  RainbowUnicorn:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - path: RainbowUnicorn
+        excludes:
+          - "Resources/Info.plist"
+    dependencies:
+      - target: GameCore
+    info:
+      path: RainbowUnicorn/Resources/Info.plist
+    settings:
+      base:
+        PRODUCT_NAME: RainbowUnicorn
+        PRODUCT_BUNDLE_IDENTIFIER: com.rainbowunicorn.candysalon
+        CODE_SIGNING_ALLOWED: NO
+        CODE_SIGNING_REQUIRED: NO
+        CODE_SIGN_IDENTITY: ""
+        AD_HOC_CODE_SIGNING_ALLOWED: YES
+        INFOPLIST_FILE: RainbowUnicorn/Resources/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        SWIFT_VERSION: "5.0"
+        ENABLE_BITCODE: NO
+
+schemes:
+  RainbowUnicorn:
+    build:
+      targets:
+        RainbowUnicorn: all
+    archive:
+      config: Release
