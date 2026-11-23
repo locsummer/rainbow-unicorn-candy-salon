@@ -146,32 +146,66 @@ public struct CakeStationView: View {
 
     @ViewBuilder
     private func toppingView(for topId: String) -> some View {
-        if topId.contains("cherry") {
+        if topId.contains("cherries") || topId.contains("cherry") {
+            // Dual Glossy Cherries with green stem
             ZStack {
-                Circle().fill(Color(red: 0.88, green: 0.08, blue: 0.18)).frame(width: 20, height: 20)
-                Circle().fill(Color.white.opacity(0.7)).frame(width: 5, height: 5).offset(x: -3, y: -3)
+                Path { p in
+                    p.move(to: CGPoint(x: 14, y: 0))
+                    p.addQuadCurve(to: CGPoint(x: 8, y: 16), control: CGPoint(x: 6, y: 6))
+                    p.move(to: CGPoint(x: 14, y: 0))
+                    p.addQuadCurve(to: CGPoint(x: 20, y: 16), control: CGPoint(x: 22, y: 6))
+                }
+                .stroke(Color.green, lineWidth: 2)
+
+                HStack(spacing: 2) {
+                    Circle().fill(Color(red: 0.90, green: 0.08, blue: 0.22)).frame(width: 16, height: 16)
+                        .overlay(Circle().fill(Color.white.opacity(0.6)).frame(width: 4, height: 4).offset(x: -3, y: -3))
+                    Circle().fill(Color(red: 0.82, green: 0.05, blue: 0.18)).frame(width: 16, height: 16)
+                        .overlay(Circle().fill(Color.white.opacity(0.6)).frame(width: 4, height: 4).offset(x: -3, y: -3))
+                }
+                .offset(y: 8)
             }
+            .frame(width: 32, height: 32)
         } else if topId.contains("macaron") {
             VStack(spacing: 1) {
-                Capsule().fill(CandyColors.pink).frame(width: 24, height: 7)
-                Capsule().fill(Color.white).frame(width: 22, height: 3)
-                Capsule().fill(CandyColors.pink).frame(width: 24, height: 7)
+                Capsule().fill(CandyColors.purple).frame(width: 26, height: 8)
+                Capsule().fill(Color.white).frame(width: 24, height: 3)
+                Capsule().fill(CandyColors.purple).frame(width: 26, height: 8)
             }
         } else if topId.contains("wafer") {
-            Capsule().fill(CandyColors.yellow).frame(width: 7, height: 28).rotationEffect(.degrees(22))
-        } else if topId.contains("kiss") || topId.contains("chocolate") {
+            Capsule()
+                .fill(LinearGradient(colors: [CandyColors.yellow, Color(red: 0.95, green: 0.65, blue: 0.2)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                .frame(width: 8, height: 32)
+                .rotationEffect(.degrees(24))
+        } else if topId.contains("chocolate") || topId.contains("chocochip") || topId.contains("kiss") {
             ZStack {
-                Circle().fill(Color(red: 0.32, green: 0.18, blue: 0.12)).frame(width: 18, height: 18)
-                Circle().fill(Color.white.opacity(0.4)).frame(width: 4, height: 4).offset(x: -2, y: -2)
+                Path { p in
+                    p.move(to: CGPoint(x: 2, y: 20))
+                    p.addQuadCurve(to: CGPoint(x: 10, y: 2), control: CGPoint(x: 4, y: 8))
+                    p.addQuadCurve(to: CGPoint(x: 18, y: 20), control: CGPoint(x: 16, y: 8))
+                    p.closeSubpath()
+                }
+                .fill(Color(red: 0.38, green: 0.20, blue: 0.12))
+                Circle().fill(Color.white.opacity(0.4)).frame(width: 4, height: 4).offset(x: -2, y: 2)
+            }
+            .frame(width: 20, height: 22)
+        } else if topId.contains("sprinkles") {
+            HStack(spacing: 3) {
+                Capsule().fill(CandyColors.pink).frame(width: 4, height: 12).rotationEffect(.degrees(30))
+                Capsule().fill(CandyColors.mint).frame(width: 4, height: 12).rotationEffect(.degrees(-20))
+                Capsule().fill(CandyColors.yellow).frame(width: 4, height: 12).rotationEffect(.degrees(45))
+                Capsule().fill(CandyColors.purple).frame(width: 4, height: 12).rotationEffect(.degrees(-35))
             }
         } else if topId.contains("crystal") {
             Image(systemName: "suit.diamond.fill")
-                .font(.system(size: 18))
-                .foregroundColor(Color(red: 0.0, green: 0.90, blue: 1.0))
+                .font(.system(size: 22))
+                .foregroundColor(Color(red: 0.2, green: 0.90, blue: 1.0))
+                .shadow(color: .white, radius: 2)
         } else {
             Image(systemName: "star.fill")
-                .font(.system(size: 18))
+                .font(.system(size: 20))
                 .foregroundColor(CandyColors.yellow)
+                .shadow(color: CandyColors.pink.opacity(0.5), radius: 2)
         }
     }
 
@@ -296,25 +330,63 @@ public struct CakeStationView: View {
                     }()
 
                     ZStack(alignment: .top) {
+                        // Cake sponge & icing body
                         RoundedRectangle(cornerRadius: 14)
-                            .fill(icingColor)
-                            .frame(width: w, height: 46)
-                            .overlay(RoundedRectangle(cornerRadius: 14).stroke(CandyColors.deepPlum.opacity(0.2), lineWidth: 1.5))
+                            .fill(
+                                LinearGradient(
+                                    colors: [icingColor, icingColor.opacity(0.85)],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                            )
+                            .frame(width: w, height: 54)
+                            .overlay(
+                                VStack {
+                                    // Scalloped white drip frosting glaze at top of tier
+                                    HStack(spacing: 2) {
+                                        ForEach(0..<max(Int(w / 14), 1), id: \.self) { _ in
+                                            Circle()
+                                                .fill(Color.white.opacity(0.85))
+                                                .frame(width: 14, height: 14)
+                                        }
+                                    }
+                                    .offset(y: -4)
+                                    Spacer()
+                                }
+                            )
+                            .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.white.opacity(0.6), lineWidth: 2))
+                            .shadow(color: .black.opacity(0.08), radius: 4, x: 0, y: 2)
 
                         // Tier Toppings Display
                         if !tierToppings.isEmpty {
-                            HStack(spacing: 12) {
+                            HStack(spacing: 8) {
                                 ForEach(Array(tierToppings.enumerated()), id: \.offset) { _, topId in
                                     toppingView(for: topId)
                                 }
                             }
-                            .offset(y: -14)
+                            .offset(y: -18)
                         }
                     }
                 }
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(CandyColors.deepPlum.opacity(0.22))
-                    .frame(width: 250, height: 16)
+                // Elegant Cake Pedestal
+                VStack(spacing: 2) {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(
+                            LinearGradient(
+                                colors: [Color(white: 0.98), Color(white: 0.88), Color(white: 0.95)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .frame(width: 260, height: 18)
+                        .shadow(color: .black.opacity(0.12), radius: 3, x: 0, y: 2)
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(Color(white: 0.85))
+                        .frame(width: 80, height: 14)
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color(white: 0.92))
+                        .frame(width: 140, height: 10)
+                }
             }
 
             Spacer()
@@ -357,11 +429,61 @@ public struct PetStationView: View {
             ZStack {
                 Circle()
                     .fill(CandyColors.mint.opacity(0.28))
-                    .frame(width: 190, height: 190)
+                    .frame(width: 210, height: 210)
 
                 VStack(spacing: 8) {
-                    Text(petFed && petGroomed ? "🐶✨" : "🐶")
-                        .font(.system(size: 72))
+                    ZStack {
+                        // Fluffy cartoon puppy face with unicorn horn and sparkling eyes
+                        Canvas { context, size in
+                            let cx = size.width * 0.5
+                            let cy = size.height * 0.55
+                            let r = size.width * 0.38
+                            // Ears
+                            for side: CGFloat in [-1.0, 1.0] {
+                                var ear = Path()
+                                ear.move(to: CGPoint(x: cx + side * r * 0.5, y: cy - r * 0.5))
+                                ear.addQuadCurve(to: CGPoint(x: cx + side * r * 1.1, y: cy + r * 0.3), control: CGPoint(x: cx + side * r * 1.3, y: cy - r * 0.3))
+                                ear.addQuadCurve(to: CGPoint(x: cx + side * r * 0.7, y: cy + r * 0.1), control: CGPoint(x: cx + side * r * 0.8, y: cy + r * 0.2))
+                                ear.closeSubpath()
+                                context.fill(ear, with: .color(Color(red: 0.95, green: 0.85, blue: 0.75)))
+                            }
+                            // Head
+                            context.fill(Path(ellipseIn: CGRect(x: cx - r, y: cy - r * 0.9, width: r * 2, height: r * 1.8)), with: .color(Color(red: 1.0, green: 0.96, blue: 0.92)))
+                            // Unicorn Horn on Pet
+                            var horn = Path()
+                            horn.move(to: CGPoint(x: cx - 6, y: cy - r * 0.85))
+                            horn.addLine(to: CGPoint(x: cx, y: cy - r * 1.35))
+                            horn.addLine(to: CGPoint(x: cx + 6, y: cy - r * 0.85))
+                            horn.closeSubpath()
+                            context.fill(horn, with: .color(CandyColors.yellow))
+                            // Eyes
+                            for side: CGFloat in [-1.0, 1.0] {
+                                let ex = cx + side * r * 0.38
+                                let ey = cy - r * 0.05
+                                context.fill(Path(ellipseIn: CGRect(x: ex - 7, y: ey - 9, width: 14, height: 18)), with: .color(Color(red: 0.15, green: 0.08, blue: 0.20)))
+                                context.fill(Path(ellipseIn: CGRect(x: ex - 4, y: ey - 7, width: 6, height: 6)), with: .color(.white))
+                            }
+                            // Snout & Nose
+                            context.fill(Path(ellipseIn: CGRect(x: cx - 18, y: cy + r * 0.15, width: 36, height: 26)), with: .color(.white))
+                            context.fill(Path(ellipseIn: CGRect(x: cx - 6, y: cy + r * 0.20, width: 12, height: 8)), with: .color(Color(red: 0.25, green: 0.12, blue: 0.20)))
+                            // Smile
+                            var smile = Path()
+                            smile.addArc(center: CGPoint(x: cx, y: cy + r * 0.32), radius: 6, startAngle: .degrees(0), endAngle: .degrees(180), clockwise: false)
+                            context.stroke(smile, with: .color(Color(red: 0.25, green: 0.12, blue: 0.20)), lineWidth: 1.8)
+                            // Cheeks
+                            context.fill(Path(ellipseIn: CGRect(x: cx - r * 0.65, y: cy + r * 0.15, width: 16, height: 10)), with: .color(CandyColors.pink.opacity(0.6)))
+                            context.fill(Path(ellipseIn: CGRect(x: cx + r * 0.65 - 16, y: cy + r * 0.15, width: 16, height: 10)), with: .color(CandyColors.pink.opacity(0.6)))
+                        }
+                        .frame(width: 140, height: 140)
+
+                        if petFed && petGroomed {
+                            Image(systemName: "sparkles")
+                                .font(.system(size: 26))
+                                .foregroundColor(CandyColors.yellow)
+                                .offset(x: 50, y: -45)
+                        }
+                    }
+
                     Text(L10n.format("pet_clean_format", language: language, Int((petClean * 100).rounded())))
                         .font(.system(size: 14, weight: .bold, design: .rounded))
                         .foregroundColor(CandyColors.deepPlum)

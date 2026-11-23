@@ -192,10 +192,13 @@ public struct BottomItemTray: View {
                                         Text(item.localizedName(language: language))
                                             .font(.system(size: 11, weight: isSelected ? .bold : .medium, design: .rounded))
                                             .foregroundColor(CandyColors.deepPlum)
-                                            .lineLimit(1)
-                                            .frame(width: 72)
+                                            .lineLimit(2)
+                                            .minimumScaleFactor(0.75)
+                                            .multilineTextAlignment(.center)
+                                            .frame(width: 80, height: 28)
                                     }
                                     .padding(6)
+                                    .frame(width: 84)
                                     .background(isSelected ? CandyColors.yellow : (isUnlocked ? CandyColors.cream : Color(white: 0.93)))
                                     .cornerRadius(14)
                                     .overlay(
@@ -418,8 +421,10 @@ public struct ItemSelectionModal: View {
                                     Text(item.localizedName(language: language))
                                         .font(.system(size: 11, weight: isSelected ? .bold : .medium, design: .rounded))
                                         .foregroundColor(isSelected ? CandyColors.pink : CandyColors.deepPlum)
-                                        .lineLimit(1)
+                                        .lineLimit(2)
+                                        .minimumScaleFactor(0.75)
                                         .multilineTextAlignment(.center)
+                                        .frame(height: 28)
                                 }
                                 .padding(8)
                                 .frame(maxWidth: .infinity)

@@ -1004,83 +1004,146 @@ public struct StationView: View {
             .ignoresSafeArea()
 
             VStack(spacing: 6) {
-                // PORTRAIT TOP HUD ROW 1 (Generous safe-area padding for punch-hole cameras)
+                // REFINED TOP HUD: Row 1 - Main Actions Bar (Exit, Goals, Undo, Redo, Reset, Done)
                 HStack(spacing: 8) {
-                    NavButton(
-                        iconName: "arrow.backward",
-                        label: L10n.string("btn_exit", language: language),
-                        backgroundColor: CandyColors.pink,
-                        compact: true,
-                        action: {
-                            soundManager.playClick()
-                            showExitDialog = true
-                        }
-                    )
+                    // Circular Exit Button
+                    Button(action: {
+                        soundManager.playClick()
+                        showExitDialog = true
+                    }) {
+                        Image(systemName: "arrow.backward")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(.white)
+                            .frame(width: 40, height: 40)
+                            .background(CandyColors.pink)
+                            .clipShape(Circle())
+                            .shadow(color: .black.opacity(0.12), radius: 3, x: 0, y: 1)
+                    }
 
+                    // Goals Progress Pill (Tap to view criteria dialog)
                     Button(action: {
                         soundManager.playClick()
                         showRequestDialog = true
                     }) {
                         HStack(spacing: 5) {
-                            Image(systemName: "list.bullet.rectangle")
-                                .font(.system(size: 14, weight: .bold))
+                            Image(systemName: "list.bullet.rectangle.fill")
+                                .font(.system(size: 13, weight: .bold))
+                                .foregroundColor(CandyColors.pink)
                             Text(L10n.format("criteria_progress_format", language: language, metCount, level.criteria.count))
                                 .font(.system(size: 12, weight: .bold, design: .rounded))
                                 .lineLimit(1)
-                                .minimumScaleFactor(0.8)
                         }
-                        .frame(maxWidth: .infinity, minHeight: 48)
                         .padding(.horizontal, 10)
-                        .background(metCount == level.criteria.count ? CandyColors.mint : .white)
+                        .frame(height: 38)
+                        .background(Color.white)
                         .foregroundColor(CandyColors.deepPlum)
-                        .cornerRadius(20)
-                        .shadow(color: .black.opacity(0.08), radius: 2, x: 0, y: 1)
+                        .cornerRadius(19)
+                        .shadow(color: .black.opacity(0.08), radius: 3, x: 0, y: 1)
                     }
 
-                    NavButton(
-                        iconName: "checkmark",
-                        label: L10n.string("btn_done", language: language),
-                        backgroundColor: CandyColors.mint,
-                        foregroundColor: CandyColors.deepPlum,
-                        compact: true,
-                        action: {
-                            soundManager.playClick()
-                            if currentStation == .spa && spaCleanPercent < 0.80 {
-                                showToast(L10n.string("spa_need_more", language: language))
-                                return
-                            }
-                            soundManager.playSparkle()
-                            let out = buildOutput(for: currentStation)
-                            levelEngine.completeCurrentStation(out)
+                    Spacer()
+
+                    // Undo Button
+                    Button(action: {
+                        soundManager.playClick()
+                        if levelEngine.undo() {
+                            characterState = levelEngine.characterState
+                            syncUndo()
                             onCheckpointChanged(buildCheckpoint())
-
-                            let firstIncomplete = level.stations.firstIndex {
-                                levelEngine.getStationStatus($0) != .completed
-                            }
-
-                            if firstIncomplete == nil {
-                                let eval = levelEngine.finishLevel()
-                                onLevelFinished(StationResult(
-                                    level: level,
-                                    characterState: characterState,
-                                    evaluation: eval,
-                                    engine: levelEngine
-                                ))
-                            } else if let fallback = firstIncomplete {
-                                let nextIdx = levelEngine.currentStationIndex
-                                let targetIdx = (nextIdx < level.stations.count && levelEngine.getStationStatus(level.stations[nextIdx]) != .completed)
-                                    ? nextIdx
-                                    : fallback
-                                levelEngine.selectStation(index: targetIdx)
-                                currentStationIndex = targetIdx
-                            }
                         }
-                    )
+                    }) {
+                        Image(systemName: "arrow.uturn.backward")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(CandyColors.deepPlum)
+                            .frame(width: 36, height: 36)
+                            .background(Color.white)
+                            .clipShape(Circle())
+                            .shadow(color: .black.opacity(0.08), radius: 2, x: 0, y: 1)
+                    }
+
+                    // Redo Button
+                    Button(action: {
+                        soundManager.playClick()
+                        if levelEngine.redo() {
+                            characterState = levelEngine.characterState
+                            syncUndo()
+                            onCheckpointChanged(buildCheckpoint())
+                        }
+                    }) {
+                        Image(systemName: "arrow.uturn.forward")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(CandyColors.deepPlum)
+                            .frame(width: 36, height: 36)
+                            .background(Color.white)
+                            .clipShape(Circle())
+                            .shadow(color: .black.opacity(0.08), radius: 2, x: 0, y: 1)
+                    }
+
+                    // Reset Button
+                    Button(action: {
+                        soundManager.playClick()
+                        showResetDialog = true
+                    }) {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(CandyColors.deepPlum)
+                            .frame(width: 36, height: 36)
+                            .background(CandyColors.yellow)
+                            .clipShape(Circle())
+                            .shadow(color: .black.opacity(0.08), radius: 2, x: 0, y: 1)
+                    }
+
+                    // Done / Complete Station Button
+                    Button(action: {
+                        soundManager.playClick()
+                        if currentStation == .spa && spaCleanPercent < 0.80 {
+                            showToast(L10n.string("spa_need_more", language: language))
+                            return
+                        }
+                        soundManager.playSparkle()
+                        let out = buildOutput(for: currentStation)
+                        levelEngine.completeCurrentStation(out)
+                        onCheckpointChanged(buildCheckpoint())
+
+                        let firstIncomplete = level.stations.firstIndex {
+                            levelEngine.getStationStatus($0) != .completed
+                        }
+
+                        if firstIncomplete == nil {
+                            let eval = levelEngine.finishLevel()
+                            onLevelFinished(StationResult(
+                                level: level,
+                                characterState: characterState,
+                                evaluation: eval,
+                                engine: levelEngine
+                            ))
+                        } else if let fallback = firstIncomplete {
+                            let nextIdx = levelEngine.currentStationIndex
+                            let targetIdx = (nextIdx < level.stations.count && levelEngine.getStationStatus(level.stations[nextIdx]) != .completed)
+                                ? nextIdx
+                                : fallback
+                            levelEngine.selectStation(index: targetIdx)
+                            currentStationIndex = targetIdx
+                        }
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 13, weight: .heavy))
+                            Text(L10n.string("btn_done", language: language))
+                                .font(.system(size: 12, weight: .heavy, design: .rounded))
+                        }
+                        .padding(.horizontal, 12)
+                        .frame(height: 38)
+                        .background(CandyColors.mint)
+                        .foregroundColor(CandyColors.deepPlum)
+                        .cornerRadius(19)
+                        .shadow(color: .black.opacity(0.08), radius: 3, x: 0, y: 1)
+                    }
                 }
                 .padding(.horizontal, 10)
-                .padding(.top, 14)
+                .padding(.top, 10)
 
-                // PORTRAIT TOP HUD ROW 2: Dedicated Full-Width Scrollable Station Steps (Zero Truncation)
+                // REFINED TOP HUD: Row 2 - Station Step Tabs
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
                         ForEach(Array(level.stations.enumerated()), id: \.offset) { idx, st in
@@ -1090,101 +1153,54 @@ public struct StationView: View {
                                 levelEngine.selectStation(index: idx)
                                 currentStationIndex = idx
                             }) {
-                                let prefix = status == .completed ? "✓ " : "\(idx + 1). "
-                                Text(prefix + L10n.stationLabel(st, language: language))
-                                    .font(.system(size: 12, weight: .bold, design: .rounded))
-                                    .foregroundColor(isCurr ? .white : CandyColors.deepPlum)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 8)
-                                    .background(
-                                        isCurr ? CandyColors.purple
-                                        : (status == .completed ? CandyColors.mint.opacity(0.65) : Color.white.opacity(0.9))
-                                    )
-                                    .cornerRadius(16)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 16)
-                                            .stroke(isCurr ? CandyColors.deepPlum : Color.gray.opacity(0.3), lineWidth: isCurr ? 2 : 1)
-                                    )
+                                HStack(spacing: 4) {
+                                    if status == .completed {
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .font(.system(size: 11))
+                                            .foregroundColor(isCurr ? .white : CandyColors.mint)
+                                    } else {
+                                        Text("\(idx + 1).")
+                                            .font(.system(size: 11, weight: .bold))
+                                    }
+                                    Text(L10n.stationLabel(st, language: language))
+                                        .font(.system(size: 12, weight: .bold, design: .rounded))
+                                }
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 7)
+                                .background(
+                                    isCurr ? CandyColors.purple
+                                    : (status == .completed ? CandyColors.mint.opacity(0.65) : Color.white.opacity(0.92))
+                                )
+                                .foregroundColor(isCurr ? .white : CandyColors.deepPlum)
+                                .cornerRadius(16)
+                                .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
+                            }
+                        }
+
+                        if currentStation == .makeup {
+                            Button(action: {
+                                soundManager.playClick()
+                                levelEngine.updateCharacter { $0 = LayerComposer.clearMakeup(character: $0) }
+                                characterState = levelEngine.characterState
+                                syncUndo()
+                                onCheckpointChanged(buildCheckpoint())
+                            }) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "sparkles")
+                                        .font(.system(size: 11))
+                                    Text(L10n.string("makeup_remover", language: language))
+                                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                                }
+                                .foregroundColor(CandyColors.deepPlum)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 7)
+                                .background(CandyColors.pastelPink)
+                                .cornerRadius(16)
                             }
                         }
                     }
                     .padding(.horizontal, 10)
                 }
-
-                // PORTRAIT TOP HUD ROW 3: Station Prompt + Action Controls (Undo, Redo, Reset with >= 44pt touch targets)
-                HStack(spacing: 6) {
-                    Text(L10n.string(instructionKey(for: currentStation), language: language))
-                        .font(.system(size: 11, weight: .medium, design: .rounded))
-                        .foregroundColor(CandyColors.deepPlum.opacity(0.85))
-                        .lineLimit(2)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-
-                    if currentStation == .makeup {
-                        Button(action: {
-                            soundManager.playClick()
-                            levelEngine.updateCharacter { $0 = LayerComposer.clearMakeup(character: $0) }
-                            characterState = levelEngine.characterState
-                            syncUndo()
-                            onCheckpointChanged(buildCheckpoint())
-                        }) {
-                            HStack(spacing: 4) {
-                                Image(systemName: "sparkles")
-                                    .font(.system(size: 11))
-                                Text(L10n.string("makeup_remover", language: language))
-                                    .font(.system(size: 11, weight: .bold, design: .rounded))
-                            }
-                            .foregroundColor(CandyColors.deepPlum)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 6)
-                            .background(CandyColors.pastelPink)
-                            .cornerRadius(14)
-                        }
-                    }
-
-                    NavButton(
-                        iconName: "arrow.uturn.backward",
-                        label: L10n.string("btn_undo", language: language),
-                        backgroundColor: .white,
-                        foregroundColor: CandyColors.deepPlum,
-                        isEnabled: true,
-                        compact: true,
-                        action: {
-                            soundManager.playClick()
-                            if levelEngine.undo() {
-                                characterState = levelEngine.characterState
-                                syncUndo()
-                                onCheckpointChanged(buildCheckpoint())
-                            }
-                        }
-                    )
-
-                    NavButton(
-                        iconName: "arrow.uturn.forward",
-                        label: L10n.string("btn_redo", language: language),
-                        backgroundColor: .white,
-                        foregroundColor: CandyColors.deepPlum,
-                        isEnabled: true,
-                        compact: true,
-                        action: {
-                            soundManager.playClick()
-                            if levelEngine.redo() {
-                                characterState = levelEngine.characterState
-                                syncUndo()
-                                onCheckpointChanged(buildCheckpoint())
-                            }
-                        }
-                    )
-
-                    NavButton(
-                        iconName: "arrow.clockwise",
-                        label: L10n.string("btn_reset", language: language),
-                        backgroundColor: CandyColors.yellow,
-                        foregroundColor: CandyColors.deepPlum,
-                        compact: true,
-                        action: { showResetDialog = true }
-                    )
-                }
-                .padding(.horizontal, 10)
 
                 // CENTRAL PORTRAIT STAGE
                 Group {
